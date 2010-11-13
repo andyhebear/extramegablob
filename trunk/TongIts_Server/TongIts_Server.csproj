@@ -72,17 +72,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TongIts_Server.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ThingReferences\ThingReferences.csproj">
+    <ProjectReference Include="..\References\ThingReferences.csproj">
       <Project>{3FD22C07-9BBD-42D3-9BDB-D56C38627630}</Project>
       <Name>ThingReferences</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(ProjectDir)\TongIts_Server.cs" "$(SolutionDir)\ServerThing\ServerThing\bin\Debug\cache\TongIts\TongIts_Server.cs"</PostBuildEvent>
+    <PostBuildEvent>rem copy "$(ProjectDir)\TongIts_Server.cs" "$(SolutionDir)\ServerThing\ServerThing\bin\Debug\cache\TongIts\TongIts_Server.cs"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

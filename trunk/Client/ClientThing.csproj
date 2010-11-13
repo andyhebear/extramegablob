@@ -44,6 +44,7 @@
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -135,11 +136,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MogreFramework_Source__user_Smiley80__2009-01\MogreFramework\MogreFramework.csproj">
+    <ProjectReference Include="..\MogreFramework\MogreFramework.csproj">
       <Project>{8D9F9D90-DDB7-4174-BA7B-1112CEE9A88F}</Project>
       <Name>MogreFramework</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ThingReferences\ThingReferences.csproj">
+    <ProjectReference Include="..\References\ThingReferences.csproj">
       <Project>{3FD22C07-9BBD-42D3-9BDB-D56C38627630}</Project>
       <Name>ThingReferences</Name>
     </ProjectReference>

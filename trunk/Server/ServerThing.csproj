@@ -38,7 +38,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -117,7 +117,7 @@
     <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ThingReferences\ThingReferences.csproj">
+    <ProjectReference Include="..\References\ThingReferences.csproj">
       <Project>{3FD22C07-9BBD-42D3-9BDB-D56C38627630}</Project>
       <Name>ThingReferences</Name>
     </ProjectReference>

@@ -159,7 +159,7 @@ namespace thing
         }
         void netClient_onDisconnected()
         {
-           // ClientPluginManager.delAllPlugins();
+            // ClientPluginManager.delAllPlugins();
         }
         void cache_pluginDeleted(string pathRelPluginFile)
         {
@@ -174,7 +174,7 @@ namespace thing
         void netClient_onConnectCompleted(string host, string port)
         {
             log("Connected to: " + host + ":" + port);
-            
+
             cache.sendReport();
         }
         void cache_route_toserver(Event ev)
@@ -404,10 +404,16 @@ namespace thing
                 }
                 catch { OgreWindow.Instance.log("couldn't wire up camera input"); }
                 #region gui updates
-                OgreWindow.Instance.updateCoords(OgreWindow.UI_ELEMENT.label1, "X: " + OgreWindow.Instance.cameraNode.Position.x.ToString("N"));
-                OgreWindow.Instance.updateCoords(OgreWindow.UI_ELEMENT.label2, "Y: " + OgreWindow.Instance.cameraNode.Position.y.ToString("N"));
-                OgreWindow.Instance.updateCoords(OgreWindow.UI_ELEMENT.label3, "Z: " + OgreWindow.Instance.cameraNode.Position.z.ToString("N"));
+                Mogre.Vector3 pos = OgreWindow.Instance.cameraNode.Position;
+
+
+                OgreWindow.Instance.updateCoords(OgreWindow.UI_ELEMENT.label1, "X: " + pos.x.ToString("N"));
+                OgreWindow.Instance.updateCoords(OgreWindow.UI_ELEMENT.label2, "Y: " + pos.y.ToString("N"));
+                OgreWindow.Instance.updateCoords(OgreWindow.UI_ELEMENT.label3, "Z: " + pos.z.ToString("N"));
                 OgreWindow.Instance.updateCoords(OgreWindow.UI_ELEMENT.label4, "S1: " + MoveScale_Camera_forwardback.ToString("N") + " S2: " + MoveScale_Camera_leftright.ToString("N"));
+
+                OgreWindow.Instance.updateCoords(OgreWindow.UI_ELEMENT.textBox1, string.Format("x:{0} y:{1} z:{2}", pos.x ,pos.y,pos.z));
+
                 #endregion
             }
             catch { }

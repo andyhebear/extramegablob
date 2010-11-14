@@ -243,10 +243,14 @@ namespace MogreFramework
             label2,
             label3,
             label4,
-            label5
+            label5,
+            textBox1
         }
         public void updateCoords(UI_ELEMENT element, string status)
         {
+
+
+
             switch (element)
             {
                 case UI_ELEMENT.label1:
@@ -260,6 +264,10 @@ namespace MogreFramework
                     break;
                 case UI_ELEMENT.label4:
                     LabelSetText(label4, status);
+                    break;
+                case UI_ELEMENT.textBox1:
+                    TextBoxClear(textBox1);
+                    TextBoxAppendText(textBox1, status);
                     break;
                 //case UI_ELEMENT.label5:
                 //    LabelSetText(label5, status);
@@ -300,7 +308,7 @@ namespace MogreFramework
         public SceneManager mSceneMgr = null;
         public bool ShuttingDown { set { if (value) { _ShuttingDown = true; } } get { return _ShuttingDown; } }
         private bool _ShuttingDown = false;
-       
+
         public SceneNode cameraNode = null;
         public SceneNode cameraYawNode = null;
         public SceneNode cameraPitchNode = null;
@@ -1117,5 +1125,10 @@ namespace MogreFramework
             return ImageFormat.Bmp;
         }
         #endregion
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(textBox1.Text);
+        }
     }
 }

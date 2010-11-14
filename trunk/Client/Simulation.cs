@@ -9,7 +9,7 @@ using System.Collections;
 using ThingReferences;
 namespace thing
 {
-   
+
     public partial class Simulation
     {
         private static String AssemblyCopyright
@@ -77,9 +77,9 @@ namespace thing
             //SlotMachine.sceneHook(win);
             //zel = new thing.zeliard();
             //zel.sceneHook(win);
-           
+
             //ClientPluginManager.setWindow(win);
-           
+
             //sn1.Rotate(new Mogre.Vector3(0.0f, 0.0f, 1.0f), new Radian(1.55f));
             // Create a pointy
             //entPointy = win.mSceneMgr.CreateEntity("pointy", "pointy.mesh");
@@ -129,7 +129,12 @@ namespace thing
             //win.Camera.SetAutoTracking(true, snMan1, new Mogre.Vector3(1, 1, 1));
             // win.SceneManager.SetWorldGeometry("terrain.cfg");
             //win.SceneManager.SetSkyBox(true, "Examples/SpaceSkyBox", 5000, false);
-            OgreWindow.Instance.mSceneMgr.SetSkyBox(true, "Examples/StormySkyBox", 5000, false);
+
+            try
+            {
+                OgreWindow.Instance.mSceneMgr.SetSkyBox(true, "Examples/StormySkyBox", 5000, false);
+            }
+            catch (Exception ex) { log(ex.Message); }
         }
         bool Root_FrameEnded(FrameEvent evt)
         {

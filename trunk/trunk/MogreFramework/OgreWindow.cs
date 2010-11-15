@@ -1128,7 +1128,8 @@ namespace MogreFramework
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(textBox1.Text);
+            try { Clipboard.SetText(textBox1.Text); }
+            catch (Exception ex) { log(ex.Message); }
         }
     }
 }

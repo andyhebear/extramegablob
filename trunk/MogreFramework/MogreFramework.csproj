@@ -160,7 +160,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Meshes.cs" />
-    <Compile Include="MeshPtrs.cs" />
     <Compile Include="OgreWindow.cs">
       <SubType>Form</SubType>
     </Compile>

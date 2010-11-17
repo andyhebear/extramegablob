@@ -511,7 +511,7 @@ namespace MogreFramework
 
         //listbox
         public delegate void ListBoxClearDelegate(ListBox Object);
-        public virtual void ListViewClear(ListBox Object)
+        public virtual void ListBoxClear(ListBox Object)
         {
             if (this.InvokeRequired)
             {

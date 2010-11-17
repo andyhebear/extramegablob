@@ -33,6 +33,7 @@ namespace thing
                 ClientPluginManager.onLogMessage += new LogDelegate(roomManager_onLogMessage);
                 ClientPluginManager.onChat += new LogDelegate(ClientPluginManager_onChat);
                 ClientPluginManager.route_toserver += new ClientPluginManager.route_toserver_delegate(roomManager_route_toserver);
+                ClientPluginManager.onListChanged += new thing.ClientPluginManager.pluginListChangedHandler(ClientPluginManager_onListChanged);
 
 
 
@@ -79,9 +80,7 @@ namespace thing
                     {
                         ClientPluginManager.addPlugin(s);
                     }
-                    ClientPluginManager.addClientPlugin(new SecretClientPlugin());
-
-
+                    ClientPluginManager.addClientPlugin(new SecretClientPlugin());//it doesn't show up in the client plugin manager's active plugin list
 
                     while (true && !OgreWindow.Instance.ShuttingDown) //MAIN LOOP
                     {
@@ -132,6 +131,10 @@ namespace thing
                                     "An Ogre exception has occurred!");
             }
             quit();
+        }
+        void ClientPluginManager_onListChanged(string[] plugins)
+        {
+            OgreWindow.Instance.setPluginsActive(plugins);
         }
         void cache_meshDeleted(string pathRelMeshFile)
         {

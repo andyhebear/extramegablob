@@ -5,6 +5,18 @@ namespace thing
 {
     public class ClientPluginManager
     {
+        public string[] allPlugins
+        {
+            get
+            {
+                ArrayList al = new ArrayList();
+                foreach (DictionaryEntry de in pluginNameLookup)
+                {
+                    al.Add(de.Key + " => " + de.Value);
+                }
+                return (String[])al.ToArray(typeof(string));
+            }
+        }
         internal void addClientPlugin(ClientPlugin ClientPlugin)
         {
             ClientPlugin.onQuit += new LogDelegate(ClientPlugin_onQuit);
@@ -25,6 +37,7 @@ namespace thing
                     string plugName = (string)pluginNameLookup[de.Key];
                     pluginNameLookup.Remove(de.Key);
                     ClientClasses.RemoveAt(plugName);
+                    listChanged(this.allPlugins);
                     break;
                 }
             }
@@ -32,6 +45,9 @@ namespace thing
         public void delPlugin(string pathRel)
         {
             ClientClasses.RemoveAt((string)pluginNameLookup[pathRel]);
+
+            pluginNameLookup.Remove(pathRel);
+            listChanged(this.allPlugins);
         }
         public void addPlugin(string pathRel)
         {
@@ -40,9 +56,21 @@ namespace thing
             if (!object.Equals(null, plugin))
             {
                 pluginNameLookup[pathRel] = plugin.Name();
+                listChanged(this.allPlugins);
                 addClientPlugin(plugin);
             }
         }
+
+        public delegate void pluginListChangedHandler(string[] plugins);
+        public event pluginListChangedHandler onListChanged;
+        private void listChanged(string[] plugins)
+        {
+            if (!object.Equals(null, this.onListChanged))
+            {
+                onListChanged(plugins);
+            }
+        }
+
         private Hashtable pluginNameLookup = new Hashtable(); // relative path = plugin name
         public ClientPluginManager(string path_cache)
         {

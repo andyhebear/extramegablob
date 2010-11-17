@@ -62,6 +62,9 @@ namespace MogreFramework
             this.pictureBox5 = new System.Windows.Forms.PictureBox();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
+            this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.lbPluginsActive = new System.Windows.Forms.ListBox();
             this.tabControl2.SuspendLayout();
             this.tabPage5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.renderBox)).BeginInit();
@@ -84,6 +87,8 @@ namespace MogreFramework
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
+            this.tabPage7.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl2
@@ -289,6 +294,7 @@ namespace MogreFramework
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage7);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
@@ -462,11 +468,49 @@ namespace MogreFramework
             this.pictureBox3.TabIndex = 0;
             this.pictureBox3.TabStop = false;
             // 
+            // tabPage7
+            // 
+            this.tabPage7.Controls.Add(this.groupBox4);
+            this.tabPage7.Location = new System.Drawing.Point(4, 22);
+            this.tabPage7.Name = "tabPage7";
+            this.tabPage7.Size = new System.Drawing.Size(590, 270);
+            this.tabPage7.TabIndex = 5;
+            this.tabPage7.Text = "Plugins";
+            this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Controls.Add(this.lbPluginsActive);
+            this.groupBox4.Location = new System.Drawing.Point(3, 3);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(265, 253);
+            this.groupBox4.TabIndex = 2;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Active";
+            // 
+            // lbPluginsActive
+            // 
+            this.lbPluginsActive.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbPluginsActive.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbPluginsActive.FormattingEnabled = true;
+            this.lbPluginsActive.HorizontalExtent = 1200;
+            this.lbPluginsActive.HorizontalScrollbar = true;
+            this.lbPluginsActive.Location = new System.Drawing.Point(14, 25);
+            this.lbPluginsActive.Name = "lbPluginsActive";
+            this.lbPluginsActive.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.lbPluginsActive.Size = new System.Drawing.Size(235, 210);
+            this.lbPluginsActive.TabIndex = 3;
+            // 
             // OgreWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(622, 320);
+            this.ClientSize = new System.Drawing.Size(630, 331);
             this.Controls.Add(this.tabControl1);
             this.MinimumSize = new System.Drawing.Size(638, 358);
             this.Name = "OgreWindow";
@@ -498,6 +542,8 @@ namespace MogreFramework
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
+            this.tabPage7.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -536,5 +582,8 @@ namespace MogreFramework
         public System.Windows.Forms.PictureBox pbCapture;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.TabPage tabPage7;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.ListBox lbPluginsActive;
     }
 }

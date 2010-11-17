@@ -650,7 +650,7 @@ namespace MogreFramework
         }
         public delegate void sendDelegate(string text);
         public event sendDelegate onSend;
-        public void send(string text)
+        private void send(string text)
         {
             if (!object.Equals(null, this.onSend))
             {
@@ -660,6 +660,28 @@ namespace MogreFramework
         public void addChatMessage(string msg)
         {
             ListBoxItemAddAndScrollDown(lbChatProximity, msg);
+        }
+        public void setPluginsActive(string[] activePlugins)
+        {
+            string[] ap2 = new string[activePlugins.Length];
+            activePlugins.CopyTo(ap2, 0);
+            for (int i = 0; i < activePlugins.Length; i++)
+            {
+                for (int a = 0; a < activePlugins.Length; a++)
+                {
+                    if (string.Compare(ap2[i], ap2[a]) > 0)
+                    {
+                        string tmp = ap2[a];
+                        ap2[a] = ap2[i];
+                        ap2[i] = tmp;
+                    }
+                }
+            }
+            ListBoxClear(lbPluginsActive);
+            foreach (string plugName in activePlugins)
+            {
+                ListBoxItemAdd(lbPluginsActive, plugName);
+            }
         }
         private void btnSend_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {

@@ -104,6 +104,19 @@ namespace ThingReferences
         }
         /// <summary>
         /// Reads data from a file.
+        /// Data is returned as a string
+        /// </summary>
+        /// <param name="pathFile">The full path to the file</param>
+        public static string getFileString(string pathFile)
+        {
+            FileInfo fi = new FileInfo(pathFile);
+            FileStream fs = new FileStream(pathFile, FileMode.Open);
+            byte[] outbytes = ReadFully(fs, (int)fi.Length);
+            fs.Close();
+            return UTF8Encoding.UTF8.GetString(outbytes);
+        }
+        /// <summary>
+        /// Reads data from a file.
         /// Data is returned as a byte array
         /// </summary>
         /// <param name="pathFile">The full path to the file</param>

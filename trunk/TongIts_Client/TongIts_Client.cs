@@ -7,6 +7,7 @@ using Mogre;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Collections;
+using System.IO;
 namespace thing
 {
     public class plugin : ThingReferences.ClientPlugin
@@ -104,11 +105,202 @@ namespace thing
             //  MeshPtr ptrMeshBox = OgreWindow.Instance.meshes["\\cheerios.mesh"];
             cerealbox1Entity = OgreWindow.Instance.mSceneMgr.CreateEntity("cerealbox1Entity", "\\cheerios.mesh"); //load the actual file i guess; cachemanager is supposed to do all background preloading????
             //  Mesh m = (Mesh)ptrMeshBox;
+
+            // GpuProgramPtr resource = GpuProgramManager.Singleton.CreateProgramFromString("blah", ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME, program, GpuProgramType.GPT_FRAGMENT_PROGRAM, "");
+
+            string syntax = "";
+            string wrld = ResourceGroupManager.Singleton.WorldResourceGroupName;
+            #region syntax
+            if (GpuProgramManager.Singleton.IsSyntaxSupported("arbvp1"))
+            {
+                syntax = "arbvp1";
+            }
+            else if (GpuProgramManager.Singleton.IsSyntaxSupported("arbfp1"))
+            {
+                syntax = "arbfp1";
+            }
+            else if (GpuProgramManager.Singleton.IsSyntaxSupported("vs_3_0"))
+            {
+                syntax = "vs_3_0";
+            }
+            else if (GpuProgramManager.Singleton.IsSyntaxSupported("vs_2_x"))
+            {
+                syntax = "vs_2_x";
+            }
+            else if (GpuProgramManager.Singleton.IsSyntaxSupported("vs_2_a"))
+            {
+                syntax = "vs_2_a";
+            }
+            else if (GpuProgramManager.Singleton.IsSyntaxSupported("vs_2_0"))
+            {
+                syntax = "vs_2_0";
+            }
+            else if (GpuProgramManager.Singleton.IsSyntaxSupported("vs_1_1"))
+            {
+                syntax = "vs_1_1";
+            }
+            else if (GpuProgramManager.Singleton.IsSyntaxSupported("ps_3_0"))
+            {
+                syntax = "ps_3_0";
+            }
+            else if (GpuProgramManager.Singleton.IsSyntaxSupported("ps_2_x"))
+            {
+                syntax = "ps_2_x";
+            }
+            else if (GpuProgramManager.Singleton.IsSyntaxSupported("ps_2_b"))
+            {
+                syntax = "ps_2_b";
+            }
+            else if (GpuProgramManager.Singleton.IsSyntaxSupported("ps_2_a"))
+            {
+                syntax = "ps_2_a";
+            }
+            else if (GpuProgramManager.Singleton.IsSyntaxSupported("ps_2_0"))
+            {
+                syntax = "ps_2_0";
+            }
+            else if (GpuProgramManager.Singleton.IsSyntaxSupported("ps_2_a"))
+            {
+                syntax = "ps_2_a";
+            }
+            else if (GpuProgramManager.Singleton.IsSyntaxSupported("ps_1_4"))
+            {
+                syntax = "ps_1_4";
+            }
+            else if (GpuProgramManager.Singleton.IsSyntaxSupported("ps_1_3"))
+            {
+                syntax = "ps_1_3";
+            }
+            else if (GpuProgramManager.Singleton.IsSyntaxSupported("ps_1_2"))
+            {
+                syntax = "ps_1_2";
+            }
+            else if (GpuProgramManager.Singleton.IsSyntaxSupported("ps_1_1"))
+            {
+                syntax = "ps_1_1";
+            }
+            else if (GpuProgramManager.Singleton.IsSyntaxSupported("hlsl"))
+            {
+                syntax = "hlsl";
+            }
+
+            else
+            {
+            }
+            #endregion
+
+            //syntax = "ps_1_4";
+            string b = "\\programs\\Example_FresnelPS.asm";
+            string d = "ocean1.vert";
+
+
+            GpuProgramPtr prog_frag = GpuProgramManager.Singleton.CreateProgramFromString(d, wrld, Helpers.getFileString(ThingPath.path_cache + b), Mogre.GpuProgramType.GPT_FRAGMENT_PROGRAM, syntax);
+            //prog_frag.Load();
+            //GpuProgramPtr prog_vert = GpuProgramManager.Singleton.CreateProgramFromString("ocean1.vert", wrld, "", Mogre.GpuProgramType.GPT_VERTEX_PROGRAM, syntax);
+
+            //prog_frag.
+            //prog_frag
+            try
+            {
+                prog_frag.Load();
+            }
+            catch
+            {
+                if (OgreException.IsThrown)
+                    log(OgreException.LastException.FullDescription);
+            }
+
+            // c0 : distortionRange
+            // c1 : tintColour
+            // testure 0 : noiseMap
+            // texture 1 : reflectMap
+            // texture 2 : refractMap
+            // v0.x : fresnel 
+            // t0.xyz : noiseCoord
+            // t1.xyw : projectionCoord 
+
+            //((GpuProgram)prog_frag).SetVertexTextureFetchRequired(true)
+
+            //prog.Name
+            // cerealbox1Entity.SetMaterialName("\\programs\\Ocean2HLSL_Cg.frag", wrld);
+
+            //((MaterialPtr)MaterialManager.Singleton.Create("spade q", ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME)).GetTechnique(0).GetPass(0
+
+            MaterialPtr ptr = MaterialManager.Singleton.Create("ocean1", wrld);
+            Pass pass0 = ptr.GetTechnique(0).GetPass(0);
+            pass0.SetFragmentProgram(d, true);
+            prog_frag.Load();
+            GpuProgramParametersSharedPtr paramsPtr = pass0.GetFragmentProgramParameters();
+            //paramsPtr.SetNamedConstant("c1", Mogre.ColourValue.Green);
+            paramsPtr.SetConstant(0, 13f);
+            paramsPtr.SetConstant(1, ColourValue.Green);
+            // paramsPtr.SetConstant(2,OgreWindow.Instance.textures[""]);
+           // paramsPtr.SetConstant(2, ((double)OgreWindow.Instance.textures["\\cheerios.jpg"].NativePtr));
+
+            pass0.SetFragmentProgramParameters(paramsPtr);
+            //Technique t = ptr.CreateTechnique();
+            //Pass pass1 = ptr.GetTechnique(0).CreatePass();
+            //pass1.CreateTextureUnitState("\\TongIts\\cheerios.jpg");
+            //pass0.CreateTextureUnitState("\\TongIts\\cheerios.jpg");
+            //pass1.SetFragmentProgram(d, true);
+            //pass1.SetVertexProgram(d, true);
+            //t.GetPass(0).CreateTextureUnitState("\\TongIts\\cheerios.jpg");
+
+            // p.SetVertexProgram(d, true);
+            //p.SetVertexProgram("ocean1.vert", true);
+
+
+
+
+            //ptr.Compile();
+
+
+
+            //paramsPtr.SetIgnoreMissingParams(true);
+
+            //MaterialManager.Singleton.GetByName("\\programs\\Ocean2HLSL_Cg.frag", wrld);
+
+            //cerealbox1Entity.SetMaterial(ptr); //crashes
+            //cerealbox1Entity.SetMaterialName("ocean1"); //crashes
             cerealbox1Entity.SetMaterialName("cerealbox1");
             cerealbox1Node.AttachObject(cerealbox1Entity);
+
+
+            OgreWindow.Instance.mSceneMgr.GetEntity("GroundEntity").SetMaterialName("ocean1");
+
+
+
+
+
+            //ResourceLoaderGpuProgram loader = new ResourceLoaderGpuProgram(ThingPath.path_cache);
+
+            //GpuProgramPtr gpuProgramPtr = GpuProgramManager.Singleton.Load("Ocean2HLSL_Cg.frag", ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME, true, loader);
+            ////GpuProgramManager.Singleton.CreateProgramFromString
+
+
+
             ready = true;
 
-            
+
+        }
+        private unsafe class ResourceLoaderGpuProgram : ManualResourceLoader
+        {
+            private string path_cache = "";
+            public ResourceLoaderGpuProgram(string path_cache)
+            {
+                this.path_cache = path_cache;
+            }
+            public override void LoadResource(Resource resource)
+            {
+                string pathAbs = path_cache + resource.Name;
+                string program = Helpers.getFileString(pathAbs);
+
+                resource = GpuProgramManager.Singleton.CreateProgramFromString(resource.Name, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME, program, GpuProgramType.GPT_FRAGMENT_PROGRAM, "");
+            }
+            public override void PrepareResource(Resource resource)
+            {
+                base.PrepareResource(resource);
+            }
         }
         public override void shutdown()
         {

@@ -112,6 +112,10 @@ namespace ThingReferences
         public ClientPlugin CompileCode(String sourceFile)
         {
             CompilerParameters cp = new CompilerParameters();
+            cp.CompilerOptions = "-unsafe";
+            //cp.CompilerOptions.Insert(cp.CompilerOptions.Length, "-unsafe");
+
+                //CompilerParameters.Unsafe
             cp.GenerateInMemory = true;
             cp.TreatWarningsAsErrors = false;
             cp.GenerateExecutable = false;

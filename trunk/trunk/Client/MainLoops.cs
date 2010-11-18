@@ -32,7 +32,7 @@ namespace thing
                 ClientPluginManager = new ClientPluginManager();
                 ClientPluginManager.onLogMessage += new LogDelegate(roomManager_onLogMessage);
                 ClientPluginManager.onChat += new LogDelegate(ClientPluginManager_onChat);
-                ClientPluginManager.route_toserver += new ClientPluginManager.route_toserver_delegate(roomManager_route_toserver);
+                ClientPluginManager.route_toserver += new ClientPluginManager.route_toserver_delegate(clientPluginManager_route_toserver);
                 ClientPluginManager.onListChanged += new thing.ClientPluginManager.pluginListChangedHandler(ClientPluginManager_onListChanged);
 
 
@@ -268,7 +268,7 @@ namespace thing
                 cache.updateFile(msg);
             }
         }
-        void roomManager_route_toserver(Event msg)
+        void clientPluginManager_route_toserver(Event msg)
         {
             if (!netClient.connected)
             {

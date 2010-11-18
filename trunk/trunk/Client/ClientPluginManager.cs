@@ -25,7 +25,12 @@ namespace thing
             ClientPlugin.onChat += new LogDelegate(ClientPlugin_onChat);
             ClientPlugin.onOutboxMessage += new ThingReferences.ClientPlugin.outboxDelegate(ClientPlugin_onOutboxMessage);
             try { ClientPlugin.startup(); }
-            catch (Exception ex) { log("[" + ClientPlugin.Name() + "] " + ex.Message); }
+            catch (Exception ex) {
+                string x = "";
+                if (Mogre.OgreException.IsThrown)
+                    x = Mogre.OgreException.LastException.FullDescription;
+                log("[" + ClientPlugin.Name() + "] " + ex.Message +"  "+ x);
+            }
             ClientClasses.Add(ClientPlugin);
         }
         public void delAllPlugins()

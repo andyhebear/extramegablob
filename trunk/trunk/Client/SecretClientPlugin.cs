@@ -92,12 +92,6 @@ namespace thing
             OgreWindow.Instance.renderBox.MouseClick += new MouseEventHandler(renderBox_MouseClick);
 
             //    OgreWindow.Instance.textures[       "\\TongIts\\200px-Playing_card_spade_A.svg.png"].
-
-            
-
-
-
-
         }
 
         ArrayList selectedNodes = new ArrayList();

@@ -205,7 +205,7 @@ namespace thing
             }
         }
         timer captimer = new timer(new TimeSpan(0, 0, 1));
-        timer saveTimer = new timer(new TimeSpan(0, 1, 0));
+        timer saveTimer = new timer(new TimeSpan(0, 0, 0, 1));
         public override void updateHook()//called every 10ms
         {
             if (!ready) return;

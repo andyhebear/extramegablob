@@ -16,7 +16,7 @@ namespace thing
         {
             try
             {
-                ((MaterialPtr)MaterialManager.Singleton.Create("cerealbox1", ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME)).GetTechnique(0).GetPass(0).CreateTextureUnitState("\\cheerios.jpg");
+                ((MaterialPtr)MaterialManager.Singleton.Create("cat1", ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME)).GetTechnique(0).GetPass(0).CreateTextureUnitState("\\cat2.jpg");
 
 
                 ((MaterialPtr)MaterialManager.Singleton.Create("club 10", ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME)).GetTechnique(0).GetPass(0).CreateTextureUnitState("\\TongIts\\200px-Playing_card_club_10.svg.png");
@@ -103,7 +103,7 @@ namespace thing
             //add cereal box
             cerealbox1Node = OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode();
             //  MeshPtr ptrMeshBox = OgreWindow.Instance.meshes["\\cheerios.mesh"];
-            cerealbox1Entity = OgreWindow.Instance.mSceneMgr.CreateEntity("cerealbox1Entity", "\\cheerios.mesh"); //load the actual file i guess; cachemanager is supposed to do all background preloading????
+            cerealbox1Entity = OgreWindow.Instance.mSceneMgr.CreateEntity("cerealbox1Entity", "\\cat.mesh"); //load the actual file i guess; cachemanager is supposed to do all background preloading????
             //  Mesh m = (Mesh)ptrMeshBox;
 
             // GpuProgramPtr resource = GpuProgramManager.Singleton.CreateProgramFromString("blah", ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME, program, GpuProgramType.GPT_FRAGMENT_PROGRAM, "");
@@ -262,7 +262,7 @@ namespace thing
 
             //cerealbox1Entity.SetMaterial(ptr); //crashes
             //cerealbox1Entity.SetMaterialName("ocean1"); //crashes
-            cerealbox1Entity.SetMaterialName("cerealbox1");
+            cerealbox1Entity.SetMaterialName("cat1");
             cerealbox1Node.AttachObject(cerealbox1Entity);
 
 

@@ -82,7 +82,7 @@ namespace thing
                     }
                     ClientPluginManager.addClientPlugin(new SecretClientPlugin());//it doesn't show up in the client plugin manager's active plugin list
 
-                    while (true && !OgreWindow.Instance.ShuttingDown) //MAIN LOOP
+                    while (!OgreWindow.Instance.ShuttingDown) //MAIN LOOP
                     {
                         if (object.Equals(null, OgreWindow.Instance.mRoot)) break;
                         b = true;

@@ -7,8 +7,15 @@ namespace thing
         [STAThread]
         static void Main()
         {
-            Simulation g = new Simulation();
-            g.main();
+            try
+            {
+                Simulation g = new Simulation();
+                g.main();
+            }
+            catch(Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.Message);
+            }
         }
     }
 }

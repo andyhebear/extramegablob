@@ -173,5 +173,18 @@ namespace MogreFramework
                 }
             }
         }
+
+        public void shutdown()
+        {
+            MeshManager.Singleton.UnloadAll();
+            //int r = this.Count;
+            //for (int i = r - 1; i > -1; i--)
+            //{
+            //    //this[i];
+            //    //OgreWindow.Instance.mSceneMgr.des
+            //    ((Mesh)this[i]).Dispose();
+            //    MeshManager.Singleton.UnloadAll();
+            //}
+        }
     }
 }

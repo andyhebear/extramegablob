@@ -152,5 +152,10 @@ namespace MogreFramework
                 }
             }
         }
+
+        public void shutdown()
+        {
+            TextureManager.Singleton.UnloadAll();
+        }
     }
 }

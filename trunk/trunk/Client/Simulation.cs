@@ -204,6 +204,8 @@ namespace thing
             OgreWindow.Instance.ShuttingDown = true;//turn off underlying thread
             ClientPluginManager.shutdown();
             netClient.disconnect();
+            OgreWindow.Instance.meshes.shutdown();
+            OgreWindow.Instance.textures.shutdown();
         }
         private bool g = false;
         private string SaveFrameFile

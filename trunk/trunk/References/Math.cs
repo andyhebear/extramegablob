@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
 
-namespace ThingReferences
+namespace ExtraMegaBlob.References
 {
     public class Vector3 : ISerializable
     {

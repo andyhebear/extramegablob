@@ -2217,7 +2217,7 @@ namespace DirectShowLib
     [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
     Guid("70423839-6ACC-4b23-B079-21DBF08156A5"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    [Obsolete("This interface is deprecated and is maintained for backward compatibility only. New applications and drivers should use the ICodecAPI interface.")]
+    //[Obsolete("This interface is deprecated and is maintained for backward compatibility only. New applications and drivers should use the ICodecAPI interface.")]
     public interface IEncoderAPI
     {
         [PreserveSig]

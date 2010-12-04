@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace ThingReferences
+namespace ExtraMegaBlob.References
 {
     public class timer
     {

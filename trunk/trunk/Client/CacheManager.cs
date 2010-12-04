@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ThingReferences;
+using ExtraMegaBlob.References;
 using System.Collections;
 using System.IO;
 
-namespace thing
+namespace ExtraMegaBlob.Client
 {
     class CacheManager
     {

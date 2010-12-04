@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections;
 
-namespace ThingReferences
+namespace ExtraMegaBlob.References
 {
     public class Globals
     {

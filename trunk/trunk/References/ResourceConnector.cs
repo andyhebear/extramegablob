@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ThingReferences
+namespace ExtraMegaBlob.References
 {
     class ResourceConnector
     {

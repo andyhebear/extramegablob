@@ -2,7 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-namespace ThingReferences
+namespace ExtraMegaBlob.References
 {
     public class Encryption
     {

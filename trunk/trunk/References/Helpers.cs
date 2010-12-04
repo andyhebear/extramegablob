@@ -3,7 +3,7 @@ using System.Text;
 using System.IO;
 using ICSharpCode.SharpZipLib.GZip;
 
-namespace ThingReferences
+namespace ExtraMegaBlob.References
 {
     public delegate void LogDelegate(string msg);
     public static class Helpers

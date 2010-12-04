@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
-using ThingReferences;
+using ExtraMegaBlob.References;
 
-namespace ServerThing
+namespace ExtraMegaBlob.Server
 {
     class EntryPoint
     {
@@ -20,7 +20,7 @@ namespace ServerThing
         }
         static void log(string msg)
         {
-            Console.WriteLine(ThingReferences.Config.logPrefix + msg);
+            Console.WriteLine(ExtraMegaBlob.References.Config.logPrefix + msg);
         }
     }
     class Server
@@ -31,14 +31,14 @@ namespace ServerThing
         public void init()
         {
             plugins = new ServerPluginManager();
-            plugins.onLogMessage += new ThingReferences.LogDelegate(plugins_onLogMessage);
+            plugins.onLogMessage += new ExtraMegaBlob.References.LogDelegate(plugins_onLogMessage);
             plugins.route_toclient += new ServerPluginManager.route_toclient_delegate(plugins_route_toclient);
             plugins.init();
             plugins.addServerPlugin(new SecretServerPlugin());
             new Thread(new ThreadStart(plugins.mainLoop)).Start();
 
             cache = new CacheManager();
-            cache.onLogMessage += new ThingReferences.LogDelegate(cache_onLogMessage);
+            cache.onLogMessage += new ExtraMegaBlob.References.LogDelegate(cache_onLogMessage);
             cache.route_toclient += new CacheManager.route_toclientDelegate(cache_route_toclient);
             cache.pluginAdded += new CacheManager.pluginAddedDelegate(cache_pluginAdded);
             cache.pluginDeleted += new CacheManager.pluginDeletedDelegate(cache_pluginDeleted);

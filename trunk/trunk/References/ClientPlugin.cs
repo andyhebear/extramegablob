@@ -1,6 +1,6 @@
 ﻿using MogreFramework;
 using Mogre;
-namespace ThingReferences
+namespace ExtraMegaBlob.References
 {
     public abstract class ClientPlugin
     {

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ThingReferences;
+using ExtraMegaBlob.References;
 using System.Collections;
-namespace thing
+namespace ExtraMegaBlob
 {
-    public class plugin : ThingReferences.ServerPlugin
+    public class plugin : ExtraMegaBlob.References.ServerPlugin
     {
         public override string Name()
         {
@@ -19,7 +19,7 @@ namespace thing
         {
             return new string[] { "TongIts_Client", "SecretServerPlugin" };
         }
-        public override void inbox(ThingReferences.Event ev)
+        public override void inbox(ExtraMegaBlob.References.Event ev)
         {
             //ThingReferences.Globals.Instance.Data[];
 
@@ -88,7 +88,7 @@ namespace thing
         //    if (msg._Endpoint != "")
         //        outboxMessage(this, msg);
         //}
-        ThingReferences.timer t = new ThingReferences.timer(new TimeSpan(0, 0, 1));
+        ExtraMegaBlob.References.timer t = new ExtraMegaBlob.References.timer(new TimeSpan(0, 0, 1));
         private bool running = true;
 
     }

@@ -1,5 +1,5 @@
 ﻿
-namespace ThingReferences
+namespace ExtraMegaBlob.References
 {
     public class ConfigUsingSqliteDatabase
     {

@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
 
-namespace ThingReferences
+namespace ExtraMegaBlob.References
 {
     public class User : ISerializable
     {

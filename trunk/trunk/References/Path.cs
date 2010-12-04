@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-namespace ThingReferences
+namespace ExtraMegaBlob.References
 {
     public static class ThingPath
     {
@@ -10,9 +10,23 @@ namespace ThingReferences
         {
             get
             {
-                //string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-                //    + Path.DirectorySeparatorChar + "MessageOpsDynamicGroups";
-                string path = path_base + Path.DirectorySeparatorChar + "cache";  //make things simpler
+                string path = path_base + Path.DirectorySeparatorChar + "cache";
+                if (!Directory.Exists(path))
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    catch { }
+                }
+                return path;
+            }
+        }
+        public static string path_servercache
+        {
+            get
+            {
+                string path = path_base + Path.DirectorySeparatorChar + "servercache";
                 if (!Directory.Exists(path))
                 {
                     try
@@ -57,7 +71,6 @@ namespace ThingReferences
         {
             get
             {
-                //implement auto backup thread for this database
                 return path_base + Path.DirectorySeparatorChar + "thingstatedatabase.db3";
             }
         }

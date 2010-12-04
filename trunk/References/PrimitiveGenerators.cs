@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Mogre;
 
-namespace ThingReferences
+namespace ExtraMegaBlob.References
 {
     public class PrimitiveGenerators
     {

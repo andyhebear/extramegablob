@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
-using ThingReferences;
-namespace thing
+using ExtraMegaBlob.References;
+namespace ExtraMegaBlob.Client
 {
     public class ClientPluginManager
     {
@@ -23,7 +23,7 @@ namespace thing
             LogDelegate testDelB = delegate(string s) { log("[" + ClientPlugin.Name() + "] " + s); };
             ClientPlugin.onLog += new LogDelegate(testDelB);
             ClientPlugin.onChat += new LogDelegate(ClientPlugin_onChat);
-            ClientPlugin.onOutboxMessage += new ThingReferences.ClientPlugin.outboxDelegate(ClientPlugin_onOutboxMessage);
+            ClientPlugin.onOutboxMessage += new ExtraMegaBlob.References.ClientPlugin.outboxDelegate(ClientPlugin_onOutboxMessage);
             try { ClientPlugin.startup(); }
             catch (Exception ex) {
                 string x = "";
@@ -92,7 +92,7 @@ namespace thing
         {
             log("[compiler]: " + msg);
         }
-        private thing.Parts.ClientPlugins ClientClasses = new thing.Parts.ClientPlugins();
+        private ClientPlugins ClientClasses = new ClientPlugins();
         private ArrayList ResourceFolderPaths = new ArrayList();
         public delegate void onPluginAddResourceFolderPathDelegate(string ResourceFolderPath);
         private ClientPluginCompiler ClientPluginCompiler = new ClientPluginCompiler();

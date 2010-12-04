@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ThingReferences;
+using ExtraMegaBlob.References;
 using System.Collections;
 using System.IO;
 using System.Threading;
 
-namespace ServerThing
+namespace ExtraMegaBlob.Server
 {
     class CacheManager
     {
@@ -20,7 +20,7 @@ namespace ServerThing
         }
         public CacheManager()
         {
-            this.path_cache = ThingPath.path_cache;
+            this.path_cache = ThingPath.path_servercache;
         }
         public event LogDelegate onLogMessage;
         private void log(string msg)
@@ -142,7 +142,10 @@ namespace ServerThing
                 string pathAbs = path_cache + pathRel;
                 if (Helpers.isPluginFile(pathRel) && Helpers.isServerPlugin(pathRel))
                     _pluginAdded(pathRel);
-                files2.Add(pathRel, Encryption.md5_file(pathAbs));
+                bool s = false;
+                try { string md5 = Encryption.md5_file(pathAbs); s = true; }
+                catch (Exception ex) { log(ex.Message); }
+                if (s) files2.Add(pathRel, Encryption.md5_file(pathAbs));
             }
             this.md5table = files2;
         }

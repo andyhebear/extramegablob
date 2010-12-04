@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 
-namespace ThingReferences
+namespace ExtraMegaBlob.References
 {
     public class Serialize
     {

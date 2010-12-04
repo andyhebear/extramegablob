@@ -4,7 +4,7 @@ using System.Data.SQLite;
 #pragma warning disable 0162 //disable "Unreachable code detected"
 #pragma warning disable 0618 //disable "This method is obsolete"
 
-namespace ThingReferences
+namespace ExtraMegaBlob.References
 {
     public class SqliteDatabase
     {

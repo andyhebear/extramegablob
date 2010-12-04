@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
-using ThingReferences;
-namespace ServerThing
+using ExtraMegaBlob.References;
+namespace ExtraMegaBlob.Server
 {
-    public class SecretServerPlugin : ThingReferences.ServerPlugin
+    public class SecretServerPlugin : ExtraMegaBlob.References.ServerPlugin
     {
         public override string Name()
         {
@@ -18,7 +18,7 @@ namespace ServerThing
             return new string[] { "SecretClientPlugin", "TongIts_Server" };
         }
 
-        public override void inbox(ThingReferences.Event ev)
+        public override void inbox(ExtraMegaBlob.References.Event ev)
         {
             //ThingReferences.Globals.Instance.Data[];
 
@@ -93,7 +93,7 @@ namespace ServerThing
             running = false;
         }
 
-        ThingReferences.timer t = new ThingReferences.timer(new TimeSpan(0, 0, 1));
+        ExtraMegaBlob.References.timer t = new ExtraMegaBlob.References.timer(new TimeSpan(0, 0, 1));
         private bool running = true;
     }
 }

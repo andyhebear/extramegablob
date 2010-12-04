@@ -6,8 +6,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.IO;
 using System.Collections;
-using ThingReferences;
-namespace ServerThing
+using ExtraMegaBlob.References;
+namespace ExtraMegaBlob.Server
 {
 
     class ServerNetwork

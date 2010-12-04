@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 using MogreFramework;
-using ThingReferences;
+using ExtraMegaBlob.References;
 using Mogre;
 using System.Windows.Forms;
-using System.Drawing;
 using System.Collections;
 using System.IO;
-namespace thing
+namespace ExtraMegaBlob
 {
-    public class plugin : ThingReferences.ClientPlugin
+    public class plugin : ExtraMegaBlob.References.ClientPlugin
     {
         private void makeMaterials()
         {
@@ -317,9 +316,9 @@ namespace thing
             //OgreWindow.Instance.mSceneMgr.DestroyEntity(testPlaneEntity.Name);
             //OgreWindow.Instance.mSceneMgr.DestroySceneNode(testSceneNode.Name);
         }
-        public override ThingReferences.Vector3 Location()
+        public override ExtraMegaBlob.References.Vector3 Location()
         {
-            return new ThingReferences.Vector3(0, 0, 15);
+            return new ExtraMegaBlob.References.Vector3(0, 0, 15);
         }
         public override float Radius()
         {
@@ -337,7 +336,7 @@ namespace thing
         {
             return new string[] { "TongIts_Server" };
         }
-        public override void inbox(ThingReferences.Event ev)
+        public override void inbox(ExtraMegaBlob.References.Event ev)
         {
             //MogreFramework.Globals.Instance.Data[];
             switch (ev._Keyword)
@@ -389,6 +388,6 @@ namespace thing
         private Light testLight;
         private SceneNode testSceneNode;
         private Entity testPlaneEntity;
-        ThingReferences.timer t = new ThingReferences.timer(new TimeSpan(0, 0, 0, 0, 1000));
+        ExtraMegaBlob.References.timer t = new ExtraMegaBlob.References.timer(new TimeSpan(0, 0, 0, 0, 1000));
     }
 }

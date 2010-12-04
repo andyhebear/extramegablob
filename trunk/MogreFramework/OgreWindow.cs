@@ -11,12 +11,45 @@ using System.Windows.Forms;
 using DirectShowLib;
 using Mogre;
 using MOIS;
-using thing;
+using ExtraMegaBlob;
 #pragma warning disable 168 //CS0168: The variable 'ex' is declared but never used
 namespace MogreFramework
 {
     public partial class OgreWindow : GUI_helper
     {
+
+        private static String AssemblyCopyright
+        {
+            get
+            {
+                object[] attributes = System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyCopyrightAttribute), false);
+                if (attributes.Length == 0)
+                {
+                    return "";
+                }
+                return ((System.Reflection.AssemblyCopyrightAttribute)attributes[0]).Copyright;
+            }
+        }
+        private static DateTime DateCompiled()
+        {
+            System.Version v = version;
+            DateTime d = new DateTime(
+                v.Build * TimeSpan.TicksPerDay +
+                v.Revision * TimeSpan.TicksPerSecond * 2
+                ).AddYears(1999).AddHours(1);
+            return d.Subtract(new TimeSpan(24, 0, 0));
+        }
+        private static String title = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+        private static Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+        public static string header
+        {
+            get
+            {
+                return title + " v" + version + " Compiled " + DateCompiled().ToString();
+            }
+        }
+
+
         public bool pauserendering = false;
         public bool renderingframe = false;
 
@@ -291,13 +324,13 @@ namespace MogreFramework
         private int[] getWindowLocation()
         {
             IntPtr acWindow = this.Handle;
-            thing.EnumWindowsItem enumw = new EnumWindowsItem(acWindow);
+            ExtraMegaBlob.EnumWindowsItem enumw = new EnumWindowsItem(acWindow);
             return new int[] { enumw.Location.X, enumw.Location.Y };
         }
         private int[] getWindowDimensions()
         {
             IntPtr acWindow = this.Handle;
-            thing.EnumWindowsItem enumw = new EnumWindowsItem(acWindow);
+            ExtraMegaBlob.EnumWindowsItem enumw = new EnumWindowsItem(acWindow);
             return new int[] { enumw.Size.Width, enumw.Size.Height };
         }
         #endregion
@@ -329,10 +362,12 @@ namespace MogreFramework
         public OgreWindow()
         {
             InitializeComponent();
+            log(header);
             this.Icon = global::MogreFramework.Properties.Resources.OgreHead;
             DoInputsStartup();
             pbCapture.Resize += new EventHandler(pbCapture_Resize);
             CaptureVideo(pbCapture.Handle);
+            this.Text = header;
         }
         public static OgreWindow Instance
         {
@@ -384,9 +419,8 @@ namespace MogreFramework
                 CreateViewport();
                 //splash.Increment("Creating input handler...");
                 //CreateInputHandler();
-                mRoot.FrameEnded += new FrameListener.FrameEndedHandler(mRoot_FrameEnded);
+                //mRoot.FrameEnded += new FrameListener.FrameEndedHandler(mRoot_FrameEnded);
                 splash.Increment("Creating scene...");
-                Disposed += new EventHandler(OgreWindow_Disposed);
                 OnSceneCreating();
             }
             finally
@@ -396,15 +430,7 @@ namespace MogreFramework
             }
         }
 
-        bool _sceneready = false;
-        bool mRoot_FrameEnded(FrameEvent evt)
-        {
-            if (!SceneReady)
-            {
-                SceneReady = true;
-            }
-            return true;
-        }
+        private bool _sceneready = false;
         public bool SceneReady { set { if (value) { _SceneReady = true; } } get { return _SceneReady; } }
         private bool _SceneReady = false;
         #endregion
@@ -544,15 +570,7 @@ namespace MogreFramework
             rs.SetConfigOption("Full Screen", "No");
             rs.SetConfigOption("Video Mode", SETTINGS_WIDTH.ToString() + " x " + SETTINGS_HEIGHT.ToString() + " @ 32-bit colour");
         }
-        void OgreWindow_Disposed(object sender, EventArgs e)
-        {
-            mRoot.Dispose();
-            mRoot = null;
-            mWindow = null;
-            mCamera = null;
-            mViewport = null;
-            mSceneMgr = null;
-        }
+
         static void InitializeResources()
         {
             TextureManager.Singleton.DefaultNumMipmaps = 5;
@@ -723,8 +741,7 @@ namespace MogreFramework
             Running,
             Init
         };
-        // Application-defined message to notify app of filtergraph events
-        public const int WM_GRAPHNOTIFY = 0x8000 + 1;
+        public const int WM_GRAPHNOTIFY = 0x8000 + 1; // Application-defined message to notify app of filtergraph events
         private IVideoWindow videoWindow = null;
         private IMediaControl mediaControl = null;
         private IMediaEventEx mediaEventEx = null;
@@ -741,10 +758,6 @@ namespace MogreFramework
             {
                 // Get DirectShow interfaces
                 GetInterfaces(ctlHandle);
-
-
-
-
                 // Attach the filter graph to the capture graph
                 hr = this.captureGraphBuilder.SetFiltergraph(this.graphBuilder);
                 //captureGraphBuilder.RenderStream(PinCategory.Preview,MediaType.Video,
@@ -752,6 +765,11 @@ namespace MogreFramework
                 // Use the system device enumerator and class enumerator to find
                 // a video capture/preview device, such as a desktop USB video camera.
                 sourceFilter = FindCaptureDevice();
+                if (sourceFilter == null)
+                {
+                    log("Couldn't find a video input device.");
+                    return;
+                }
                 // Add Capture filter to our graph.
                 hr = this.graphBuilder.AddFilter(sourceFilter, "Video Capture");
                 DsError.ThrowExceptionForHR(hr);
@@ -804,7 +822,7 @@ namespace MogreFramework
             }
             catch
             {
-                MessageBox.Show("An unrecoverable error has occurred.");
+                MessageBox.Show("CaptureVideo(ctlHandle) suffered a fatal error.");
             }
         }
         // This version of FindCaptureDevice is provide for education only.
@@ -812,52 +830,34 @@ namespace MogreFramework
         private IBaseFilter FindCaptureDevice()
         {
             int hr = 0;
-#if USING_NET11
-      UCOMIEnumMoniker classEnum = null;
-      UCOMIMoniker[] moniker = new UCOMIMoniker[1];
-#else
             IEnumMoniker classEnum = null;
             IMoniker[] moniker = new IMoniker[1];
-#endif
             object source = null;
-            // Create the system device enumerator
             ICreateDevEnum devEnum = (ICreateDevEnum)new CreateDevEnum();
-            // Create an enumerator for the video capture devices
             hr = devEnum.CreateClassEnumerator(FilterCategory.VideoInputDevice, out classEnum, 0);
             DsError.ThrowExceptionForHR(hr);
-            // The device enumerator is no more needed
             Marshal.ReleaseComObject(devEnum);
-            // If there are no enumerators for the requested type, then 
-            // CreateClassEnumerator will succeed, but classEnum will be NULL.
             if (classEnum == null)
             {
-                throw new ApplicationException("No video capture device was detected.\r\n\r\n" +
-                                               "This sample requires a video capture device, such as a USB WebCam,\r\n" +
-                                               "to be installed and working properly.  The sample will now close.");
+                try { Marshal.ReleaseComObject(moniker[0]); }
+                catch { }
+                return null;
             }
-            // Use the first video capture device on the device list.
-            // Note that if the Next() call succeeds but there are no monikers,
-            // it will return 1 (S_FALSE) (which is not a failure).  Therefore, we
-            // check that the return code is 0 (S_OK).
-#if USING_NET11
-      int i;
-      if (classEnum.Next (moniker.Length, moniker, IntPtr.Zero) == 0)
-#else
-            if (classEnum.Next(moniker.Length, moniker, IntPtr.Zero) == 0)
-#endif
+            while (classEnum.Next(moniker.Length, moniker, IntPtr.Zero) == 0)
             {
-                // Bind Moniker to a filter object
                 Guid iid = typeof(IBaseFilter).GUID;
-                moniker[0].BindToObject(null, null, ref iid, out source);
+                try
+                {
+                    moniker[0].BindToObject(null, null, ref iid, out source);
+                }
+                catch (Exception ex) { }
+                if (source != null) // Use the first video capture device on the device list.
+                    break;
             }
-            else
-            {
-                throw new ApplicationException("Unable to access video capture device!");
-            }
-            // Release COM objects
-            Marshal.ReleaseComObject(moniker[0]);
-            Marshal.ReleaseComObject(classEnum);
-            // An exception is thrown if cast fail
+            try { Marshal.ReleaseComObject(moniker[0]); }
+            catch { }
+            try { Marshal.ReleaseComObject(classEnum); }
+            catch { }
             return (IBaseFilter)source;
         }
         /*
@@ -890,10 +890,6 @@ namespace MogreFramework
             this.mediaEventEx = (IMediaEventEx)this.graphBuilder;
             hr = this.mediaEventEx.SetNotifyWindow(ControlHandle, WM_GRAPHNOTIFY, IntPtr.Zero);
             DsError.ThrowExceptionForHR(hr);
-
-
-
-
         }
         private void CloseInterfaces()
         {

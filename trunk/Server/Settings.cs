@@ -1,4 +1,4 @@
-﻿namespace ServerThing.Properties {
+﻿namespace ExtraMegaBlob.Server.Properties {
     
     
     // This class allows you to handle specific events on the settings class:

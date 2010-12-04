@@ -5,9 +5,9 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using ThingReferences;
+using ExtraMegaBlob.References;
 
-namespace thing.Parts
+namespace ExtraMegaBlob.Client
 {
     [XmlInclude(typeof(Memory))]
     public sealed class ClientPlugins : IEnumerable, ISerializable

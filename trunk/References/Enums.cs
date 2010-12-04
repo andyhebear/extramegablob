@@ -1,4 +1,4 @@
-﻿namespace ThingReferences
+﻿namespace ExtraMegaBlob.References
 {
     public enum EventTransfer
     {

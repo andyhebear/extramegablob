@@ -5,7 +5,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace ThingReferences
+namespace ExtraMegaBlob.References
 {
     [XmlInclude(typeof(Memories))]
     public class Event : ISerializable

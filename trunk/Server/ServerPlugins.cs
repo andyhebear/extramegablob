@@ -5,9 +5,9 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using ThingReferences;
+using ExtraMegaBlob.References;
 
-namespace ServerThing
+namespace ExtraMegaBlob.Server
 {
     [XmlInclude(typeof(Memory))]
     public sealed class ServerPlugins : IEnumerable, ISerializable

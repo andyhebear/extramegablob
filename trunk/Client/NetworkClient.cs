@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Net.Sockets;
 using System.Threading;
-using ThingReferences;
+using ExtraMegaBlob.References;
 #pragma warning disable 618 //warning CS0618: 'System.Net.Dns.Resolve(string)' is obsolete: 'Resolve is obsoleted for this type, please use GetHostEntry instead. http://go.microsoft.com/fwlink/?linkid=14202'
-namespace thing
+namespace ExtraMegaBlob.Client
 {
     public class ClientNetwork
     {

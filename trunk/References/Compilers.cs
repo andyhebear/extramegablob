@@ -2,7 +2,7 @@
 using System.CodeDom.Compiler;
 using System.Reflection;
 using System.IO;
-namespace ThingReferences
+namespace ExtraMegaBlob.References
 {
     public class ServerPluginCompiler
     {
@@ -36,7 +36,7 @@ namespace ThingReferences
             cp.IncludeDebugInformation = true;
             cp.ReferencedAssemblies.Add("System.dll");
             //cp.ReferencedAssemblies.Add("Mogre.dll");
-            cp.ReferencedAssemblies.Add("ThingReferences.dll");
+            cp.ReferencedAssemblies.Add("ExtraMegaBlob.References.dll");
             //cp.ReferencedAssemblies.Add("MogreFramework.dll");
             //cp.ReferencedAssemblies.Add("System.Windows.Forms.dll");
             //cp.ReferencedAssemblies.Add("MOIS_d.dll");
@@ -60,14 +60,14 @@ namespace ThingReferences
             }
             if (cr.Errors.HasErrors) return null;
             Assembly ClientClass = cr.CompiledAssembly;
-            Type ClientClassType = ClientClass.GetType("thing.plugin");
+            Type ClientClassType = ClientClass.GetType("ExtraMegaBlob.plugin");
             if (!object.Equals(null, ClientClassType))
             {
                 BindingFlags bflags = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
                 ServerPlugin o;
                 try
                 {
-                    o = (ServerPlugin)ClientClassType.InvokeMember("thing.plugin", bflags | BindingFlags.CreateInstance, null, null, null);
+                    o = (ServerPlugin)ClientClassType.InvokeMember("ExtraMegaBlob.plugin", bflags | BindingFlags.CreateInstance, null, null, null);
                 }
                 catch (Exception ex)
                 {
@@ -115,7 +115,7 @@ namespace ThingReferences
             cp.CompilerOptions = "-unsafe";
             //cp.CompilerOptions.Insert(cp.CompilerOptions.Length, "-unsafe");
 
-                //CompilerParameters.Unsafe
+            //CompilerParameters.Unsafe
             cp.GenerateInMemory = true;
             cp.TreatWarningsAsErrors = false;
             cp.GenerateExecutable = false;
@@ -123,7 +123,7 @@ namespace ThingReferences
             cp.IncludeDebugInformation = true;
             cp.ReferencedAssemblies.Add("System.dll");
             cp.ReferencedAssemblies.Add("Mogre.dll");
-            cp.ReferencedAssemblies.Add("ThingReferences.dll");
+            cp.ReferencedAssemblies.Add("ExtraMegaBlob.References.dll");
             cp.ReferencedAssemblies.Add("MogreFramework.dll");
             cp.ReferencedAssemblies.Add("System.Windows.Forms.dll");
             cp.ReferencedAssemblies.Add("System.Drawing.dll");
@@ -145,14 +145,18 @@ namespace ThingReferences
             }
             if (cr.Errors.HasErrors) return null;
             Assembly ClientClass = cr.CompiledAssembly;
-            Type ClientClassType = ClientClass.GetType("thing.plugin");
+            Type ClientClassType = ClientClass.GetType("ExtraMegaBlob.plugin");
             if (!object.Equals(null, ClientClassType))
             {
                 BindingFlags bflags = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-                ClientPlugin o = (ClientPlugin)ClientClassType.InvokeMember("thing.plugin", bflags | BindingFlags.CreateInstance, null, null, null);
+                ClientPlugin o = (ClientPlugin)ClientClassType.InvokeMember("ExtraMegaBlob.plugin", bflags | BindingFlags.CreateInstance, null, null, null);
                 return o;
             }
-            else return null;
+            else
+            {
+                log("Compiled Plugin failed to initialize properly, source: \"" + sourceFile + "\"");
+                return null;
+            }
         }
         public ClientPlugin CompileCode2(String sourceFile)
         {
@@ -164,7 +168,7 @@ namespace ThingReferences
             cp.IncludeDebugInformation = true;
             cp.ReferencedAssemblies.Add("System.dll");
             cp.ReferencedAssemblies.Add("Mogre.dll");
-            cp.ReferencedAssemblies.Add("ThingReferences.dll");
+            cp.ReferencedAssemblies.Add("ExtraMegaBlob.References.dll");
             cp.ReferencedAssemblies.Add("MogreFramework.dll");
             cp.ReferencedAssemblies.Add("System.Windows.Forms.dll");
             cp.ReferencedAssemblies.Add("MOIS_d.dll");

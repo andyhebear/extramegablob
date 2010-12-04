@@ -2,8 +2,8 @@
 using System.Collections;
 using System.IO;
 using System.Threading;
-using ThingReferences;
-namespace ServerThing
+using ExtraMegaBlob.References;
+namespace ExtraMegaBlob.Server
 {
     public class ServerPluginManager
     {

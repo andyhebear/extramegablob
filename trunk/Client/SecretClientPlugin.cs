@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ThingReferences;
+using ExtraMegaBlob.References;
 using MogreFramework;
 using Mogre;
 using System.Collections;
 using System.IO;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-namespace thing
+namespace ExtraMegaBlob.Client
 {
     class SecretClientPlugin : ClientPlugin
     {
@@ -165,9 +165,9 @@ namespace thing
             }
         }
 
-        public override ThingReferences.Vector3 Location()
+        public override ExtraMegaBlob.References.Vector3 Location()
         {
-            return new ThingReferences.Vector3(15, 15, 15);
+            return new ExtraMegaBlob.References.Vector3(15, 15, 15);
         }
         public override float Radius()
         {

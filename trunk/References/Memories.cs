@@ -6,7 +6,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace ThingReferences
+namespace ExtraMegaBlob.References
 {
     [XmlInclude(typeof(Memory))]
     public sealed class Memories : IEnumerable, ISerializable

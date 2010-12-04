@@ -8,8 +8,8 @@
     <ProjectGuid>{3FD22C07-9BBD-42D3-9BDB-D56C38627630}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ThingReferences</RootNamespace>
-    <AssemblyName>ThingReferences</AssemblyName>
+    <RootNamespace>ExtraMegaBlob.References</RootNamespace>
+    <AssemblyName>ExtraMegaBlob.References</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>

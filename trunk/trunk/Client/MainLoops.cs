@@ -70,7 +70,6 @@ namespace ExtraMegaBlob.Client
                 OgreWindow.Instance.Show();
                 timer t = new timer(new TimeSpan(0, 0, 2));
                 t.start();
-                OgreWindow.g_m.MouseMoved += new MouseListener.MouseMovedHandler(g_m_MouseMoved);
                 try
                 {
                     int loops;
@@ -144,11 +143,8 @@ namespace ExtraMegaBlob.Client
             OgreWindow.Instance.ShuttingDown = true;
             ClientPluginManager.shutdown();
             netClient.disconnect();
-
             OgreWindow.Instance.saveFrame(SaveFrameFile);
-
             OgreWindow.Instance.Close();
-
             OgreWindow.Instance.meshes.shutdown();
             OgreWindow.Instance.textures.shutdown();
             OgreWindow.Instance.mRoot.Dispose();
@@ -347,24 +343,7 @@ namespace ExtraMegaBlob.Client
         {
             OgreWindow.Instance.addChatMessage(msg);
         }
-        bool g_m_MouseMoved(MouseEvent arg)
-        {
-            MouseState_NativePtr s = arg.state;
-            //OgreWindow.Instance.log(s.X.abs.ToString());
-            if (arg.state.buttons == 2)
-            {
-                OgreWindow.Instance.cameraYawNode.Yaw(-s.X.rel * RotateScale_Camera);
-                OgreWindow.Instance.cameraRollNode.Pitch(-s.Y.rel * RotateScale_Camera);
-            }
-            Mogre.Vector3 oldpos = OgreWindow.Instance.cameraNode.Position;
-            float mouseZ = (float)arg.state.Z.rel * .1f;
-            if (0 != mouseZ)
-            {
-                MoveScale_Camera_updown -= mouseZ;
-            }
-            //OgreWindow.Instance.log(arg.state.Z.abs.ToString());
-            return true;
-        }
+
         private ClientNetwork netClient;
         void netClient_onReceiveEvent(Event msg)
         {
@@ -406,135 +385,27 @@ namespace ExtraMegaBlob.Client
         private ClientPluginManager ClientPluginManager;
         private bool Root_FrameStarted(FrameEvent evt)
         {
-            TranslateVector_Camera.z += MoveScale_Camera_forwardback * (interpolation + 1);
-            TranslateVector_Camera.x += MoveScale_Camera_leftright * (interpolation + 1);
-            if (MoveScale_Camera_updown != 0)
-            {
-                float s = MoveScale_Camera_updown * (interpolation + 1);
-                TranslateVector_Camera.y += s;
-                MoveScale_Camera_updown -= s;
-            }
-            //mainwindow.cameraYawNode.Yaw(-inputMouse.MouseState.X.rel * RotateScale_Camera * (interpolation + 1));
-            //mainwindow.cameraRollNode.Pitch(-inputMouse.MouseState.Y.rel * RotateScale_Camera * (interpolation + 1));
-            //if (OgreWindow.g_m.MouseState.buttons != 3) return true;
-            //OgreWindow.Instance.log(OgreWindow.g_m.MouseState.buttons.ToString());
-            int buttons = OgreWindow.g_m.MouseState.buttons;
-
             try
             {
                 ClientPluginManager.FrameStartedHooks(interpolation);
-                // float pitchAngle = 0.0f;
-                //  float pitchAngleSign = 0.0f;
-                OgreWindow.Instance.cameraNode.Translate(OgreWindow.Instance.cameraYawNode.Orientation * OgreWindow.Instance.cameraPitchNode.Orientation * TranslateVector_Camera);
-                TranslateVector_Camera = new Mogre.Vector3();
-                //if (buttons != 2) return true;
-                //pitchAngle = (2 *
-                //    new Mogre.Degree(Mogre.Math.ACos(
-                //        OgreWindow.Instance.cameraPitchNode.Orientation.w))
-                //        .ValueDegrees);
-                //pitchAngleSign = OgreWindow.Instance.cameraPitchNode.Orientation.x;
-                //if (pitchAngle > 90.0f)
-                //{
-                //    if (pitchAngleSign > 0)
-                //        OgreWindow.Instance.cameraPitchNode.Orientation = new Mogre.Quaternion(Mogre.Math.Sqrt(0.5f), Mogre.Math.Sqrt(0.5f), 0, 0);
-                //    else if (pitchAngleSign < 0)
-                //        OgreWindow.Instance.cameraPitchNode.Orientation = new Mogre.Quaternion(Mogre.Math.Sqrt(0.5f), -Mogre.Math.Sqrt(0.5f), 0, 0);
-                //}
             }
             catch
             {
             }
             return true;
         }
-        #region camera location control
-        private float MoveScale_Camera_forwardback = 0f;
-        private float MoveScale_Camera_leftright = 0f;
-        private float MoveScale_Camera_updown = 0f;
 
-        private Mogre.Vector3 TranslateVector_Camera = new Mogre.Vector3();
-        const float speedcap_forwardback = .15f;
-        const float speedcap_leftright = .15f;
-        const float incr_forwardback = .0005f;
-        const float incr_leftright = .0005f;
-        const float brakes_forwardback = incr_forwardback * 2;
-        const float brakes_leftright = incr_leftright * 2;
-        #endregion
         private void update()
         {
             try
             {
-                //inputKeyboard.Capture();
-                //inputMouse.Capture();
                 ClientPluginManager.updateHooks();
                 if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_ESCAPE))
                 {
                     quit();
                 }
-                try
-                {
-                    if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_W))
-                    {
-                        if (MoveScale_Camera_forwardback > -speedcap_forwardback)
-                            MoveScale_Camera_forwardback -= incr_forwardback;
-                    }
-                    else if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_S))
-                    {
-                        if (MoveScale_Camera_forwardback < speedcap_forwardback)
-                            MoveScale_Camera_forwardback += incr_forwardback;
-                    }
-                    else if (MoveScale_Camera_forwardback != 0f)
-                    {
-                        if (MoveScale_Camera_forwardback > 0f)
-                            MoveScale_Camera_forwardback -= incr_forwardback;
-                        else
-                            MoveScale_Camera_forwardback += incr_forwardback;
-                        if (MoveScale_Camera_forwardback < brakes_forwardback && MoveScale_Camera_forwardback > -brakes_forwardback)
-                            MoveScale_Camera_forwardback = 0f;
-                    }
-                    else
-                    {
-                        MoveScale_Camera_forwardback = 0f;
-                    }
-                    if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_A))
-                    {
-                        if (MoveScale_Camera_leftright > -speedcap_leftright)
-                            MoveScale_Camera_leftright -= incr_leftright;
-                    }
-                    else if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_D))
-                    {
-                        if (MoveScale_Camera_leftright < speedcap_leftright)
-                            MoveScale_Camera_leftright += incr_leftright;
-                    }
-                    else if (MoveScale_Camera_leftright != 0f)
-                    {
-                        if (MoveScale_Camera_leftright > 0f)
-                            MoveScale_Camera_leftright -= incr_leftright;
-                        else
-                            MoveScale_Camera_leftright += incr_leftright;
-                        if (MoveScale_Camera_leftright < brakes_leftright && MoveScale_Camera_leftright > -brakes_leftright)
-                            MoveScale_Camera_leftright = 0f;
-                    }
-                    else
-                    {
-                        MoveScale_Camera_leftright = 0f;
-                    }
-                }
-                catch { OgreWindow.Instance.log("couldn't wire up camera input"); }
-                #region gui updates
-                Mogre.Vector3 pos = OgreWindow.Instance.cameraNode.Position;
-
-
-                OgreWindow.Instance.updateCoords(OgreWindow.UI_ELEMENT.label1, "X: " + pos.x.ToString("N"));
-                OgreWindow.Instance.updateCoords(OgreWindow.UI_ELEMENT.label2, "Y: " + pos.y.ToString("N"));
-                OgreWindow.Instance.updateCoords(OgreWindow.UI_ELEMENT.label3, "Z: " + pos.z.ToString("N"));
-                OgreWindow.Instance.updateCoords(OgreWindow.UI_ELEMENT.label4, "S1: " + MoveScale_Camera_forwardback.ToString("N") + " S2: " + MoveScale_Camera_leftright.ToString("N"));
-
-                OgreWindow.Instance.updateCoords(OgreWindow.UI_ELEMENT.textBox1, string.Format("x:{0} y:{1} z:{2}", pos.x ,pos.y,pos.z));
-
-                #endregion
             }
             catch { }
         }
-        private Random ran = new Random((int)DateTime.Now.Ticks);
     }
 }

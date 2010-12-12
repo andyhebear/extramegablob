@@ -35,7 +35,7 @@ namespace ExtraMegaBlob.Client
             }
         }
         private DateTime trim2changed = DateTime.Now;
-        float RotateScale_Camera = .001f;//mouse sensitivity
+        
         private DateTime lastFrame = DateTime.Now;
         timer saveTimer = new timer(new TimeSpan(0, 0, 0, 1));
         private bool takeScreenshotInsideFrameEnded()

@@ -52,7 +52,7 @@ namespace ExtraMegaBlob.Server
         }
         public ServerPluginManager()
         {
-            this.path_cache = ThingPath.path_cache;
+            this.path_cache = ThingPath.path_servercache;
             compiler.onLog += new LogDelegate(compiler_onLog);
         }
         private string path_cache = "";

@@ -1,12 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
-using MogreFramework;
 using ExtraMegaBlob.References;
 using Mogre;
-using System.Threading;
-using MOIS;
-using System.Collections;
+using MogreFramework;
 #pragma warning disable 162 //warning CS0162: Unreachable code detected
 #pragma warning disable 168 //CS0168: The variable 'ex' is declared but never used
 namespace ExtraMegaBlob.Client
@@ -153,6 +152,43 @@ namespace ExtraMegaBlob.Client
             OgreWindow.Instance.mCamera = null;
             OgreWindow.Instance.mViewport = null;
             OgreWindow.Instance.mSceneMgr = null;
+        }
+        Entity ground_ent = null;
+        SceneNode ground_node = null;
+        void mainwindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            quit();
+        }
+        private timer saveScreenshotLimiter = new timer(new TimeSpan(0, 0, 0, 1));
+        private void saveScreenshot()
+        {
+            if (saveScreenshotLimiter.elapsed)
+            {
+                saveScreenshotLimiter.start();
+                try
+                {
+                    OgreWindow.Instance.saveFrame(SaveFrameFile);
+                }
+                catch { }
+            }
+        }
+        private string SaveFrameFile
+        {
+            get
+            {
+                for (int i = 0; i > -1; i++)
+                {
+                    string part1 = Path.GetDirectoryName(Application.ExecutablePath) + "\\Screenshots\\frame";
+                    string part2 = i.ToString("D3");
+                    string part3 = ".jpg";
+                    string cmp = part1 + part2 + part3;
+                    if (!File.Exists(cmp))
+                    {
+                        return cmp;
+                    }
+                }
+                return null;
+            }
         }
         void SceneCreating()
         {

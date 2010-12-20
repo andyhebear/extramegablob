@@ -155,6 +155,15 @@ namespace MogreFramework
 
         public void shutdown()
         {
+            foreach(TexturePtr ptr in this){
+                
+                TextureManager.Singleton.Unload(ptr.Handle);
+                TextureManager.Singleton.Unload((ulong)ptr.NativePtr);
+                TextureManager.Singleton.Remove(ptr.Handle);
+                TextureManager.Singleton.Remove((ulong)ptr.NativePtr);
+                ptr.Unload();
+            }
+           
             TextureManager.Singleton.UnloadAll();
         }
     }

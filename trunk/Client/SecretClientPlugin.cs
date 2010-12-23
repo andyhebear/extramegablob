@@ -9,6 +9,11 @@ using System.Collections;
 using System.IO;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+#pragma warning disable 168 //CS0168: The variable 'ex' is declared but never used
+#pragma warning disable 169 //CS0169: "Field XYZ is never used"
+#pragma warning disable 414 //CS0414 x is assigned but its value is never used
+#pragma warning disable 649 //CS0649 Field XYZ is never assigned to, and will always have its default value XX
+
 namespace ExtraMegaBlob.Client
 {
     class SecretClientPlugin : ClientPlugin

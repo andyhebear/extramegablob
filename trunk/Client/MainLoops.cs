@@ -6,8 +6,11 @@ using System.Windows.Forms;
 using ExtraMegaBlob.References;
 using Mogre;
 using MogreFramework;
-#pragma warning disable 162 //warning CS0162: Unreachable code detected
-#pragma warning disable 168 //CS0168: The variable 'ex' is declared but never used
+#pragma warning disable 162 //CS0162: Unreachable code detected
+#pragma warning disable 168 //CS0168: The variable 'XYZ' is declared but never used
+#pragma warning disable 169 //CS0169: Field 'XYZ' is never used
+#pragma warning disable 414 //CS0414: XYZ is assigned but its value is never used
+#pragma warning disable 649 //CS0649: Field 'XYZ' is never assigned to, and will always have its default value XX
 namespace ExtraMegaBlob.Client
 {
     public partial class Simulation
@@ -21,7 +24,7 @@ namespace ExtraMegaBlob.Client
             {
                 log(Program.header);
 
-                conf = new Config(); 
+                conf = new Config();
 
                 OgreWindow.Instance.textures = new Textures(ThingPath.path_cache);
                 OgreWindow.Instance.meshes = new Meshes(ThingPath.path_cache);
@@ -53,10 +56,6 @@ namespace ExtraMegaBlob.Client
 
 
                 OgreWindow.Instance.SceneCreating += new OgreWindow.SceneEventHandler(SceneCreating);
-
-
-
-
                 OgreWindow.Instance.InitializeOgre();
                 OgreWindow.Instance.mRoot.FrameStarted += new FrameListener.FrameStartedHandler(Root_FrameStarted);
                 OgreWindow.Instance.Text = Program.header;
@@ -73,58 +72,48 @@ namespace ExtraMegaBlob.Client
                 {
                     int loops;
                     bool b;
-
-                    Thread th = new Thread(new ThreadStart(netConnect));
-                    th.Name = "net connect loop";
-                    th.Start();
-
-
+                    new Thread(new ThreadStart(netConnect)).Start();
                     cache.init();
                     foreach (string s in pluginAddQueue)
                     {
                         ClientPluginManager.addPlugin(s);
                     }
-                   // ClientPluginManager.addClientPlugin(new SecretClientPlugin());//it doesn't show up in the client plugin manager's active plugin list
-
-                    while (!OgreWindow.Instance.ShuttingDown) //MAIN LOOP
+                    #region Primary Loop
+                    while (!OgreWindow.Instance.ShuttingDown)
                     {
+                        if (Mogre.OgreException.IsThrown)
+                        {
+                            string x = Mogre.OgreException.LastException.FullDescription;
+                            log("[ main() ] " + x);
+                            Mogre.OgreException.ClearLastException();
+                        }
                         if (object.Equals(null, OgreWindow.Instance.mRoot)) break;
                         b = true;
-                        try
+                        loops = 0;
+                        while (DateTime.Now.Ticks > next_game_tick && loops < MAX_FRAMESKIP)
                         {
-                            loops = 0;
-                            while (DateTime.Now.Ticks > next_game_tick && loops < MAX_FRAMESKIP)
-                            {
-                                update();
-                                next_game_tick += SKIP_TICKS;
-                                loops++;
-                            }
-                            interpolation = (float)(DateTime.Now.Ticks + SKIP_TICKS - next_game_tick) / (float)(SKIP_TICKS);
-                            ExtraMegaBlob.References.Math.clamp_hi(1f, ref interpolation);
-
-
-                            if (!OgreWindow.Instance.pauserendering)
-                            {
-                                OgreWindow.Instance.renderingframe = true;
-                                b = OgreWindow.Instance.mRoot.RenderOneFrame();
-                                OgreWindow.Instance.renderingframe = false;
-                            }
+                            update();
+                            next_game_tick += SKIP_TICKS;
+                            loops++;
                         }
-                        catch
+                        interpolation = (float)(DateTime.Now.Ticks + SKIP_TICKS - next_game_tick) / (float)(SKIP_TICKS);
+                        ExtraMegaBlob.References.Math.clamp_hi(1f, ref interpolation);
+                        if (!OgreWindow.Instance.pauserendering)
                         {
-                            // MessageBox.Show("main loop1: " + ex.Message);
+                            OgreWindow.Instance.renderingframe = true;
+                            b = OgreWindow.Instance.mRoot.RenderOneFrame();
+                            OgreWindow.Instance.renderingframe = false;
                         }
                         if (!b) break;
-                        //System.Windows.Forms.Application.DoEvents();
                         OgreWindow.Instance.doEvents();
                     }
-                    
-                    
+                    #endregion
+
+
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
-                    // MessageBox.Show("main loop2: " + ex.Message);
                 }
             }
             catch (Exception ex)
@@ -343,6 +332,7 @@ namespace ExtraMegaBlob.Client
         }
         public void netConnect()
         {
+            Thread.CurrentThread.Name = "net connect loop";
             if (DISABLE_NETWORK)
             {
                 log("Network is DISABLED");

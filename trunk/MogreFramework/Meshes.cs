@@ -176,7 +176,7 @@ namespace MogreFramework
 
         public void shutdown()
         {
-            MeshManager.Singleton.UnloadAll();
+            //MeshManager.Singleton.UnloadAll();
             //int r = this.Count;
             //for (int i = r - 1; i > -1; i--)
             //{
@@ -185,6 +185,15 @@ namespace MogreFramework
             //    ((Mesh)this[i]).Dispose();
             //    MeshManager.Singleton.UnloadAll();
             //}
+
+            foreach (MeshPtr ptr in this)
+            {
+                ptr.Unload();
+                MeshManager.Singleton.Remove(ptr.Handle);
+                ptr.Dispose();
+            }
+            MeshManager.Singleton.UnloadAll();
+
         }
     }
 }

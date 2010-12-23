@@ -2,12 +2,33 @@
 using System.Text;
 using System.IO;
 using ICSharpCode.SharpZipLib.GZip;
+using Mogre;
 
 namespace ExtraMegaBlob.References
 {
     public delegate void LogDelegate(string msg);
     public static class Helpers
     {
+        public static void setEntityOpacity(Entity ent, float val)
+        {
+            for (uint x = 0; x < ent.NumSubEntities; x++)
+            {
+                Mogre.MaterialPtr mat = ent.GetSubEntity(x).GetMaterial();
+                Technique t = mat.GetTechnique(0); // we are only bothering the fade with the first technique.
+                //t.SetSceneBlending(SceneBlendFactor.SBF_DEST_ALPHA, SceneBlendFactor.SBF_ONE_MINUS_DEST_COLOUR); //sweet color invert effect
+                t.SetSceneBlending(SceneBlendFactor.SBF_DEST_ALPHA, SceneBlendFactor.SBF_SOURCE_ALPHA); //works
+                t.SetDepthWriteEnabled(false);
+                // iterate through passes and textureUnitStates, setting their opacity.
+                for (ushort p = 0; p < t.NumPasses; p++)
+                {
+                    for (ushort s = 0; s < t.GetPass(p).NumTextureUnitStates; s++)
+                    {
+                        t.GetPass(p).GetTextureUnitState(s).SetAlphaOperation(LayerBlendOperationEx.LBX_MODULATE, LayerBlendSource.LBS_MANUAL, LayerBlendSource.LBS_CURRENT, val);
+                    }
+                }
+                mat.Dispose();
+            }
+        }
         public static bool isClientPlugin(string path)
         {
             string x = Path.GetFileName(path).ToLower();

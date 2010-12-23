@@ -6,12 +6,22 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using ExtraMegaBlob.References;
+using MogreFramework;
 
 namespace ExtraMegaBlob.Client
 {
     [XmlInclude(typeof(Memory))]
     public sealed class ClientPlugins : IEnumerable, ISerializable
     {
+        public event LogDelegate onLogMessage;
+        internal void log(string msg)
+        {
+            if (!object.Equals(null, this.onLogMessage))
+            {
+                onLogMessage(msg);
+            }
+        }
+
         public override String ToString()
         {
             Serialize Serialization = new Serialize();
@@ -58,7 +68,7 @@ namespace ExtraMegaBlob.Client
             }
             return al;
         }
-        public object this[int index]
+        public ClientPlugin this[int index]
         {
             get
             {
@@ -69,7 +79,7 @@ namespace ExtraMegaBlob.Client
                 allPlugins[index] = value;
             }
         }
-        public object this[String key]
+        public ClientPlugin this[String key]
         {
             get
             {
@@ -159,16 +169,10 @@ namespace ExtraMegaBlob.Client
             {
                 if (!object.Equals(null, allPlugins[i]))
                 {
-                    try
-                    {
-                        ((ClientPlugin)allPlugins[i]).shutdown();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.Write(ex.ToString());
-                    }
+                    shutdownPlugin((ClientPlugin)allPlugins[i]);
                 }
             }
+            allPlugins = new ArrayList();
         }
         //public int IndexOf(KeyWord KeyWord)
         //{
@@ -186,9 +190,25 @@ namespace ExtraMegaBlob.Client
             int i = IndexOf(Name);
             if (i > -1)
             {
-                ((ClientPlugin)allPlugins[i]).shutdown();
+                if (!object.Equals(null, allPlugins[i]))
+                {
+                    shutdownPlugin((ClientPlugin)allPlugins[i]);
+                }
                 allPlugins.RemoveAt(i);
             }
+        }
+        private void shutdownPlugin(ClientPlugin plugin)
+        {
+            OgreWindow.Instance.pause();
+            try
+            {
+                plugin.shutdown();
+            }
+            catch (Exception ex)
+            {
+                log(ex.ToString());
+            }
+            OgreWindow.Instance.unpause();
         }
         public void RemoveAt(int i)
         {

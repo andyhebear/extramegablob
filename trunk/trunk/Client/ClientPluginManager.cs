@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using ExtraMegaBlob.References;
+using Mogre;
+using MogreFramework;
 namespace ExtraMegaBlob.Client
 {
     public class ClientPluginManager
@@ -17,7 +19,7 @@ namespace ExtraMegaBlob.Client
                 return (String[])al.ToArray(typeof(string));
             }
         }
-        internal void addClientPlugin(ClientPlugin ClientPlugin)
+        internal bool addClientPlugin(ClientPlugin ClientPlugin)
         {
             ClientPlugin.onQuit += new LogDelegate(ClientPlugin_onQuit);
             LogDelegate testDelB = delegate(string s) { log("[" + ClientPlugin.Name() + "] " + s); };
@@ -25,13 +27,13 @@ namespace ExtraMegaBlob.Client
             ClientPlugin.onChat += new LogDelegate(ClientPlugin_onChat);
             ClientPlugin.onOutboxMessage += new ExtraMegaBlob.References.ClientPlugin.outboxDelegate(ClientPlugin_onOutboxMessage);
             try { ClientPlugin.startup(); }
-            catch (Exception ex) {
-                string x = "";
-                if (Mogre.OgreException.IsThrown)
-                    x = Mogre.OgreException.LastException.FullDescription;
-                log("[" + ClientPlugin.Name() + "] " + ex.Message +"  "+ x);
+            catch (Exception ex)
+            {
+                log("[" + ClientPlugin.Name() + "] " + ex.ToString());
+                return false;
             }
             ClientClasses.Add(ClientPlugin);
+            return true;
         }
         public void delAllPlugins()
         {
@@ -47,12 +49,22 @@ namespace ExtraMegaBlob.Client
                 }
             }
         }
-        public void delPlugin(string pathRel)
+        public bool delPlugin(string pathRel)
         {
-            ClientClasses.RemoveAt((string)pluginNameLookup[pathRel]);
+            string pluginName = (string)pluginNameLookup[pathRel];
+            try
+            {
+                ClientClasses.RemoveAt(pluginName);
+            }
+            catch (Exception ex)
+            {
+                log("[" + pluginName + "] " + ex.ToString());
+                return false;
+            }
 
             pluginNameLookup.Remove(pathRel);
             listChanged(this.allPlugins);
+            return true;
         }
         public void addPlugin(string pathRel)
         {
@@ -61,10 +73,40 @@ namespace ExtraMegaBlob.Client
             if (!object.Equals(null, plugin))
             {
                 pluginNameLookup[pathRel] = plugin.Name();
+                if (addClientPlugin(plugin))
+                {
+                    addPluginSphere(plugin.Name());
+                }
+
                 listChanged(this.allPlugins);
-                addClientPlugin(plugin);
             }
         }
+        string sphereNamePrefix = "";
+        private void addPluginSphere(string pluginName)
+        {
+            string meshName = sphereNamePrefix + "_SphereMesh_" + pluginName;
+            string entityName = sphereNamePrefix + "_SphereEntity_" + pluginName;
+            string materialName = sphereNamePrefix + "_SphereMaterial_" + pluginName;
+
+            ((MaterialPtr)MaterialManager.Singleton.Create(materialName, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME)).GetTechnique(0).GetPass(0).CreateTextureUnitState("\\normalNoiseColor.png");
+
+            //  ClientClasses[pluginName].Location
+
+            Textures t = OgreWindow.Instance.textures;
+
+            PrimitiveGenerators.CreateSphere(meshName, ClientClasses[pluginName].Radius(), 8, 8);
+            Entity sphereEntity = OgreWindow.Instance.mSceneMgr.CreateEntity(entityName, meshName);
+            SceneNode sphereNode = OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode();
+            sphereEntity.SetMaterialName(materialName);
+            sphereNode.AttachObject(sphereEntity);
+            sphereEntity.CastShadows = false;
+            sphereNode.Position = ClientClasses[pluginName].Location().toMogre;
+            Helpers.setEntityOpacity(sphereEntity, .9f);
+            //sphereNode.SetScale(new Mogre.Vector3(2f));
+
+
+        }
+
 
         public delegate void pluginListChangedHandler(string[] plugins);
         public event pluginListChangedHandler onListChanged;
@@ -79,13 +121,23 @@ namespace ExtraMegaBlob.Client
         private Hashtable pluginNameLookup = new Hashtable(); // relative path = plugin name
         public ClientPluginManager(string path_cache)
         {
-            this.path_cache = path_cache;
-            ClientPluginCompiler.onLog += new LogDelegate(compiler_onLog);
+            init(path_cache);
         }
         public ClientPluginManager()
         {
-            this.path_cache = ThingPath.path_cache;
+            init(ThingPath.path_cache);
+        }
+        private void init(string path_cache)
+        {
+            this.path_cache = path_cache;
             ClientPluginCompiler.onLog += new LogDelegate(compiler_onLog);
+            ClientClasses.onLogMessage += new LogDelegate(ClientClasses_onLogMessage);
+            sphereNamePrefix = ran.Next(int.MaxValue).ToString();
+        }
+
+        void ClientClasses_onLogMessage(string msg)
+        {
+            log("[ClientClasses] " + msg);
         }
         private string path_cache = "";
         private void compiler_onLog(string msg)

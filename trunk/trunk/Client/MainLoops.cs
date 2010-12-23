@@ -6,18 +6,17 @@ using System.Windows.Forms;
 using ExtraMegaBlob.References;
 using Mogre;
 using MogreFramework;
+#region disable annoying warnings
 #pragma warning disable 162 //CS0162: Unreachable code detected
 #pragma warning disable 168 //CS0168: The variable 'XYZ' is declared but never used
 #pragma warning disable 169 //CS0169: Field 'XYZ' is never used
-#pragma warning disable 414 //CS0414: XYZ is assigned but its value is never used
+#pragma warning disable 414 //CS0414: 'XYZ' is assigned but its value is never used
 #pragma warning disable 649 //CS0649: Field 'XYZ' is never assigned to, and will always have its default value XX
+#endregion
 namespace ExtraMegaBlob.Client
 {
     public partial class Simulation
     {
-        private CacheManager cache;
-        private const bool DISABLE_NETWORK = false;
-        private Config conf = null;
         public void main()
         {
             try
@@ -73,20 +72,11 @@ namespace ExtraMegaBlob.Client
                     int loops;
                     bool b;
                     new Thread(new ThreadStart(netConnect)).Start();
+                    new Thread(new ThreadStart(checkPluginAddQueueLoop)).Start();
                     cache.init();
-                    foreach (string s in pluginAddQueue)
-                    {
-                        ClientPluginManager.addPlugin(s);
-                    }
                     #region Primary Loop
                     while (!OgreWindow.Instance.ShuttingDown)
                     {
-                        if (Mogre.OgreException.IsThrown)
-                        {
-                            string x = Mogre.OgreException.LastException.FullDescription;
-                            log("[ main() ] " + x);
-                            Mogre.OgreException.ClearLastException();
-                        }
                         if (object.Equals(null, OgreWindow.Instance.mRoot)) break;
                         b = true;
                         loops = 0;
@@ -108,8 +98,6 @@ namespace ExtraMegaBlob.Client
                         OgreWindow.Instance.doEvents();
                     }
                     #endregion
-
-
                 }
                 catch (Exception ex)
                 {
@@ -125,13 +113,38 @@ namespace ExtraMegaBlob.Client
             }
             quit();
         }
+        private bool Root_FrameStarted(FrameEvent evt)
+        {
+            try
+            {
+                ClientPluginManager.FrameStartedHooks(interpolation);
+            }
+            catch
+            {
+                log("[ main() ] FrameStarted exception while doing plugins' hooks");
+            }
+            return true;
+        }
+        private void update()
+        {
+            checkOgreException();
+            try
+            {
+                ClientPluginManager.updateHooks();
+                if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_ESCAPE))
+                {
+                    quit();
+                }
+            }
+            catch { }
+        }
         private void quit()
         {
             if (OgreWindow.Instance.ShuttingDown) return;
             OgreWindow.Instance.ShuttingDown = true;
             ClientPluginManager.shutdown();
             netClient.disconnect();
-            OgreWindow.Instance.saveFrame(SaveFrameFile);
+            saveScreenshot();
             OgreWindow.Instance.Close();
             OgreWindow.Instance.meshes.shutdown();
             OgreWindow.Instance.textures.shutdown();
@@ -142,13 +155,33 @@ namespace ExtraMegaBlob.Client
             OgreWindow.Instance.mViewport = null;
             OgreWindow.Instance.mSceneMgr = null;
         }
-        Entity ground_ent = null;
-        SceneNode ground_node = null;
-        void mainwindow_FormClosing(object sender, FormClosingEventArgs e)
+        private CacheManager cache;
+        private ClientPluginManager ClientPluginManager;
+        private ClientNetwork netClient;
+        private const bool DISABLE_NETWORK = false;
+        private Config conf = null;
+        private Entity ground_ent = null;
+        private SceneNode ground_node = null;
+        private void mainwindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             quit();
         }
         private timer saveScreenshotLimiter = new timer(new TimeSpan(0, 0, 0, 1));
+        private void checkPluginAddQueueLoop()
+        {
+            Thread.CurrentThread.Name = "plugin add queue loop";
+            while (!OgreWindow.Instance.ShuttingDown)
+            {
+                Thread.Sleep(100);
+                for (int i = 0; i < pluginAddQueue.Count; i++)
+                {
+                    string pathRel = (string)pluginAddQueue[i];
+                    ClientPluginManager.addPlugin(pathRel);
+                    pluginAddQueue.RemoveAt(i);
+                    break;
+                }
+            }
+        }
         private void saveScreenshot()
         {
             if (saveScreenshotLimiter.elapsed)
@@ -179,7 +212,7 @@ namespace ExtraMegaBlob.Client
                 return null;
             }
         }
-        void SceneCreating()
+        private void SceneCreating()
         {
 
             // Set the ambient light and shadow technique
@@ -235,6 +268,7 @@ namespace ExtraMegaBlob.Client
             ground_ent = OgreWindow.Instance.mSceneMgr.CreateEntity("GroundEntity", "ground");
             ground_node = OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode();
             ground_node.AttachObject(ground_ent);
+
             ground_ent.SetMaterialName("Examples/Rockwall");
             ground_ent.CastShadows = false;
             ground_node.Position -= new Mogre.Vector3(0f, 10f, 0f);
@@ -270,55 +304,66 @@ namespace ExtraMegaBlob.Client
             catch (Exception ex) { log(ex.Message); }
             OgreWindow.Instance.SceneReady = true;
         }
-        void ClientPluginManager_onListChanged(string[] plugins)
+        private void checkOgreException()
+        {
+            if (Mogre.OgreException.IsThrown)
+            {
+                string a = "";
+                OgreException x = Mogre.OgreException.LastException;
+                a += "Source: " + x.Source + "; Number: " + x.Number.ToString() + "; Description: " + x.Description;
+                log("[ main() ] " + a);
+                Mogre.OgreException.ClearLastException();
+            }
+        }
+        private void ClientPluginManager_onListChanged(string[] plugins)
         {
             OgreWindow.Instance.setPluginsActive(plugins);
         }
-        void cache_meshDeleted(string pathRelMeshFile)
+        private void cache_meshDeleted(string pathRelMeshFile)
         {
             OgreWindow.Instance.pause();
             OgreWindow.Instance.meshes.RemoveAt(pathRelMeshFile);
             OgreWindow.Instance.unpause();
         }
-        void cache_meshAdded(string pathRelMeshFile)
+        private void cache_meshAdded(string pathRelMeshFile)
         {
             OgreWindow.Instance.pause();
             OgreWindow.Instance.meshes.Add(pathRelMeshFile);
             OgreWindow.Instance.unpause();
         }
-        void cache_textureDeleted(string pathRelTextureFile)
+        private void cache_textureDeleted(string pathRelTextureFile)
         {
             OgreWindow.Instance.pause();
             OgreWindow.Instance.textures.RemoveAt(pathRelTextureFile);
             OgreWindow.Instance.unpause();
         }
-        void cache_textureAdded(string pathRelTextureFile)
+        private void cache_textureAdded(string pathRelTextureFile)
         {
             OgreWindow.Instance.pause();
             OgreWindow.Instance.textures.Add(pathRelTextureFile);
             OgreWindow.Instance.unpause();
         }
-        void netClient_onDisconnected()
+        private void netClient_onDisconnected()
         {
             // ClientPluginManager.delAllPlugins();
         }
-        void cache_pluginDeleted(string pathRelPluginFile)
+        private void cache_pluginDeleted(string pathRelPluginFile)
         {
             ClientPluginManager.delPlugin(pathRelPluginFile);
         }
-        void cache_pluginAdded(string pathRelPluginFile)
+        private void cache_pluginAdded(string pathRelPluginFile)
         {
             //ClientPluginManager.addPlugin(pathRelPluginFile);
             pluginAddQueue.Add(pathRelPluginFile);
         }
         private ArrayList pluginAddQueue = new ArrayList();
-        void netClient_onConnectCompleted(string host, string port)
+        private void netClient_onConnectCompleted(string host, string port)
         {
             log("Connected to: " + host + ":" + port);
 
             cache.sendReport();
         }
-        void cache_route_toserver(Event ev)
+        private void cache_route_toserver(Event ev)
         {
             ClientPluginManager.sourceHub(ev, EventTransfer.CLIENTTOSERVER);
         }
@@ -326,11 +371,11 @@ namespace ExtraMegaBlob.Client
         {
             OgreWindow.Instance.log(what);
         }
-        void cache_onLogMessage(string msg)
+        private void cache_onLogMessage(string msg)
         {
             log("cache: " + msg);
         }
-        public void netConnect()
+        private void netConnect()
         {
             Thread.CurrentThread.Name = "net connect loop";
             if (DISABLE_NETWORK)
@@ -355,7 +400,7 @@ namespace ExtraMegaBlob.Client
                 Thread.Sleep(1000);
             }
         }
-        void Instance_onSend(string text)
+        private void Instance_onSend(string text)
         {
             Event e = new Event();
             e._IntendedRecipients = eventScope.SERVERALL;
@@ -365,13 +410,11 @@ namespace ExtraMegaBlob.Client
             e._Memories.Add(new Memory("text", KeyWord.NIL, text, null));
             ClientPluginManager.sourceHub(e, EventTransfer.CLIENTTOSERVER);
         }
-        void ClientPluginManager_onChat(string msg)
+        private void ClientPluginManager_onChat(string msg)
         {
             OgreWindow.Instance.addChatMessage(msg);
         }
-
-        private ClientNetwork netClient;
-        void netClient_onReceiveEvent(Event msg)
+        private void netClient_onReceiveEvent(Event msg)
         {
             ClientPluginManager.sourceHub(msg, EventTransfer.SERVERTOCLIENT);
             if (msg._Keyword == KeyWord.CACHE_CLIENTRENAMEFILE)
@@ -387,7 +430,7 @@ namespace ExtraMegaBlob.Client
                 cache.updateFile(msg);
             }
         }
-        void clientPluginManager_route_toserver(Event msg)
+        private void clientPluginManager_route_toserver(Event msg)
         {
             if (!netClient.connected)
             {
@@ -395,43 +438,19 @@ namespace ExtraMegaBlob.Client
             }
             netClient.sendEvent(msg);
         }
-        void netClient_onLogMessage(string msg)
+        private void netClient_onLogMessage(string msg)
         {
             OgreWindow.Instance.log("[netClient]: " + msg);
         }
-        void roomManager_onLogMessage(string msg)
+        private void roomManager_onLogMessage(string msg)
         {
             OgreWindow.Instance.log(msg);
         }
-        public int TICKS_PER_SECOND { get { return 100; } }
-        public int SKIP_TICKS { get { return (10000000 / TICKS_PER_SECOND); } }
-        public int MAX_FRAMESKIP { get { return 5; } }
-        long next_game_tick = DateTime.Now.Ticks;
+        private int TICKS_PER_SECOND { get { return 100; } }
+        private int SKIP_TICKS { get { return (10000000 / TICKS_PER_SECOND); } }
+        private int MAX_FRAMESKIP { get { return 5; } }
+        private long next_game_tick = DateTime.Now.Ticks;
         private float interpolation = 0f;
-        private ClientPluginManager ClientPluginManager;
-        private bool Root_FrameStarted(FrameEvent evt)
-        {
-            try
-            {
-                ClientPluginManager.FrameStartedHooks(interpolation);
-            }
-            catch
-            {
-            }
-            return true;
-        }
 
-        private void update()
-        {
-            try
-            {
-                ClientPluginManager.updateHooks();
-                if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_ESCAPE))
-                {
-                    quit();
-                }
-            }
-            catch { }
-        }
     }
 }

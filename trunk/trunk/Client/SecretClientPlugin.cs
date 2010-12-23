@@ -94,41 +94,12 @@ namespace ExtraMegaBlob.Client
         public override void startup()
         {
             log("starting up!");
-            OgreWindow.Instance.renderBox.MouseClick += new MouseEventHandler(renderBox_MouseClick);
+            
 
             //    OgreWindow.Instance.textures[       "\\TongIts\\200px-Playing_card_spade_A.svg.png"].
         }
 
-        ArrayList selectedNodes = new ArrayList();
-        void renderBox_MouseClick(object sender, MouseEventArgs e)
-        {
-            foreach (MovableObject selectedNode in selectedNodes)
-            {
-                try
-                {
-                    selectedNode.ParentSceneNode.ShowBoundingBox = false;
-                }
-                catch (Exception ex)
-                {
-                    log(ex.ToString());
-                }
-            }
-            selectedNodes = new ArrayList();
-            float scrx = (float)e.X / OgreWindow.Instance.mViewport.ActualWidth;
-            float scry = (float)e.Y / OgreWindow.Instance.mViewport.ActualHeight;
-            Ray ray = OgreWindow.Instance.mCamera.GetCameraToViewportRay(scrx, scry);
-            RaySceneQuery query = OgreWindow.Instance.mSceneMgr.CreateRayQuery(ray);
-            RaySceneQueryResult results = query.Execute();
-
-            //chat(results.Count.ToString());
-            foreach (RaySceneQueryResultEntry entry in results)
-            {
-                if (entry.movable.Name == "MainCamera") continue;
-                //chat(entry.movable.Name);
-                entry.movable.ParentSceneNode.ShowBoundingBox = true;
-                selectedNodes.Add(entry.movable);
-            }
-        }
+        
         private void addCheeriosBox()
         {
             // if (!OgreWindow.Instance.SceneReady) return;

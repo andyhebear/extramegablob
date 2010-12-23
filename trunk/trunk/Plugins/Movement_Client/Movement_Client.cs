@@ -4,43 +4,9 @@ namespace ExtraMegaBlob
 {
     public class plugin : ExtraMegaBlob.References.ClientPlugin
     {
-        float RotateScale_Camera = .001f;//mouse sensitivity
-        #region camera location control
-        private float MoveScale_Camera_forwardback = 0f;
-        private float MoveScale_Camera_leftright = 0f;
-        private float MoveScale_Camera_updown = 0f;
-
-        private Mogre.Vector3 TranslateVector_Camera = new Mogre.Vector3();
-        const float speedcap_forwardback = .15f;
-        const float speedcap_leftright = .15f;
-        const float incr_forwardback = .0005f;
-        const float incr_leftright = .0005f;
-        const float brakes_forwardback = incr_forwardback * 2;
-        const float brakes_leftright = incr_leftright * 2;
-        bool g_m_MouseMoved(MouseEvent arg)
-        {
-            MouseState_NativePtr s = arg.state;
-            //OgreWindow.Instance.log(s.X.abs.ToString());
-            if (arg.state.buttons == 2)
-            {
-                OgreWindow.Instance.cameraYawNode.Yaw(-s.X.rel * RotateScale_Camera);
-                OgreWindow.Instance.cameraRollNode.Pitch(-s.Y.rel * RotateScale_Camera);
-            }
-            Mogre.Vector3 oldpos = OgreWindow.Instance.cameraNode.Position;
-            float mouseZ = (float)arg.state.Z.rel * .1f;
-            if (0 != mouseZ)
-            {
-                MoveScale_Camera_updown -= mouseZ;
-            }
-            //OgreWindow.Instance.log(arg.state.Z.abs.ToString());
-            return true;
-        }
-        #endregion
-
-
         public override void startup()
         {
-            log("starting up!");
+            log("starting up");
             OgreWindow.g_m.MouseMoved += new MouseListener.MouseMovedHandler(g_m_MouseMoved);
         }
         public override void shutdown()
@@ -153,6 +119,33 @@ namespace ExtraMegaBlob
             catch
             {
             }
+        }
+        private float RotateScale_Camera = .001f;//mouse sensitivity
+        private float MoveScale_Camera_forwardback = 0f;
+        private float MoveScale_Camera_leftright = 0f;
+        private float MoveScale_Camera_updown = 0f;
+        private Mogre.Vector3 TranslateVector_Camera = new Mogre.Vector3();
+        private const float speedcap_forwardback = .15f;
+        private const float speedcap_leftright = .15f;
+        private const float incr_forwardback = .0005f;
+        private const float incr_leftright = .0005f;
+        private const float brakes_forwardback = incr_forwardback * 2;
+        private const float brakes_leftright = incr_leftright * 2;
+        private bool g_m_MouseMoved(MouseEvent arg)
+        {
+            MouseState_NativePtr s = arg.state;
+            if (arg.state.buttons == 2)
+            {
+                OgreWindow.Instance.cameraYawNode.Yaw(-s.X.rel * RotateScale_Camera);
+                OgreWindow.Instance.cameraRollNode.Pitch(-s.Y.rel * RotateScale_Camera);
+            }
+            Mogre.Vector3 oldpos = OgreWindow.Instance.cameraNode.Position;
+            float mouseZ = (float)arg.state.Z.rel * .1f;
+            if (0 != mouseZ)
+            {
+                MoveScale_Camera_updown -= mouseZ;
+            }
+            return true;
         }
     }
 }

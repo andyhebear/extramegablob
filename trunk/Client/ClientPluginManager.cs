@@ -35,23 +35,8 @@ namespace ExtraMegaBlob.Client
             ClientClasses.Add(ClientPlugin);
             return true;
         }
-        public void delAllPlugins()
+        internal bool delClientPlugin(string pluginName)
         {
-            while (pluginNameLookup.Count > 0)
-            {
-                foreach (DictionaryEntry de in pluginNameLookup)
-                {
-                    string plugName = (string)pluginNameLookup[de.Key];
-                    pluginNameLookup.Remove(de.Key);
-                    ClientClasses.RemoveAt(plugName);
-                    listChanged(this.allPlugins);
-                    break;
-                }
-            }
-        }
-        public bool delPlugin(string pathRel)
-        {
-            string pluginName = (string)pluginNameLookup[pathRel];
             try
             {
                 ClientClasses.RemoveAt(pluginName);
@@ -61,7 +46,25 @@ namespace ExtraMegaBlob.Client
                 log("[" + pluginName + "] " + ex.ToString());
                 return false;
             }
-
+            return true;
+        }
+        public void delAllPlugins()
+        {
+            while (pluginNameLookup.Count > 0)
+            {
+                foreach (DictionaryEntry de in pluginNameLookup)
+                {
+                    string pathRel = (string)de.Key;
+                    delPlugin(pathRel);
+                    break;
+                }
+            }
+        }
+        public bool delPlugin(string pathRel)
+        {
+            string pluginName = (string)pluginNameLookup[pathRel];
+            delClientPlugin(pluginName);
+            delPluginSphere(pluginName);
             pluginNameLookup.Remove(pathRel);
             listChanged(this.allPlugins);
             return true;
@@ -87,27 +90,34 @@ namespace ExtraMegaBlob.Client
             string meshName = sphereNamePrefix + "_SphereMesh_" + pluginName;
             string entityName = sphereNamePrefix + "_SphereEntity_" + pluginName;
             string materialName = sphereNamePrefix + "_SphereMaterial_" + pluginName;
-
+            string sceneNodeName = sphereNamePrefix + "_SphereSceneNode_" + pluginName;
             ((MaterialPtr)MaterialManager.Singleton.Create(materialName, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME)).GetTechnique(0).GetPass(0).CreateTextureUnitState("\\normalNoiseColor.png");
-
-            //  ClientClasses[pluginName].Location
-
-            Textures t = OgreWindow.Instance.textures;
-
             PrimitiveGenerators.CreateSphere(meshName, ClientClasses[pluginName].Radius(), 8, 8);
             Entity sphereEntity = OgreWindow.Instance.mSceneMgr.CreateEntity(entityName, meshName);
-            SceneNode sphereNode = OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode();
+            SceneNode sphereNode = OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode(sceneNodeName);
             sphereEntity.SetMaterialName(materialName);
             sphereNode.AttachObject(sphereEntity);
             sphereEntity.CastShadows = false;
             sphereNode.Position = ClientClasses[pluginName].Location().toMogre;
             Helpers.setEntityOpacity(sphereEntity, .9f);
             //sphereNode.SetScale(new Mogre.Vector3(2f));
-
-
         }
 
-
+        private void delPluginSphere(string pluginName)
+        {
+            OgreWindow.Instance.pause();
+            MaterialPtr ptrMat = MaterialManager.Singleton.GetByName(sphereNamePrefix + "_SphereMaterial_" + pluginName);
+            ptrMat.Unload();
+            MaterialManager.Singleton.Remove(ptrMat.Handle);
+            ptrMat.Dispose();
+            MeshPtr ptrMesh = MeshManager.Singleton.GetByName(sphereNamePrefix + "_SphereMesh_" + pluginName);
+            ptrMesh.Unload();
+            MeshManager.Singleton.Remove(ptrMesh.Handle);
+            ptrMesh.Dispose();
+            OgreWindow.Instance.mSceneMgr.DestroyEntity(sphereNamePrefix + "_SphereEntity_" + pluginName);
+            OgreWindow.Instance.mSceneMgr.DestroySceneNode(sphereNamePrefix + "_SphereSceneNode_" + pluginName);
+            OgreWindow.Instance.unpause();
+        }
         public delegate void pluginListChangedHandler(string[] plugins);
         public event pluginListChangedHandler onListChanged;
         private void listChanged(string[] plugins)
@@ -134,7 +144,6 @@ namespace ExtraMegaBlob.Client
             ClientClasses.onLogMessage += new LogDelegate(ClientClasses_onLogMessage);
             sphereNamePrefix = ran.Next(int.MaxValue).ToString();
         }
-
         void ClientClasses_onLogMessage(string msg)
         {
             log("[ClientClasses] " + msg);

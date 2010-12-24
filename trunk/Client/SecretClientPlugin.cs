@@ -120,26 +120,7 @@ namespace ExtraMegaBlob.Client
         SceneNode sphereNode;
         Entity sphereEntity;
 
-        public void setSphereOpacity(float val)
-        {
-            for (uint x = 0; x < sphereEntity.NumSubEntities; x++)
-            {
-                Mogre.MaterialPtr mat = sphereEntity.GetSubEntity(x).GetMaterial();
 
-                Technique t = mat.GetTechnique(0); // we are only bothering the fade with the first technique.
-
-                // iterate through passes and textureUnitStates, setting their opacity.
-                for (ushort p = 0; p < t.NumPasses; p++)
-                {
-                    t.GetPass(p).SetSceneBlending(Mogre.SceneBlendType.SBT_TRANSPARENT_ALPHA);
-                    for (ushort s = 0; s < t.GetPass(p).NumTextureUnitStates; s++)
-                    {
-                        t.GetPass(p).GetTextureUnitState(s).SetAlphaOperation(Mogre.LayerBlendOperationEx.LBX_MODULATE, Mogre.LayerBlendSource.LBS_MANUAL, Mogre.LayerBlendSource.LBS_TEXTURE, val);
-                    }
-                }
-                mat.Dispose();
-            }
-        }
 
         public override ExtraMegaBlob.References.Vector3 Location()
         {
@@ -254,15 +235,6 @@ namespace ExtraMegaBlob.Client
 
                 ManualObject asdf = OgreWindow.Instance.mSceneMgr.CreateManualObject();
 
-                //string sphereName = "MySphere_" + ran.Next(int.MaxValue).ToString();
-                //PrimitiveGenerators.CreateSphere(sphereName, this.Radius(), 64, 64);
-                //sphereEntity = OgreWindow.Instance.mSceneMgr.CreateEntity("SphereEntity", sphereName);
-                //sphereNode = OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode();
-                //sphereEntity.SetMaterialName("Examples/Rockwall");
-                //sphereNode.AttachObject(sphereEntity);
-                //sphereEntity.CastShadows = true;
-                //sphereNode.Position = this.Location().toMogre;
-                //setSphereOpacity(.1f);
             }
         }
         public override void shutdown()

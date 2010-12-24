@@ -46,40 +46,68 @@ namespace ExtraMegaBlob.Server
         }
         private void watcher_Deleted(object sender, FileSystemEventArgs e)
         {
-            string pathRel = e.FullPath.Replace(path_cache, "");
-            if (Helpers.isPluginFile(pathRel) && Helpers.isServerPlugin(pathRel))
-                _pluginDeleted(pathRel);
-            md5table.Remove(pathRel);
-            fileDeleteFromClient(pathRel, "");
+            try
+            {
+                string pathRel = e.FullPath.Replace(path_cache, "");
+                if (Helpers.isPluginFile(pathRel) && Helpers.isServerPlugin(pathRel))
+                    _pluginDeleted(pathRel);
+                md5table.Remove(pathRel);
+                fileDeleteFromClient(pathRel, "");
+            }
+            catch (Exception ex)
+            {
+                log(ex.ToString());
+            }
         }
         private void watcher_Renamed(object sender, RenamedEventArgs e)
         {
-            string pathRelOld = e.OldFullPath.Replace(path_cache, "");
-            string pathRelNew = e.FullPath.Replace(path_cache, "");
-            string md5 = (string)md5table[pathRelOld];
-            if (Helpers.isPluginFile(pathRelOld) && Helpers.isServerPlugin(pathRelOld))
-                _pluginDeleted(pathRelOld);
-            if (Helpers.isPluginFile(pathRelNew) && Helpers.isServerPlugin(pathRelNew))
-                _pluginAdded(pathRelNew);
-            md5table.Remove(pathRelOld);
-            md5table.Add(pathRelNew, md5);
-            fileRenameFromClient("", pathRelOld, pathRelNew);
+            try
+            {
+                string pathRelOld = e.OldFullPath.Replace(path_cache, "");
+                string pathRelNew = e.FullPath.Replace(path_cache, "");
+                string md5 = (string)md5table[pathRelOld];
+                if (Helpers.isPluginFile(pathRelOld) && Helpers.isServerPlugin(pathRelOld))
+                    _pluginDeleted(pathRelOld);
+                if (Helpers.isPluginFile(pathRelNew) && Helpers.isServerPlugin(pathRelNew))
+                    _pluginAdded(pathRelNew);
+                md5table.Remove(pathRelOld);
+                md5table.Add(pathRelNew, md5);
+                fileRenameFromClient("", pathRelOld, pathRelNew);
+            }
+            catch (Exception ex)
+            {
+                log(ex.ToString());
+            }
         }
         private void watcher_Created(object sender, FileSystemEventArgs e)
         {
-            string pathRel = e.FullPath.Replace(path_cache, "");
-            string md5 = Encryption.md5_file(e.FullPath);
-            if (Helpers.isPluginFile(pathRel) && Helpers.isServerPlugin(pathRel))
-                _pluginAdded(pathRel);
-            md5table[pathRel] = md5;
-            fileSendToClient(pathRel, "");
+            try
+            {
+                string pathRel = e.FullPath.Replace(path_cache, "");
+                string md5 = Encryption.md5_file(e.FullPath);
+                if (Helpers.isPluginFile(pathRel) && Helpers.isServerPlugin(pathRel))
+                    _pluginAdded(pathRel);
+                md5table[pathRel] = md5;
+                fileSendToClient(pathRel, "");
+            }
+            catch (Exception ex)
+            {
+                log(ex.ToString());
+            }
         }
         private void watcher_Changed(object sender, FileSystemEventArgs e)
         {
-            if (!File.Exists(e.FullPath)) return;
-            string pathRel = e.FullPath.Replace(path_cache, "");
-            if (!watcherChangedQueue.Contains(pathRel))
-                watcherChangedQueue.Add(pathRel);
+            try
+            {
+                if (!File.Exists(e.FullPath)) return;
+                string pathRel = e.FullPath.Replace(path_cache, "");
+                if (!watcherChangedQueue.Contains(pathRel))
+                    watcherChangedQueue.Add(pathRel);
+            }
+            catch (Exception ex)
+            {
+                log(ex.ToString());
+            }
         }
         private void processWatcherChangedQueue()
         {

@@ -18,7 +18,7 @@ namespace ExtraMegaBlob
         }
         public override ExtraMegaBlob.References.Vector3 Location()
         {
-            return new ExtraMegaBlob.References.Vector3(43, 0, 15);
+            return new ExtraMegaBlob.References.Vector3(163, 0, 15);
         }
         public override float Radius()
         {
@@ -30,11 +30,11 @@ namespace ExtraMegaBlob
         }
         public override string[] AllowedInputNames()
         {
-            return new string[] {};
+            return new string[] { };
         }
         public override string[] AllowedOutputNames()
         {
-            return new string[] {};
+            return new string[] { };
         }
         public override void inbox(ExtraMegaBlob.References.Event ev)
         {
@@ -48,6 +48,7 @@ namespace ExtraMegaBlob
         private ArrayList selectedNodes = new ArrayList();
         private void renderBox_MouseClick(object sender, MouseEventArgs e)
         {
+            if (e.Button != MouseButtons.Left) return; 
             foreach (MovableObject selectedNode in selectedNodes)
             {
                 try
@@ -65,15 +66,32 @@ namespace ExtraMegaBlob
             Ray ray = OgreWindow.Instance.mCamera.GetCameraToViewportRay(scrx, scry);
             RaySceneQuery query = OgreWindow.Instance.mSceneMgr.CreateRayQuery(ray);
             RaySceneQueryResult results = query.Execute();
+            float nearest = 100000000f; //100 mill
+            int nearestIndex = -1;
 
-            //chat(results.Count.ToString());
-            foreach (RaySceneQueryResultEntry entry in results)
+
+            for (int i = 0; i < results.Count; i++)
             {
+                RaySceneQueryResultEntry entry = results[i];
                 if (entry.movable.Name == "MainCamera") continue;
-                //chat(entry.movable.Name);
-                entry.movable.ParentSceneNode.ShowBoundingBox = true;
-                selectedNodes.Add(entry.movable);
+                if (entry.movable.Name.IndexOf("SphereEntity") > -1) continue;
+                if (entry.distance < nearest)
+                {
+                    nearest = entry.distance;
+                    nearestIndex = i;
+                }
             }
+            if (nearestIndex > -1)
+            {
+                RaySceneQueryResultEntry entry = results[nearestIndex];
+                selectSceneNode(entry.movable);
+            }
+        }
+        private void selectSceneNode(MovableObject moveableObject)
+        {
+            chat(moveableObject.Name);
+            moveableObject.ParentSceneNode.ShowBoundingBox = true;
+            selectedNodes.Add(moveableObject);
         }
     }
 }

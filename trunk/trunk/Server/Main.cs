@@ -8,11 +8,19 @@ namespace ExtraMegaBlob.Server
     {
         static void Main(string[] args)
         {
-            Server s = new Server();
-            s.onLogMessage += new Server.LogDelegate(s_onLogMessage);
-            //new Thread(new ThreadStart(s.mainLoop)).Start();
-            s.init();
-            s.mainLoop();
+            try
+            {
+                Server s = new Server();
+                s.onLogMessage += new Server.LogDelegate(s_onLogMessage);
+                //new Thread(new ThreadStart(s.mainLoop)).Start();
+                s.init();
+                s.mainLoop();
+            }
+            catch (Exception ex)
+            {
+                log(ex.ToString());
+                Console.ReadKey();
+            }
         }
         static void s_onLogMessage(string msg)
         {

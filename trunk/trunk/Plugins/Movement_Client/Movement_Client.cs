@@ -1,5 +1,7 @@
 ﻿using MogreFramework;
 using MOIS;
+using ExtraMegaBlob.References;
+using System;
 namespace ExtraMegaBlob
 {
     public class plugin : ExtraMegaBlob.References.ClientPlugin
@@ -8,6 +10,8 @@ namespace ExtraMegaBlob
         {
             log("starting up");
             OgreWindow.g_m.MouseMoved += new MouseListener.MouseMovedHandler(g_m_MouseMoved);
+            middlemousetimer.reset();
+            middlemousetimer.start();
         }
         public override void shutdown()
         {
@@ -15,7 +19,7 @@ namespace ExtraMegaBlob
         }
         public override ExtraMegaBlob.References.Vector3 Location()
         {
-            return new ExtraMegaBlob.References.Vector3(43, 0, 15);
+            return new ExtraMegaBlob.References.Vector3(-454.8301f, 9.800894f, 322.5049f);
         }
         public override float Radius()
         {
@@ -36,10 +40,21 @@ namespace ExtraMegaBlob
         public override void inbox(ExtraMegaBlob.References.Event ev)
         {
         }
+
+        private timer middlemousetimer = new timer(mmbClutch);
         public override void updateHook()
         {
             try
             {
+
+
+                if (middlemousetimer.elapsed)
+                {
+                    middleMouseState = middleMouseStates.idle;
+                }
+
+
+
                 if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_W))
                 {
                     if (MoveScale_Camera_forwardback > -speedcap_forwardback)
@@ -86,6 +101,30 @@ namespace ExtraMegaBlob
                 {
                     MoveScale_Camera_leftright = 0f;
                 }
+
+                if (middleMouseState == middleMouseStates.scrolldown)
+                {
+                    if (MoveScale_Camera_updown > -speedcap_updown)
+                        MoveScale_Camera_updown -= incr_updown;
+                }
+                else if (middleMouseState == middleMouseStates.scrollup)
+                {
+                    if (MoveScale_Camera_updown < speedcap_updown)
+                        MoveScale_Camera_updown += incr_updown;
+                }
+                else if (MoveScale_Camera_updown != 0f)
+                {
+                    if (MoveScale_Camera_updown > 0f)
+                        MoveScale_Camera_updown -= incr_updown;
+                    else
+                        MoveScale_Camera_updown += incr_updown;
+                    if (MoveScale_Camera_updown < brakes_updown && MoveScale_Camera_updown > -brakes_updown)
+                        MoveScale_Camera_updown = 0f;
+                }
+                else
+                {
+                    MoveScale_Camera_updown = 0f;
+                }
             }
             catch { OgreWindow.Instance.log("couldn't wire up camera input"); }
             #region gui updates
@@ -97,20 +136,28 @@ namespace ExtraMegaBlob
             OgreWindow.Instance.updateCoords(OgreWindow.UI_ELEMENT.label3, "Z: " + pos.z.ToString("N"));
             OgreWindow.Instance.updateCoords(OgreWindow.UI_ELEMENT.label4, "S1: " + MoveScale_Camera_forwardback.ToString("N") + " S2: " + MoveScale_Camera_leftright.ToString("N"));
 
-            OgreWindow.Instance.updateCoords(OgreWindow.UI_ELEMENT.textBox1, string.Format("x:{0} y:{1} z:{2}", pos.x, pos.y, pos.z));
+            OgreWindow.Instance.updateCoords(OgreWindow.UI_ELEMENT.textBox1, string.Format("{0}f, {1}f, {2}f", pos.x, pos.y, pos.z));
 
             #endregion
         }
+        private enum middleMouseStates
+        {
+            scrollup,
+            scrolldown,
+            idle
+        }
+        private middleMouseStates middleMouseState = middleMouseStates.idle;
         public override void frameHook(float interpolation)
         {
             TranslateVector_Camera.z += MoveScale_Camera_forwardback * (interpolation + 1);
             TranslateVector_Camera.x += MoveScale_Camera_leftright * (interpolation + 1);
-            if (MoveScale_Camera_updown != 0)
-            {
-                float s = MoveScale_Camera_updown * (interpolation + 1);
-                TranslateVector_Camera.y += s;
-                MoveScale_Camera_updown -= s;
-            }
+            TranslateVector_Camera.y += MoveScale_Camera_updown * (interpolation + 1);
+            //if (MoveScale_Camera_updown != 0)
+            //{
+            //    float s = MoveScale_Camera_updown * (interpolation + 1);
+            //    TranslateVector_Camera.y += s;
+            //    MoveScale_Camera_updown -= s;
+            //}
             try
             {
                 OgreWindow.Instance.cameraNode.Translate(OgreWindow.Instance.cameraYawNode.Orientation * OgreWindow.Instance.cameraPitchNode.Orientation * TranslateVector_Camera);
@@ -127,10 +174,14 @@ namespace ExtraMegaBlob
         private Mogre.Vector3 TranslateVector_Camera = new Mogre.Vector3();
         private const float speedcap_forwardback = .15f;
         private const float speedcap_leftright = .15f;
+        private const float speedcap_updown = .5f;
         private const float incr_forwardback = .0005f;
         private const float incr_leftright = .0005f;
+        private const float incr_updown = .0001f;
+        private const float brakes_updown = incr_updown * 2;
         private const float brakes_forwardback = incr_forwardback * 2;
         private const float brakes_leftright = incr_leftright * 2;
+        private static TimeSpan mmbClutch = new TimeSpan(0, 0, 0, 0, 100);
         private bool g_m_MouseMoved(MouseEvent arg)
         {
             MouseState_NativePtr s = arg.state;
@@ -140,11 +191,24 @@ namespace ExtraMegaBlob
                 OgreWindow.Instance.cameraRollNode.Pitch(-s.Y.rel * RotateScale_Camera);
             }
             Mogre.Vector3 oldpos = OgreWindow.Instance.cameraNode.Position;
-            float mouseZ = (float)arg.state.Z.rel * .1f;
-            if (0 != mouseZ)
+            float mouseZ = (float)OgreWindow.g_m.MouseState.Z.rel * .1f;
+            //chat(mouseZ.ToString());
+            if (mouseZ > 0)
             {
-                MoveScale_Camera_updown -= mouseZ;
+                middleMouseState = middleMouseStates.scrollup;
+                middlemousetimer.reset();
+                middlemousetimer.start();
             }
+            else if (mouseZ < 0)
+            {
+                middleMouseState = middleMouseStates.scrolldown;
+                middlemousetimer.reset();
+                middlemousetimer.start();
+            }
+
+
+
+
             return true;
         }
     }

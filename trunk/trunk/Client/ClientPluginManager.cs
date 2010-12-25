@@ -105,18 +105,25 @@ namespace ExtraMegaBlob.Client
 
         private void delPluginSphere(string pluginName)
         {
-            OgreWindow.Instance.pause();
-            MaterialPtr ptrMat = MaterialManager.Singleton.GetByName(sphereNamePrefix + "_SphereMaterial_" + pluginName);
-            ptrMat.Unload();
-            MaterialManager.Singleton.Remove(ptrMat.Handle);
-            ptrMat.Dispose();
-            MeshPtr ptrMesh = MeshManager.Singleton.GetByName(sphereNamePrefix + "_SphereMesh_" + pluginName);
-            ptrMesh.Unload();
-            MeshManager.Singleton.Remove(ptrMesh.Handle);
-            ptrMesh.Dispose();
-            OgreWindow.Instance.mSceneMgr.DestroyEntity(sphereNamePrefix + "_SphereEntity_" + pluginName);
-            OgreWindow.Instance.mSceneMgr.DestroySceneNode(sphereNamePrefix + "_SphereSceneNode_" + pluginName);
-            OgreWindow.Instance.unpause();
+            try
+            {
+                OgreWindow.Instance.pause();
+                MaterialPtr ptrMat = MaterialManager.Singleton.GetByName(sphereNamePrefix + "_SphereMaterial_" + pluginName);
+                ptrMat.Unload();
+                MaterialManager.Singleton.Remove(ptrMat.Handle);
+                ptrMat.Dispose();
+                MeshPtr ptrMesh = MeshManager.Singleton.GetByName(sphereNamePrefix + "_SphereMesh_" + pluginName);
+                ptrMesh.Unload();
+                MeshManager.Singleton.Remove(ptrMesh.Handle);
+                ptrMesh.Dispose();
+                OgreWindow.Instance.mSceneMgr.DestroyEntity(sphereNamePrefix + "_SphereEntity_" + pluginName);
+                OgreWindow.Instance.mSceneMgr.DestroySceneNode(sphereNamePrefix + "_SphereSceneNode_" + pluginName);
+                OgreWindow.Instance.unpause();
+            }
+            catch (Exception ex)
+            {
+                log("error deleting plugin sphere: " + ex.ToString());
+            }
         }
         public delegate void pluginListChangedHandler(string[] plugins);
         public event pluginListChangedHandler onListChanged;

@@ -18,6 +18,8 @@ namespace ExtraMegaBlob.References
                 //t.SetSceneBlending(SceneBlendFactor.SBF_DEST_ALPHA, SceneBlendFactor.SBF_ONE_MINUS_DEST_COLOUR); //sweet color invert effect
                 t.SetSceneBlending(SceneBlendFactor.SBF_DEST_ALPHA, SceneBlendFactor.SBF_SOURCE_ALPHA); //works
                 t.SetDepthWriteEnabled(false);
+                t.SetSelfIllumination(ColourValue.Green);
+                t.SetAmbient(ColourValue.Green);
                 // iterate through passes and textureUnitStates, setting their opacity.
                 for (ushort p = 0; p < t.NumPasses; p++)
                 {

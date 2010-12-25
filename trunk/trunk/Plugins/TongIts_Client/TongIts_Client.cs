@@ -17,7 +17,8 @@ namespace ExtraMegaBlob
             {
                 Hashtable h = new Hashtable();
                 #region materials
-                h["wood"] = "\\TongIts\\woodblurred.jpg";
+                h["Material/TEXFACE/woodblurred.jpg"] = "\\TongIts\\woodblurred.jpg";
+                h["Material/TEXFACE/BumpyMetal.jpg"] = "\\TongIts\\BumpyMetal.jpg";
                 h["clouds"] = "\\clouds.jpg";
                 h["dirt"] = "\\terr_dirt-grass.jpg";
                 h["noise"] = "\\normalNoiseColor.png";
@@ -96,28 +97,37 @@ namespace ExtraMegaBlob
         {
             testLight = OgreWindow.Instance.mSceneMgr.CreateLight("testLight");
             testLight.Type = Light.LightTypes.LT_POINT;
-            testLight.Position = new Mogre.Vector3(-117.9847f, 120f, 234.2695f);
+            testLight.Position = new Mogre.Vector3(-117.9847f, 120f, 234.2695f) + Location().toMogre;
             testLight.DiffuseColour = ColourValue.White;
             testLight.SpecularColour = ColourValue.White;
-            try
-            {
-                //OgreWindow.Instance.mSceneMgr.SetSkyBox(true, "cat1", 5000, false);
-                //OgreWindow.Instance.mSceneMgr.SetSkyPlane(true, new Plane(Mogre.Vector3.UNIT_Y, 10), "cat1");
-               // OgreWindow.Instance.mSceneMgr.SetSkyDome(true, "clouds");
 
-                OgreWindow.Instance.mSceneMgr.SetSkyDome(true, "clouds", 5, 8);
+            testLight2 = OgreWindow.Instance.mSceneMgr.CreateLight("testLight2");
+            testLight2.Type = Light.LightTypes.LT_POINT;
+            testLight2.Position = new Mogre.Vector3(88.00402f, 30.67856f, -107.2294f) + Location().toMogre;
+            testLight2.DiffuseColour = ColourValue.White;
+            testLight2.SpecularColour = ColourValue.White;
 
-               // OgreWindow.Instance.mSceneMgr._queueSkiesForRendering(OgreWindow.Instance.mCamera);
 
-                chat(OgreWindow.Instance.mSceneMgr.IsSkyDomeEnabled.ToString());
-               // OgreWindow.Instance.mCamera.FarClipDistance = 500;
 
-                //Plane plane;
-                //plane.d = 1000;
-                //plane.normal = Mogre.Vector3.NEGATIVE_UNIT_Y;
-                //OgreWindow.Instance.mSceneMgr.SetSkyPlane(true, plane, "clouds", 1500, 75);
-            }
-            catch (Exception ex) { log(ex.Message); }
+            //try
+            //{
+            //    //OgreWindow.Instance.mSceneMgr.SetSkyBox(true, "cat1", 5000, false);
+            //    //OgreWindow.Instance.mSceneMgr.SetSkyPlane(true, new Plane(Mogre.Vector3.UNIT_Y, 10), "cat1");
+            //   // OgreWindow.Instance.mSceneMgr.SetSkyDome(true, "clouds");
+
+            //    OgreWindow.Instance.mSceneMgr.SetSkyDome(true, "clouds", 5, 8);
+
+            //   // OgreWindow.Instance.mSceneMgr._queueSkiesForRendering(OgreWindow.Instance.mCamera);
+
+            //    chat(OgreWindow.Instance.mSceneMgr.IsSkyDomeEnabled.ToString());
+            //   // OgreWindow.Instance.mCamera.FarClipDistance = 500;
+
+            //    //Plane plane;
+            //    //plane.d = 1000;
+            //    //plane.normal = Mogre.Vector3.NEGATIVE_UNIT_Y;
+            //    //OgreWindow.Instance.mSceneMgr.SetSkyPlane(true, plane, "clouds", 1500, 75);
+            //}
+            //catch (Exception ex) { log(ex.Message); }
         }
         private Entity ent_ground = null;
         private SceneNode sn_ground = null;
@@ -127,30 +137,60 @@ namespace ExtraMegaBlob
             makeMaterials();
             putLights();
 
-            MeshManager.Singleton.CreatePlane("ground", ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME, new Plane(Mogre.Vector3.UNIT_Y, 0), 1500, 1500, 20, 20, true, 1, 5, 5, Mogre.Vector3.UNIT_Z);
+            MeshManager.Singleton.CreatePlane("ground",
+                ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME,
+                new Plane(Mogre.Vector3.UNIT_Y, 0),
+                1500, 1500, 20, 20, true, 1, 5, 5, Mogre.Vector3.UNIT_Z);
             // Create a ground plane
             ent_ground = OgreWindow.Instance.mSceneMgr.CreateEntity("GroundEntity", "ground");
             ent_ground.CastShadows = false;
             ent_ground.SetMaterialName("dirt");
             sn_ground = OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode();
             sn_ground.AttachObject(ent_ground);
-            sn_ground.Position -= new Mogre.Vector3(0f, 10f, 0f);
+            sn_ground.Position -= new Mogre.Vector3(0f, 0f, 0f) + Location().toMogre;
 
 
-            MeshManager.Singleton.CreatePlane("spinnycard", "General", new Plane(Mogre.Vector3.UNIT_Y, 0), 200, 250, 1, 1, true, 1, 1, 1, Mogre.Vector3.UNIT_X);
+            MeshManager.Singleton.CreatePlane("spinnycard", "General", new Plane(Mogre.Vector3.UNIT_Y, 0), 200f, 250f, 1, 1, true, 1, 1, 1, Mogre.Vector3.UNIT_X);
             ent_spinnycard = OgreWindow.Instance.mSceneMgr.CreateEntity("TestPlaneEntity", "spinnycard");
             ent_spinnycard.CastShadows = true;
             ent_spinnycard.SetMaterialName("heart 6");
             sn_spinnycard = OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode();
             sn_spinnycard.AttachObject(ent_spinnycard);
-            sn_spinnycard.Position += new Mogre.Vector3(0f, 10f, 0f);
-            sn_spinnycard.Roll(new Radian(new Degree(90f)));
-            sn_spinnycard.Scale(.05f, .05f, .05f);
+            sn_spinnycard.Position += new Mogre.Vector3(0f, 2f, 0f) + Location().toMogre;
+            //sn_spinnycard.Roll(new Radian(new Degree(90f)));
+            //sn_spinnycard.Pitch(new Radian(new Degree(90f)));
+            sn_spinnycard.Scale(.001f, .001f, .001f);
 
             ent_table = OgreWindow.Instance.mSceneMgr.CreateEntity("tongitstable", "\\TongIts\\tongitstable.mesh");
-            ent_table.SetMaterialName("wood");
+            //ent_table.SetMaterialName("wood");
             sn_table = OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode();
             sn_table.AttachObject(ent_table);
+            sn_table.Position = new Mogre.Vector3(0f, 1f, 0f) + Location().toMogre;
+            sn_table.Scale(new Mogre.Vector3(2f));
+
+
+            //mo_tetra = PrimitiveGenerators.CreateTetrahedron(tetraName, new Mogre.Vector3(1f, 2f, 1f) + Location().toMogre, 1f, "Material/TEXFACE/woodblurred.jpg");
+            //mo_tetra.SetMaterialName(0, "clouds");
+            //mo_tetra.SetDebugDisplayEnabled(true);
+            //OgreWindow.Instance.mSceneMgr.RootSceneNode.AttachObject(mo_tetra);
+
+            //PrimitiveGenerators.CreateTetrahedron2(tetraName);
+            //ent_tetra = OgreWindow.Instance.mSceneMgr.CreateEntity(tetraName+"ent", tetraName);
+            //sn_tetra = OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode();
+            //sn_tetra.AttachObject(ent_tetra);
+            //sn_tetra.ShowBoundingBox = true;
+            //sn_tetra.Position = new Mogre.Vector3(0f, 6f, 0f) + Location().toMogre;
+            //sn_tetra.SetDebugDisplayEnabled(true);
+            //ent_tetra.SetMaterialName("Material/TEXFACE/BumpyMetal.jpg");
+            //Helpers.setEntityOpacity(ent_tetra, .3f);
+
+
+            sn_tetra = PrimitiveGenerators.CreateTestTetrahedron(OgreWindow.Instance.mSceneMgr, "asdfadsf", 10f,
+                new Mogre.Vector3(0f, 6f, 0f) + Location().toMogre,
+                "Material/TEXFACE/BumpyMetal.jpg");
+            sn_tetra.ShowBoundingBox = true;
+
+            //OgreWindow.Instance.mCamera.Position = new Mogre.Vector3(-15.37969f, 0f, -3.784838f);
 
             //ent_cat = OgreWindow.Instance.mSceneMgr.CreateEntity("cerealbox1Entity", "\\cat.mesh");
             //ent_cat.SetMaterialName("cat1");
@@ -158,22 +198,38 @@ namespace ExtraMegaBlob
             //sn_cat.AttachObject(ent_cat);
             ready = true;
         }
+        SceneNode sn_tetra;
+        Entity ent_tetra;
+        String tetraName = "tetra";
+        //ManualObject mo_tetra = null;
         public override void shutdown()
         {
             log("shutting down!");
+            // remove tetrahedrons
+            //if (OgreWindow.Instance.mSceneMgr.HasManualObject(tetraName))
+            //    OgreWindow.Instance.mSceneMgr.GetManualObject(tetraName).Clear();
+
+            //OgreWindow.Instance.mSceneMgr.DestroyManualObject(mo_tetra); 
+            OgreWindow.Instance.mSceneMgr.DestroySceneNode(sn_tetra);
+            OgreWindow.Instance.mSceneMgr.DestroySceneNode(sn_table);
+            OgreWindow.Instance.mSceneMgr.DestroySceneNode(sn_spinnycard);
+            OgreWindow.Instance.mSceneMgr.DestroySceneNode(sn_ground);
+            OgreWindow.Instance.mSceneMgr.DestroyLight(testLight2);
             OgreWindow.Instance.mSceneMgr.DestroyLight(testLight);
+            //OgreWindow.Instance.mSceneMgr.DestroyEntity(ent_tetra);
             OgreWindow.Instance.mSceneMgr.DestroyEntity(ent_table);
             OgreWindow.Instance.mSceneMgr.DestroyEntity(ent_ground);
             //OgreWindow.Instance.mSceneMgr.DestroyEntity(ent_cat);
             OgreWindow.Instance.mSceneMgr.DestroyEntity(ent_spinnycard);
             //OgreWindow.Instance.mSceneMgr.DestroySceneNode(sn_cat);
-            OgreWindow.Instance.mSceneMgr.DestroySceneNode(sn_table);
-            OgreWindow.Instance.mSceneMgr.DestroySceneNode(sn_spinnycard);
-            OgreWindow.Instance.mSceneMgr.DestroySceneNode(sn_ground);
+
+            MeshManager.Singleton.Remove("ground");
+
         }
         public override ExtraMegaBlob.References.Vector3 Location()
         {
-            return new ExtraMegaBlob.References.Vector3(0, 10, 15);
+            //return new ExtraMegaBlob.References.Vector3(0f, -168.6846f, -1101.067f);
+            return new ExtraMegaBlob.References.Vector3(0f, 0f, 0f);
         }
         public override float Radius()
         {
@@ -241,6 +297,7 @@ namespace ExtraMegaBlob
 
 
         private Light testLight;
+        private Light testLight2;
         private SceneNode sn_spinnycard;
         private Entity ent_spinnycard;
         ExtraMegaBlob.References.timer t = new ExtraMegaBlob.References.timer(new TimeSpan(0, 0, 0, 0, 1000));

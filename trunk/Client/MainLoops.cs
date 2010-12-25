@@ -53,9 +53,12 @@ namespace ExtraMegaBlob.Client
                 cache.meshAdded += new CacheManager.meshAddedDelegate(cache_meshAdded);
                 cache.meshDeleted += new CacheManager.meshDeletedDelegate(cache_meshDeleted);
 
+                //LogManager lm = new LogManager();
 
+                
                 OgreWindow.Instance.SceneCreating += new OgreWindow.SceneEventHandler(SceneCreating);
                 OgreWindow.Instance.InitializeOgre();
+                LogManager.Singleton.DefaultLog.MessageLogged += new LogListener.MessageLoggedHandler(DefaultLog_MessageLogged);
                 OgreWindow.Instance.mRoot.FrameStarted += new FrameListener.FrameStartedHandler(Root_FrameStarted);
                 OgreWindow.Instance.Text = Program.header;
                 OgreWindow.Instance.onSend += new OgreWindow.sendDelegate(Instance_onSend);
@@ -113,6 +116,11 @@ namespace ExtraMegaBlob.Client
                                     "An Ogre exception has occurred!");
             }
             quit();
+        }
+        void DefaultLog_MessageLogged(string message, LogMessageLevel lml, bool maskDebug, string logName)
+        {
+            
+            log(lml.ToString()+": "+message);
         }
         private bool Root_FrameStarted(FrameEvent evt)
         {

@@ -57,7 +57,7 @@ namespace ExtraMegaBlob
                 }
                 catch (Exception ex)
                 {
-                    log(ex.ToString());
+                    //log(ex.ToString());
                 }
             }
             selectedNodes = new ArrayList();

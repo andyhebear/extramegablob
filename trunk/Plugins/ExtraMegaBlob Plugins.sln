@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Movement_Client", "Movement
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MousePick_Client", "MousePick_Client\MousePick_Client.csproj", "{2E5AE8EC-45C9-44C2-9366-A8DC7DC5B5AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoCapture_Client", "VideoCapture_Client\VideoCapture_Client.csproj", "{D4F6646B-E5C1-4DF7-88E0-8B0665F22172}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,18 @@ Global
 		{2E5AE8EC-45C9-44C2-9366-A8DC7DC5B5AD}.Release|x64.ActiveCfg = Release|x86
 		{2E5AE8EC-45C9-44C2-9366-A8DC7DC5B5AD}.Release|x86.ActiveCfg = Release|x86
 		{2E5AE8EC-45C9-44C2-9366-A8DC7DC5B5AD}.Release|x86.Build.0 = Release|x86
+		{D4F6646B-E5C1-4DF7-88E0-8B0665F22172}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{D4F6646B-E5C1-4DF7-88E0-8B0665F22172}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{D4F6646B-E5C1-4DF7-88E0-8B0665F22172}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{D4F6646B-E5C1-4DF7-88E0-8B0665F22172}.Debug|x64.ActiveCfg = Debug|x86
+		{D4F6646B-E5C1-4DF7-88E0-8B0665F22172}.Debug|x86.ActiveCfg = Debug|x86
+		{D4F6646B-E5C1-4DF7-88E0-8B0665F22172}.Debug|x86.Build.0 = Debug|x86
+		{D4F6646B-E5C1-4DF7-88E0-8B0665F22172}.Release|Any CPU.ActiveCfg = Release|x86
+		{D4F6646B-E5C1-4DF7-88E0-8B0665F22172}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{D4F6646B-E5C1-4DF7-88E0-8B0665F22172}.Release|Mixed Platforms.Build.0 = Release|x86
+		{D4F6646B-E5C1-4DF7-88E0-8B0665F22172}.Release|x64.ActiveCfg = Release|x86
+		{D4F6646B-E5C1-4DF7-88E0-8B0665F22172}.Release|x86.ActiveCfg = Release|x86
+		{D4F6646B-E5C1-4DF7-88E0-8B0665F22172}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

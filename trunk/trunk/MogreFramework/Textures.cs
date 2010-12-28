@@ -68,7 +68,7 @@ namespace MogreFramework
             //TextureUnitState tState2 = mat3.GetTechnique(0).GetPass(0).CreateTextureUnitState("test2");
             //ent.SetMaterialName("MATERIAL_CUSTOM_DYN");
         }
-        public int Add(System.Object o)
+        public int Add(TexturePtr o)
         {
             lock (allTextures)
             {

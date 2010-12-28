@@ -78,7 +78,8 @@ namespace ExtraMegaBlob.Client
                 pluginNameLookup[pathRel] = plugin.Name();
                 if (addClientPlugin(plugin))
                 {
-                    addPluginSphere(plugin.Name());
+                    try { addPluginSphere(plugin.Name()); }
+                    catch (Exception ex) { log(ex.ToString()); }
                 }
 
                 listChanged(this.allPlugins);

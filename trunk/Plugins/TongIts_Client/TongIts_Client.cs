@@ -153,7 +153,12 @@ namespace ExtraMegaBlob
             MeshManager.Singleton.CreatePlane("spinnycard", "General", new Plane(Mogre.Vector3.UNIT_Y, 0), 200f, 250f, 1, 1, true, 1, 1, 1, Mogre.Vector3.UNIT_X);
             ent_spinnycard = OgreWindow.Instance.mSceneMgr.CreateEntity("TestPlaneEntity", "spinnycard");
             ent_spinnycard.CastShadows = true;
-            ent_spinnycard.SetMaterialName("heart 6");
+
+            MaterialPtr mat2 = MaterialManager.Singleton.GetByName("heart 6");
+            mat2.SetCullingMode(CullingMode.CULL_NONE);
+            ent_spinnycard.SetMaterial(mat2);
+
+            //ent_spinnycard.SetMaterialName("heart 6");
             sn_spinnycard = OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode();
             sn_spinnycard.AttachObject(ent_spinnycard);
             sn_spinnycard.Position += new Mogre.Vector3(0f, 2f, 0f) + Location().toMogre;
@@ -185,13 +190,46 @@ namespace ExtraMegaBlob
             //Helpers.setEntityOpacity(ent_tetra, .3f);
 
 
-            sn_tetra = PrimitiveGenerators.CreateTestTetrahedron(OgreWindow.Instance.mSceneMgr, "asdfadsf", 10f,
-                new Mogre.Vector3(0f, 6f, 0f) + Location().toMogre,
-                "Material/TEXFACE/BumpyMetal.jpg");
+            //sn_tetra = PrimitiveGenerators.CreateTestTetrahedron(OgreWindow.Instance.mSceneMgr, "asdfadsf", 10f,
+            //    new Mogre.Vector3(0f, 6f, 0f) + Location().toMogre,
+            //    "Material/TEXFACE/BumpyMetal.jpg");
+            //sn_tetra.ShowBoundingBox = true;
+
+            //MeshPtr ptr = PrimitiveGenerators.CreateTestTetrahedron2(OgreWindow.Instance.mSceneMgr, "asdfasdf", 10f,
+            //        new Mogre.Vector3(0f, 6f, 0f) + Location().toMogre,
+            //    "Material/TEXFACE/BumpyMetal.jpg");
+            //OgreWindow.Instance.meshes.Add(ptr);
+            //ent_tetra = OgreWindow.Instance.mSceneMgr.CreateEntity("ent_tetra", "asdfasdf_mesh");
+            //sn_tetra = OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode();
+            //sn_tetra.AttachObject(ent_tetra);
+            //sn_tetra.ShowBoundingBox = true;
+            //sn_tetra.Position = new Mogre.Vector3(0f, 6f, 0f) + Location().toMogre;
+            ////sn_tetra.SetDebugDisplayEnabled(true);
+            //ent_tetra.SetMaterialName("Material/TEXFACE/BumpyMetal.jpg");
+
+
+
+            MeshPtr mytetra = PrimitiveGenerators.makeTetra("mytetra", "heart 7");
+            //MeshPtr mytetra = MeshManager.Singleton.GetByName("mytetra");
+
+            ent_tetra = OgreWindow.Instance.mSceneMgr.CreateEntity("ent_tetra", "mytetra");
+            //MaterialPtr mat = MaterialManager.Singleton.GetByName("Material/TEXFACE/BumpyMetal.jpg");
+            //mat.SetCullingMode(CullingMode.CULL_NONE);
+            ////mat.SetSelfIllumination(.2f, .2f, .2f); 
+            //ent_tetra.SetMaterial(mat);
+
+
+
+            Helpers.setEntityOpacity(ent_tetra, .5f);
+            sn_tetra = OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode();
+            sn_tetra.AttachObject(ent_tetra);
             sn_tetra.ShowBoundingBox = true;
+            sn_tetra.Position = new Mogre.Vector3(0f, 6f, 0f) + Location().toMogre;
+            //sn_tetra.SetDebugDisplayEnabled(true);
+            
 
-            //OgreWindow.Instance.mCamera.Position = new Mogre.Vector3(-15.37969f, 0f, -3.784838f);
 
+            //ent_tetra.getm
             //ent_cat = OgreWindow.Instance.mSceneMgr.CreateEntity("cerealbox1Entity", "\\cat.mesh");
             //ent_cat.SetMaterialName("cat1");
             //sn_cat = OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode();
@@ -200,7 +238,6 @@ namespace ExtraMegaBlob
         }
         SceneNode sn_tetra;
         Entity ent_tetra;
-        String tetraName = "tetra";
         //ManualObject mo_tetra = null;
         public override void shutdown()
         {
@@ -209,6 +246,8 @@ namespace ExtraMegaBlob
             //if (OgreWindow.Instance.mSceneMgr.HasManualObject(tetraName))
             //    OgreWindow.Instance.mSceneMgr.GetManualObject(tetraName).Clear();
 
+            MeshManager.Singleton.Remove("mytetra");
+
             //OgreWindow.Instance.mSceneMgr.DestroyManualObject(mo_tetra); 
             OgreWindow.Instance.mSceneMgr.DestroySceneNode(sn_tetra);
             OgreWindow.Instance.mSceneMgr.DestroySceneNode(sn_table);
@@ -216,7 +255,7 @@ namespace ExtraMegaBlob
             OgreWindow.Instance.mSceneMgr.DestroySceneNode(sn_ground);
             OgreWindow.Instance.mSceneMgr.DestroyLight(testLight2);
             OgreWindow.Instance.mSceneMgr.DestroyLight(testLight);
-            //OgreWindow.Instance.mSceneMgr.DestroyEntity(ent_tetra);
+            OgreWindow.Instance.mSceneMgr.DestroyEntity(ent_tetra);
             OgreWindow.Instance.mSceneMgr.DestroyEntity(ent_table);
             OgreWindow.Instance.mSceneMgr.DestroyEntity(ent_ground);
             //OgreWindow.Instance.mSceneMgr.DestroyEntity(ent_cat);
@@ -283,7 +322,9 @@ namespace ExtraMegaBlob
                     //}
                 }
                 sn_spinnycard.Pitch(new Radian(new Degree(1f)));
-
+                sn_table.Yaw(new Radian(new Degree(-1f)));
+                this.sn_tetra.Yaw(new Radian(new Degree(-1f)));
+                this.sn_tetra.Pitch(new Radian(new Degree(-1f)));
             }
         }
         timer scaleLimiter = new timer(new TimeSpan(0, 0, 1));

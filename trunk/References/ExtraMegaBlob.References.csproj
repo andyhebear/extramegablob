@@ -144,6 +144,7 @@
     <Compile Include="Math.cs" />
     <Compile Include="Memories.cs" />
     <Compile Include="Memory.cs" />
+    <Compile Include="MeshHelp.cs" />
     <Compile Include="Path.cs" />
     <Compile Include="PrimitiveGenerators.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -105,9 +105,9 @@ namespace ExtraMegaBlob.Client
 
         private void delPluginSphere(string pluginName)
         {
+            OgreWindow.Instance.pause();
             try
             {
-                OgreWindow.Instance.pause();
                 MaterialPtr ptrMat = MaterialManager.Singleton.GetByName(sphereNamePrefix + "_SphereMaterial_" + pluginName);
                 ptrMat.Unload();
                 MaterialManager.Singleton.Remove(ptrMat.Handle);
@@ -118,12 +118,12 @@ namespace ExtraMegaBlob.Client
                 ptrMesh.Dispose();
                 OgreWindow.Instance.mSceneMgr.DestroyEntity(sphereNamePrefix + "_SphereEntity_" + pluginName);
                 OgreWindow.Instance.mSceneMgr.DestroySceneNode(sphereNamePrefix + "_SphereSceneNode_" + pluginName);
-                OgreWindow.Instance.unpause();
             }
             catch (Exception ex)
             {
                 log("error deleting plugin sphere: " + ex.ToString());
             }
+            OgreWindow.Instance.unpause();
         }
         public delegate void pluginListChangedHandler(string[] plugins);
         public event pluginListChangedHandler onListChanged;
@@ -178,8 +178,6 @@ namespace ExtraMegaBlob.Client
         private bool g = false;
         internal void updateHooks()
         {
-            //Thread t = new Thread(new ThreadStart(_updateHooks));
-            //t.Start();
             ClientClasses.UpdateHooks();
         }
         private void _updateHooks()

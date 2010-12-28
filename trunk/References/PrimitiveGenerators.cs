@@ -3,7 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Mogre;
-
+#region disable annoying warnings
+#pragma warning disable 162 //CS0162: Unreachable code detected
+#pragma warning disable 168 //CS0168: The variable 'XYZ' is declared but never used
+#pragma warning disable 169 //CS0169: Field 'XYZ' is never used
+#pragma warning disable 414 //CS0414: 'XYZ' is assigned but its value is never used
+#pragma warning disable 649 //CS0649: Field 'XYZ' is never assigned to, and will always have its default value XX
+#endregion
 namespace ExtraMegaBlob.References
 {
     public class PrimitiveGenerators
@@ -464,6 +470,123 @@ namespace ExtraMegaBlob.References
 
         } // CreateTetrahedron
 
+
+        public static MeshPtr CreateTestTetrahedron2(SceneManager sm, string name, float scale, Mogre.Vector3 position, String materialName)
+        {
+
+            var mo = sm.CreateManualObject(name);
+            mo.CastShadows = false;
+
+            Mogre.Vector3[] c = new Mogre.Vector3[4]; // corners
+
+            // calculate corners of tetrahedron (with point of origin in middle of volume)
+            Single mbot = scale * 0.2f;      // distance middle to bottom
+            Single mtop = scale * 0.62f;     // distance middle to top   
+            Single mf = scale * 0.289f;    // distance middle to front
+            Single mb = scale * 0.577f;    // distance middle to back
+            Single mlr = scale * 0.5f;      // distance middle to left right
+            //               width / hight / depth
+            c[0] = new Mogre.Vector3(-mlr, -mbot, mf);  // left bottom front
+            c[1] = new Mogre.Vector3(mlr, -mbot, mf);  // right bottom front
+            c[2] = new Mogre.Vector3(0, -mbot, -mb);  // (middle) bottom back
+            c[3] = new Mogre.Vector3(0, mtop, 0);  // (middle) top (middle)
+
+            // add position offset for all corners (move tetrahedron)
+            for (Int16 i = 0; i <= 3; i++)
+                c[i] += position;
+
+            // create bottom
+            mo.Begin(materialName, RenderOperation.OperationTypes.OT_TRIANGLE_LIST);
+            var normal = (c[1] - c[0]).CrossProduct(c[1] - c[2]).NormalisedCopy;
+            var normalA = normal;
+            var normalB = normal;
+            var normalC = normal;
+
+
+
+            //this is an attempt to try to make it seem softer.
+            normalA.x += 2f;
+            normalA.y += 0.5f;
+            normalB.y -= 2f;
+            normalB.x -= 0.5f;
+
+            mo.Position(c[0]);
+            mo.Normal(normalA);
+            mo.TextureCoord(0, 0);
+
+            mo.Position(c[1]);
+            mo.Normal(normalB);
+            mo.TextureCoord(0, 1);
+
+            mo.Position(c[2]);
+            mo.Normal(normalC);
+            mo.TextureCoord(1, 1);
+
+            mo.Triangle(0, 1, 2);
+            mo.Triangle(0, 2, 1);
+            mo.End();
+
+            float lineLen = scale / 3;
+
+
+
+            // create right back side
+            mo.Begin(materialName, RenderOperation.OperationTypes.OT_TRIANGLE_LIST);
+            normal = (c[1] - c[2]).CrossProduct(c[1] - c[3]).NormalisedCopy;
+            normalA = normal;
+            normalB = normal;
+            normalC = normal;
+
+            normalA.x += 2f;
+            normalA.y += 0.5f;
+            normalB.y -= 2f;
+            normalB.x -= 0.5f;
+
+            mo.Position(c[1]);
+            mo.Normal(normalA);
+            mo.Position(c[2]);
+            mo.Normal(normalB);
+            mo.Position(c[3]);
+            mo.Normal(normalC);
+            mo.Triangle(0, 1, 2);
+            mo.Triangle(0, 2, 1);
+            mo.End();
+
+
+            // create left back side
+            normal = (c[0] - c[2]).CrossProduct(c[2] - c[3]);
+            mo.Begin(materialName, RenderOperation.OperationTypes.OT_TRIANGLE_LIST);
+            mo.Position(c[3]);
+            mo.Normal(normal);
+            mo.Position(c[2]);
+            mo.Normal(normal);
+            mo.Position(c[0]);
+            mo.Normal(normal);
+            mo.Triangle(0, 1, 2);
+            mo.Triangle(0, 2, 1);
+            mo.End();
+
+
+            // create front side
+            normal = (c[1] - c[3]).CrossProduct(c[0] - c[3]);
+            mo.Begin(materialName, RenderOperation.OperationTypes.OT_TRIANGLE_LIST);
+            mo.Position(c[0]);
+            mo.Normal(normal);
+            mo.Position(c[1]);
+            mo.Normal(normal);
+            mo.Position(c[3]);
+            mo.Normal(normal);
+            mo.Triangle(0, 1, 2);
+            mo.Triangle(0, 2, 1);
+            mo.End();
+
+
+            MeshPtr pMesh = mo.ConvertToMesh(name + "_mesh");
+            sm.DestroyMovableObject(mo);
+            return pMesh;
+        }
+
+
         public static SceneNode CreateTestTetrahedron(SceneManager sm, string name, float scale, Mogre.Vector3 position, String materialName)
         {
 
@@ -492,11 +615,11 @@ namespace ExtraMegaBlob.References
             // create bottom
             mo.Begin(materialName, RenderOperation.OperationTypes.OT_TRIANGLE_LIST);
             var normal = (c[1] - c[0]).CrossProduct(c[1] - c[2]).NormalisedCopy;
-            var normalA =  normal;
-            var normalB =  normal;
-            var normalC =  normal;
+            var normalA = normal;
+            var normalB = normal;
+            var normalC = normal;
 
-           
+
 
             //this is an attempt to try to make it seem softer.
             normalA.x += 2f;
@@ -506,21 +629,21 @@ namespace ExtraMegaBlob.References
 
             mo.Position(c[0]);
             mo.Normal(normalA);
-            mo.TextureCoord(0,0);
+            mo.TextureCoord(0, 0);
 
             mo.Position(c[1]);
             mo.Normal(normalB);
-            mo.TextureCoord(0,1);
+            mo.TextureCoord(0, 1);
 
             mo.Position(c[2]);
             mo.Normal(normalC);
-            mo.TextureCoord(1,1);
+            mo.TextureCoord(1, 1);
 
             mo.Triangle(0, 1, 2);
             mo.Triangle(0, 2, 1);
             mo.End();
 
-            float lineLen = scale/3;
+            float lineLen = scale / 3;
 
 
 
@@ -580,31 +703,114 @@ namespace ExtraMegaBlob.References
 
         }
 
-        //public MeshPtr CreateMesh(Vertex[] vertexList, Index[] indexList, string meshName, string materialName)
-        //{
-        //    ManualObject mo = sceneManager.CreateManualObject(meshName + "ManualObject");
-        //    mo.Begin(materialName, RenderOperation.OperationTypes.OT_TRIANGLE_LIST); //Set the material and state that you are making a mesh out of triangles
 
-        //    //Create all the vertices
-        //    foreach (Vertex v in vertexList)
-        //    {
-        //        mo.Position(v.Position);
-        //        mo.Normal(v.Normal);
-        //        mo.Colour(v.Color); //NB Ogre uses British English spelling of Colour.
-        //        mo.TextureCoord(v.textureCoord.U, v.textureCoord.V);
 
-        //    }
+        public static MeshPtr makeTetra2(string name)
+        {
+            MeshBuilderHelper mbh = new MeshBuilderHelper(name, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME, false, 0, 12);
+            UInt32 offPos = mbh.AddElement(VertexElementType.VET_FLOAT3,
+                VertexElementSemantic.VES_POSITION).Offset;
+            UInt32 offNorm = mbh.AddElement(VertexElementType.VET_FLOAT3,
+                VertexElementSemantic.VES_NORMAL).Offset;
+            UInt32 offUV = mbh.AddElement(VertexElementType.VET_FLOAT2,
+                VertexElementSemantic.VES_TEXTURE_COORDINATES).Offset;
+            mbh.CreateVertexBuffer(12, HardwareBuffer.Usage.HBU_STATIC_WRITE_ONLY);
+            int scale = 10;
+            // calculate corners of tetrahedron (with point of origin in middle of volume)
+            Single mbot = scale * 0.2f;      // distance middle to bottom
+            Single mtop = scale * 0.62f;     // distance middle to top    
+            Single mf = scale * 0.289f;    // distance middle to front
+            Single mb = scale * 0.577f;    // distance middle to back
+            Single mlr = scale * 0.5f;      // distance middle to left right 
+            Mogre.Vector3[] corners = new Mogre.Vector3[4]; // corners
+            //               width / height / depth
+            corners[0] = new Mogre.Vector3(-mlr, -mbot, mf);  // left bottom front
+            corners[1] = new Mogre.Vector3(mlr, -mbot, mf);  // right bottom front
+            corners[2] = new Mogre.Vector3(0, -mbot, -mb);  // (middle) bottom back
+            corners[3] = new Mogre.Vector3(0, mtop, 0);  // (middle) top (middle)
 
-        //    //Create the triangles
-        //    foreach (Index index in indexList)
-        //    {
-        //        mo.Triangle(index.pos1, index.pos2, index.pos3);
-        //    }
+            int[,] triangles = new int[4, 3] { { 0, 1, 2 }, { 0, 1, 3 }, { 0, 2, 3 }, { 1, 2, 3 } };
+            uint i = 0;
+            for (int f = 0; f < 4; f++)
+            {
+                for (int g = 0; g < 3; g++)
+                {
+                    Mogre.Vector3 pos = new Mogre.Vector3(corners[triangles[f, g]].x, corners[triangles[f, g]].y, corners[triangles[f, g]].z);
+                    Mogre.Vector3 norm = pos.NormalisedCopy;
+                    mbh.SetVertFloat(i, offPos, pos.x, pos.y, pos.z);
+                    mbh.SetVertFloat(i, offNorm, norm.x, norm.y, norm.z);
+                    mbh.SetVertFloat(i, offUV, 0f, 0f);
+                    i++;
+                }
+            }
+            mbh.CreateIndexBuffer(4, HardwareIndexBuffer.IndexType.IT_16BIT,
+                                  HardwareBuffer.Usage.HBU_STATIC_WRITE_ONLY);
+            mbh.SetIndex16bit(0, (UInt16)0, (UInt16)1, (UInt16)2);
+            mbh.SetIndex16bit(1, (UInt16)3, (UInt16)4, (UInt16)5);
+            mbh.SetIndex16bit(2, (UInt16)6, (UInt16)7, (UInt16)8);
+            mbh.SetIndex16bit(3, (UInt16)9, (UInt16)10, (UInt16)11);
+            MaterialPtr material = MaterialManager.Singleton.Create("Test/ColourTest",
+                             ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME);
+            material.GetTechnique(0).GetPass(0).VertexColourTracking =
+                           (int)TrackVertexColourEnum.TVC_AMBIENT;
+            MeshPtr m = mbh.Load("Test/ColourTest");
+            // MeshPtr m = mbh.Load();
+            m._setBounds(new AxisAlignedBox(0.0f, 0.0f, 0.0f, mtop, mtop, mtop), false);
+            m._setBoundingSphereRadius((float)System.Math.Sqrt(mbot * mtop + mf * mb));
+            return m;
+        }
+        public static MeshPtr makeTetra(string name, string matname)
+        {
+            MeshBuilderHelper mbh = new MeshBuilderHelper(name, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME, false, 0, 4);
+            UInt32 offPos = mbh.AddElement(VertexElementType.VET_FLOAT3,
+                VertexElementSemantic.VES_POSITION).Offset;
+            UInt32 offNorm = mbh.AddElement(VertexElementType.VET_FLOAT3,
+                VertexElementSemantic.VES_NORMAL).Offset;
+            UInt32 offUV = mbh.AddElement(VertexElementType.VET_FLOAT2,
+                VertexElementSemantic.VES_TEXTURE_COORDINATES).Offset;
+            mbh.CreateVertexBuffer(4, HardwareBuffer.Usage.HBU_STATIC_WRITE_ONLY);
+            int scale = 10;
+            // calculate corners of tetrahedron (with point of origin in middle of volume)
+            Single mbot = scale * 0.2f;      // distance middle to bottom
+            Single mtop = scale * 0.62f;     // distance middle to top    
+            Single mf = scale * 0.289f;    // distance middle to front
+            Single mb = scale * 0.577f;    // distance middle to back
+            Single mlr = scale * 0.5f;      // distance middle to left right 
+            Mogre.Vector3[] corners = new Mogre.Vector3[4]; // corners
+            //               width / height / depth
+            corners[0] = new Mogre.Vector3(-mlr, -mbot, mf);  // left bottom front
+            corners[1] = new Mogre.Vector3(mlr, -mbot, mf);  // right bottom front
+            corners[2] = new Mogre.Vector3(0, -mbot, -mb);  // (middle) bottom back
+            corners[3] = new Mogre.Vector3(0, mtop, 0);  // (middle) top (middle)
 
-        //    mo.End(); // End creating the manual object.
+            for (int i = 0; i < 4; i++)
+            {
+                mbh.SetVertFloat((uint)i, offPos, corners[i].x, corners[i].y, corners[i].z);
+                mbh.SetVertFloat((uint)i, offNorm, corners[i].NormalisedCopy.x, corners[i].NormalisedCopy.y, corners[i].NormalisedCopy.z);
+                mbh.SetVertFloat((uint)i, offUV, 0f, 0f);
+            }
+            mbh.CreateIndexBuffer(4, HardwareIndexBuffer.IndexType.IT_16BIT,
+                                 HardwareBuffer.Usage.HBU_STATIC_WRITE_ONLY);
 
-        //    return mo.ConvertToMesh(meshName); //Create an actual mesh from the ManualObject, and return.
+            mbh.SetIndex16bit(0, (UInt16)0, (UInt16)1, (UInt16)2);
+            mbh.SetIndex16bit(1, (UInt16)0, (UInt16)1, (UInt16)3);
+            mbh.SetIndex16bit(2, (UInt16)0, (UInt16)2, (UInt16)3);
+            mbh.SetIndex16bit(3, (UInt16)1, (UInt16)2, (UInt16)3);
 
-        //}
+            MaterialPtr material = MaterialManager.Singleton.Create("Test/ColourTest",
+                             ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME);
+            material.GetTechnique(0).GetPass(0).VertexColourTracking =
+                           (int)TrackVertexColourEnum.TVC_AMBIENT;
+            material.SetCullingMode(CullingMode.CULL_NONE);
+            MeshPtr m = mbh.Load("Test/ColourTest");
+            // MeshPtr m = mbh.Load();
+            m._setBounds(new AxisAlignedBox(0.0f, 0.0f, 0.0f, scale, scale, scale), false);
+            m._setBoundingSphereRadius((float)System.Math.Sqrt(scale * scale + scale * scale));
+            
+            // the original code was missing this line:
+            m._setBounds(new AxisAlignedBox(new Mogre.Vector3(-scale, -scale, -scale), new Mogre.Vector3(scale, scale, scale)), false);
+            m._setBoundingSphereRadius(scale);
+            return m;
+        }
     }
 }

@@ -55,7 +55,7 @@ namespace ExtraMegaBlob.Client
 
                 //LogManager lm = new LogManager();
 
-                
+
                 OgreWindow.Instance.SceneCreating += new OgreWindow.SceneEventHandler(SceneCreating);
                 OgreWindow.Instance.InitializeOgre();
                 LogManager.Singleton.DefaultLog.MessageLogged += new LogListener.MessageLoggedHandler(DefaultLog_MessageLogged);
@@ -119,8 +119,8 @@ namespace ExtraMegaBlob.Client
         }
         void DefaultLog_MessageLogged(string message, LogMessageLevel lml, bool maskDebug, string logName)
         {
-            
-            log(lml.ToString()+": "+message);
+
+            log(lml.ToString() + ": " + message);
         }
         private bool Root_FrameStarted(FrameEvent evt)
         {
@@ -268,25 +268,29 @@ namespace ExtraMegaBlob.Client
         private void cache_meshDeleted(string pathRelMeshFile)
         {
             OgreWindow.Instance.pause();
-            OgreWindow.Instance.meshes.RemoveAt(pathRelMeshFile);
+            try { OgreWindow.Instance.meshes.RemoveAt(pathRelMeshFile); }
+            catch (Exception ex) { log(ex.ToString()); }
             OgreWindow.Instance.unpause();
         }
         private void cache_meshAdded(string pathRelMeshFile)
         {
             OgreWindow.Instance.pause();
-            OgreWindow.Instance.meshes.Add(pathRelMeshFile);
+            try { OgreWindow.Instance.meshes.Add(pathRelMeshFile); }
+            catch (Exception ex) { log(ex.ToString()); }
             OgreWindow.Instance.unpause();
         }
         private void cache_textureDeleted(string pathRelTextureFile)
         {
             OgreWindow.Instance.pause();
-            OgreWindow.Instance.textures.RemoveAt(pathRelTextureFile);
+            try { OgreWindow.Instance.textures.RemoveAt(pathRelTextureFile); }
+            catch (Exception ex) { log(ex.ToString()); }
             OgreWindow.Instance.unpause();
         }
         private void cache_textureAdded(string pathRelTextureFile)
         {
             OgreWindow.Instance.pause();
-            OgreWindow.Instance.textures.Add(pathRelTextureFile);
+            try { OgreWindow.Instance.textures.Add(pathRelTextureFile); }
+            catch (Exception ex) { log(ex.ToString()); }
             OgreWindow.Instance.unpause();
         }
         private void netClient_onDisconnected()

@@ -89,7 +89,7 @@ namespace MogreFramework
             //sn.Position += new Mogre.Vector3((float)Helpers.RandomInt(0, 10, ref ran), (float)Helpers.RandomInt(0, 10, ref ran), (float)Helpers.RandomInt(0, 10, ref ran));
             //sn.Rotate(new Quaternion(.28f, 0f, -.95f, .16f));
         }
-        public int Add(System.Object o)
+        public int Add(MeshPtr o)
         {
             lock (allMeshes)
             {

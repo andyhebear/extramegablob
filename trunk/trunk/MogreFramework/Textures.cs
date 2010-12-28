@@ -3,6 +3,7 @@ using System.Collections;
 using System.Runtime.Serialization;
 using Mogre;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace MogreFramework
 {
@@ -63,11 +64,90 @@ namespace MogreFramework
             {
                 return allTextures.Add(texturePtr);
             }
-            //ResourcePtr rp2 = MaterialManager.Singleton.Create("MATERIAL_CUSTOM_DYN", ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME);
-            //MaterialPtr mat3 = (MaterialPtr)rp2;
-            //TextureUnitState tState2 = mat3.GetTechnique(0).GetPass(0).CreateTextureUnitState("test2");
-            //ent.SetMaterialName("MATERIAL_CUSTOM_DYN");
         }
+        public void Replace(string pathRelFile, byte[] imgBytes)
+        {
+            if (this.IndexOf(pathRelFile) < 0) throw new ArgumentException("The texture \"" + pathRelFile + "\"doesn't exist");
+            Mogre.Image image = new Mogre.Image();
+            MemoryStream ms = new MemoryStream(imgBytes);
+            DataStreamPtr fs2 = new DataStreamPtr(new ManagedDataStream(ms));
+            image.Load(fs2);
+            PixelBox imagBox = image.GetPixelBox();
+            TexturePtr pTexture = this[pathRelFile];
+            TextureManager lTextureManager = TextureManager.Singleton;
+            HardwarePixelBuffer buffer = pTexture.GetBuffer();
+            unsafe
+            {
+                buffer.BlitFromMemory(imagBox);
+            }
+            image.Dispose();
+            fs2.Close();
+            ms.Close();
+        }
+
+        //unsafe
+        //{
+        //    void* pointer = buffer.Lock(0, image.Width * image.Height * 4, HardwareBuffer.LockOptions.HBL_NORMAL);
+        //    PixelBox pBox = buffer.CurrentLock;
+        //    pBox.format = PixelFormat.PF_X8R8G8B8;
+
+        //    //PixelBox imagBox = image.GetPixelBox();
+
+        //    Marshal.Copy(imgBytes, 0, pBox.data, imgBytes.Length);
+
+        //    //Marshal.Copy(imagBox.data,pBox. 0, pBox.data, (int)imagBox.GetConsecutiveSize());
+        //}
+
+        //TexturePtr lTextureWithRtt = lTextureManager.CreateManual(pathRelFile + "_temp_rtt", 
+        //    ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME,
+        //    TextureType.TEX_TYPE_2D, 512, 512, 0, PixelFormat.PF_R8G8B8,
+        //   (int)Mogre.TextureUsage.TU_DYNAMIC_WRITE_ONLY, null, false, 0);
+
+        //TexturePtr lIntermediateTexture = lTextureManager.CreateManual(pathRelFile + "_temp_inter",
+        //    ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME,
+        //    TextureType.TEX_TYPE_2D, 512, 512, 0, PixelFormat.PF_R8G8B8,
+        //   (int)Mogre.TextureUsage.TU_DYNAMIC_WRITE_ONLY, null, false, 0);
+
+
+
+
+        //buffer.
+        //TexturePtr texturePtr = TextureManager.Singleton.LoadImage(pathRelFile, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME, image);
+        //fs2.Close();
+        //fs.Close();
+        //lock (allTextures)
+        //{
+        //    return allTextures.Add(texturePtr);
+        //}
+        //ResourcePtr rp2 = MaterialManager.Singleton.Create("MATERIAL_CUSTOM_DYN", ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME);
+        //MaterialPtr mat3 = (MaterialPtr)rp2;
+        //TextureUnitState tState2 = mat3.GetTechnique(0).GetPass(0).CreateTextureUnitState("test2");
+        //ent.SetMaterialName("MATERIAL_CUSTOM_DYN");
+        //public static void ReplaceTexture(HardwarePixelBuffer buffer, byte[] frame, int ancho, int alto)
+        //{
+        //    unsafe
+        //    {
+
+        //        buffer.Lock(HardwareBuffer.LockOptions.HBL_NORMAL);
+        //        PixelBox pBox = buffer.CurrentLock;
+        //        //pBox.format = PixelFormat.PF_BYTE_BGRA;
+        //        pBox.format = PixelFormat.PF_X8R8G8B8;
+
+
+
+        //        //Marshal.Copy(frame, 0, pBox.data, (alto * ancho * 4));
+        //        Marshal.Copy(frame, 0, pBox.data, frame.Length);
+
+        //        buffer.Unlock();
+        //    }
+        //}
+        //public void ShowImageOnTexture(System.Drawing.Image img, Entity ent)
+        //{
+        //    ent.SetMaterialName("MATERIAL_CUSTOM_DYN");
+        //    MemoryStream ms = new MemoryStream();
+        //    img.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+        //    ReplaceTexture("DynTexture", ms.ToArray(), img.Width, img.Height);
+        //}
         public int Add(TexturePtr o)
         {
             lock (allTextures)

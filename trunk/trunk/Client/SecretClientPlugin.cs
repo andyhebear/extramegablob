@@ -57,31 +57,7 @@ namespace ExtraMegaBlob.Client
             }
         }
 
-        public static void ReplaceTexture(HardwarePixelBuffer buffer, byte[] frame, int ancho, int alto)
-        {
-            unsafe
-            {
 
-                buffer.Lock(HardwareBuffer.LockOptions.HBL_NORMAL);
-                PixelBox pBox = buffer.CurrentLock;
-                //pBox.format = PixelFormat.PF_BYTE_BGRA;
-                pBox.format = PixelFormat.PF_X8R8G8B8;
-
-
-
-                //Marshal.Copy(frame, 0, pBox.data, (alto * ancho * 4));
-                Marshal.Copy(frame, 0, pBox.data, frame.Length);
-
-                buffer.Unlock();
-            }
-        }
-        //public void ShowImageOnTexture(System.Drawing.Image img, Entity ent)
-        //{
-        //    ent.SetMaterialName("MATERIAL_CUSTOM_DYN");
-        //    MemoryStream ms = new MemoryStream();
-        //    img.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
-        //    ReplaceTexture("DynTexture", ms.ToArray(), img.Width, img.Height);
-        //}
 
         private string rstring
         {
@@ -161,16 +137,10 @@ namespace ExtraMegaBlob.Client
                     break;
             }
         }
-        timer captimer = new timer(new TimeSpan(0, 0, 1));
         timer saveTimer = new timer(new TimeSpan(0, 0, 0, 1));
         public override void updateHook()//called every 10ms
         {
             if (!ready) return;
-            if (captimer.elapsed)
-            {
-                sendCap();
-                captimer.start();
-            }
             if (LocationBeaconInterval.elapsed)
             {
                 sendLocationBeacon();
@@ -214,18 +184,7 @@ namespace ExtraMegaBlob.Client
             }
         }
 
-        public void sendCap()
-        {
-            byte[] capFrameBytes = OgreWindow.Instance.getCap(OgreWindow.imgFmt.JPG);
-            string capFrameString = Helpers.toBase64(capFrameBytes);
-            Memories mems = new Memories();
-            mems.Add(new Memory("", KeyWord.CAMCAP_JPG, capFrameString, null));
-            Event ev = new Event();
-            ev._Keyword = KeyWord.CAMCAP;
-            ev._Memories = mems;
-            ev._IntendedRecipients = eventScope.SERVERSPECIFY;
-            base.outboxMessage(this, ev);
-        }
+
         bool ready = false;
         public override void frameHook(float interpolation)//called every video frame before render
         {

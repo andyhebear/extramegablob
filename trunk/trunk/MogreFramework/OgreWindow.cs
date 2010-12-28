@@ -996,7 +996,7 @@ namespace MogreFramework
                 // Insert event processing code here, if desired
             }
         }
-        void pbCapture_Resize(object sender, EventArgs e)
+        private void pbCapture_Resize(object sender, EventArgs e)
         {
             // Stop graph when Form is iconic
             if (this.WindowState == FormWindowState.Minimized)
@@ -1006,94 +1006,57 @@ namespace MogreFramework
                 ChangePreviewState(true);
             ResizeVideoWindow();
         }
-        public byte[] getCap(imgFmt fmt)
+        public void setCapStatusImage(Bitmap b)
         {
-            MemoryStream ms = new MemoryStream();
-
-            //samplegrabber.SetOneShot(true);
-            //int hr = this.mediaControl.Pause();
-            //DsError.ThrowExceptionForHR(hr);
-
-            VideoInfoHeader videoheader = new VideoInfoHeader();
-            AMMediaType grab = new AMMediaType();
-            samplegrabber.GetConnectedMediaType(grab);
-            videoheader = (VideoInfoHeader)Marshal.PtrToStructure(grab.formatPtr, typeof(VideoInfoHeader));
-
-            //int width = 0, height =0;
-            //videoWindow.get_Width(out width);
-            //videoWindow.get_Height(out height);
-            //int width = pbCapture.Width, height = pbCapture.Height;
-            //int width = videoheader.SrcRect.right;
-            //int height = videoheader.SrcRect.bottom;
-            int width = videoheader.BmiHeader.Width;
-            int height = videoheader.BmiHeader.Height;
-            Bitmap b = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-
-            uint bytesPerPixel = (uint)(24 >> 3);
-            uint extraBytes = ((uint)width * bytesPerPixel) % 4;
-            uint adjustedLineSize = bytesPerPixel * ((uint)width + extraBytes);
-            uint sizeOfImageData = (uint)(height) * adjustedLineSize;
-
-            BitmapData bd1 = b.LockBits(new System.Drawing.Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-            int bufsize = (int)sizeOfImageData;
-            int n = samplegrabber.GetCurrentBuffer(ref bufsize, bd1.Scan0);
-            b.UnlockBits(bd1);
-
-            b.RotateFlip(RotateFlipType.RotateNoneFlipY);
-            b.Save(ms, convertImgType(fmt));
-
             int[] newsiz = getNominalCapDimensions();
             Bitmap r = ResizeBitmap(b, newsiz[0], newsiz[1]);
             pbCapture.Image = r;
-            //r.Dispose();
-            //b.Dispose();
-
-
-            //samplegrabber.SetOneShot(false);
-            //samplegrabber.SetBufferSamples(false);
-            //hr = this.mediaControl.Run();
-            //DsError.ThrowExceptionForHR(hr);
-
-            return ms.GetBuffer();
+        }
+        public void setCapStatusImage(byte[] bmpBytes)
+        {
+            setCapStatusImage(unserializeBitmap(bmpBytes));
+        }
+        private System.Drawing.Bitmap unserializeBitmap(byte[] bmpBytes)
+        {
+            MemoryStream ms = new MemoryStream(bmpBytes);
+            System.Drawing.Bitmap img = (Bitmap)System.Drawing.Bitmap.FromStream(ms);
+            // Do NOT close the stream!
+            return img;
+        }
+        public byte[] getCapSerialized(imgFmt fmt)
+        {
+            return (serializeBitmap(getCap(), fmt));
+        }
+        public byte[] serializeBitmap(Bitmap b, imgFmt fmt)
+        {
+            MemoryStream ms = new MemoryStream();
+            b.Save(ms, convertImgType(fmt));
+            byte[] bmpBytes = ms.GetBuffer();
+            b.Dispose();
+            ms.Close();
+            return bmpBytes;
         }
         public Bitmap getCap()
         {
             MemoryStream ms = new MemoryStream();
-
-            //samplegrabber.SetOneShot(true);
-            //int hr = this.mediaControl.Pause();
-            //DsError.ThrowExceptionForHR(hr);
-
             VideoInfoHeader videoheader = new VideoInfoHeader();
             AMMediaType grab = new AMMediaType();
             samplegrabber.GetConnectedMediaType(grab);
             videoheader = (VideoInfoHeader)Marshal.PtrToStructure(grab.formatPtr, typeof(VideoInfoHeader));
-
-            //int width = 0, height =0;
-            //videoWindow.get_Width(out width);
-            //videoWindow.get_Height(out height);
-            //int width = pbCapture.Width, height = pbCapture.Height;
-            //int width = videoheader.SrcRect.right;
-            //int height = videoheader.SrcRect.bottom;
             int width = videoheader.BmiHeader.Width;
             int height = videoheader.BmiHeader.Height;
             Bitmap b = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-
             uint bytesPerPixel = (uint)(24 >> 3);
             uint extraBytes = ((uint)width * bytesPerPixel) % 4;
             uint adjustedLineSize = bytesPerPixel * ((uint)width + extraBytes);
             uint sizeOfImageData = (uint)(height) * adjustedLineSize;
-
             BitmapData bd1 = b.LockBits(new System.Drawing.Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
             int bufsize = (int)sizeOfImageData;
             int n = samplegrabber.GetCurrentBuffer(ref bufsize, bd1.Scan0);
             b.UnlockBits(bd1);
-
             b.RotateFlip(RotateFlipType.RotateNoneFlipY);
-
             return b;
         }
-
         private Bitmap ResizeBitmap(Bitmap b, int nWidth, int nHeight)
         {
             Bitmap result = new Bitmap(nWidth, nHeight);
@@ -1101,7 +1064,6 @@ namespace MogreFramework
                 g.DrawImage(b, 0, 0, nWidth, nHeight);
             return result;
         }
-
         public enum imgFmt
         {
             BMP,

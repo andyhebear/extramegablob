@@ -127,7 +127,8 @@ namespace ExtraMegaBlob.Client
             {
                 if (!object.Equals(null, allPlugins[i]))
                 {
-                    ((ClientPlugin)allPlugins[i]).updateHook();
+                    try { ((ClientPlugin)allPlugins[i]).updateHook(); }
+                    catch (Exception ex) { log(ex.ToString()); }
                 }
             }
         }

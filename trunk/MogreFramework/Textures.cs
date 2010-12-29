@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using Mogre;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Drawing;
 
 namespace MogreFramework
 {
@@ -65,15 +66,15 @@ namespace MogreFramework
                 return allTextures.Add(texturePtr);
             }
         }
-        public void Replace(string pathRelFile, byte[] imgBytes)
+        public void Replace(byte[] bytes, string textureName)
         {
-            if (this.IndexOf(pathRelFile) < 0) throw new ArgumentException("The texture \"" + pathRelFile + "\"doesn't exist");
+            if (this.IndexOf(textureName) < 0) throw new ArgumentException("The texture \"" + textureName + "\"doesn't exist");
             Mogre.Image image = new Mogre.Image();
-            MemoryStream ms = new MemoryStream(imgBytes);
+            MemoryStream ms = new MemoryStream(bytes);
             DataStreamPtr fs2 = new DataStreamPtr(new ManagedDataStream(ms));
             image.Load(fs2);
             PixelBox imagBox = image.GetPixelBox();
-            TexturePtr pTexture = this[pathRelFile];
+            TexturePtr pTexture = this[textureName];
             TextureManager lTextureManager = TextureManager.Singleton;
             HardwarePixelBuffer buffer = pTexture.GetBuffer();
             unsafe
@@ -83,6 +84,77 @@ namespace MogreFramework
             image.Dispose();
             fs2.Close();
             ms.Close();
+        }
+        //public unsafe void Replace3(Mogre.Image image, string textureName)
+        //{
+        //    if (this.IndexOf(textureName) < 0) throw new ArgumentException("The texture \"" + textureName + "\"doesn't exist");
+        //    TexturePtr pTexture = this[textureName];
+        //    HardwarePixelBufferSharedPtr texBuffer = pTexture.GetBuffer();
+        //    texBuffer.Lock(HardwareBuffer.LockOptions.HBL_DISCARD);
+        //    PixelBox pb = texBuffer.CurrentLock;
+
+        //    PixelBox imagBox = image.GetPixelBox();
+        //    imagBox.data
+        //    Marshal.Copy(bytes, 0, pb.data, bytes.Length);
+        //    texBuffer.Unlock();
+        //    texBuffer.Dispose();
+        //}
+
+        public byte[] ConvertImageToRgbValues(byte[] inBytes)
+        {
+            Mogre.Image image = new Mogre.Image();
+            MemoryStream ms = new MemoryStream(inBytes);
+            DataStreamPtr fs2 = new DataStreamPtr(new ManagedDataStream(ms));
+            image.Load(fs2);
+            PixelBox imagBox = image.GetPixelBox();
+            uint bytes = imagBox.GetConsecutiveSize();
+            byte[] rgbValues = new byte[bytes];
+            Marshal.Copy( imagBox.data, rgbValues, 0, (int)bytes);
+            image.Dispose();
+            fs2.Close();
+            ms.Close();
+            return rgbValues;
+        }
+        public byte[] ConvertImageToRgbValues(Bitmap image)
+        {
+            System.Drawing.Imaging.BitmapData bmpData = image.LockBits(
+                new System.Drawing.Rectangle(0, 0, image.Width, image.Height),
+                System.Drawing.Imaging.ImageLockMode.ReadOnly,
+                System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            IntPtr ptr = bmpData.Scan0;
+            int bytes = System.Math.Abs(bmpData.Stride) * image.Height;
+            byte[] rgbValues = new byte[bytes];
+            Marshal.Copy(ptr, rgbValues, 0, bytes);
+            image.UnlockBits(bmpData);
+            return rgbValues;
+        }
+        public unsafe void Replace2(byte[] bytes, string textureName)
+        {
+            if (this.IndexOf(textureName) < 0) throw new ArgumentException("The texture \"" + textureName + "\"doesn't exist");
+            TexturePtr pTexture = this[textureName];
+            HardwarePixelBufferSharedPtr texBuffer = pTexture.GetBuffer();
+            texBuffer.Lock(HardwareBuffer.LockOptions.HBL_DISCARD);
+            PixelBox pb = texBuffer.CurrentLock;
+            Marshal.Copy(bytes, 0, pb.data, bytes.Length);
+            texBuffer.Unlock();
+            texBuffer.Dispose();
+        }
+        public unsafe void WriteToTexture(byte[] bytes, string textureName)
+        {
+            using (ResourcePtr rpt = TextureManager.Singleton.GetByName(textureName))
+            {
+                using (TexturePtr texture = rpt)
+                {
+                    HardwarePixelBufferSharedPtr texBuffer = texture.GetBuffer();
+                    texBuffer.Lock(HardwareBuffer.LockOptions.HBL_DISCARD);
+                    PixelBox pb = texBuffer.CurrentLock;
+
+                    Marshal.Copy(bytes, 0, pb.data, bytes.Length);
+
+                    texBuffer.Unlock();
+                    texBuffer.Dispose();
+                }
+            }
         }
 
         //unsafe

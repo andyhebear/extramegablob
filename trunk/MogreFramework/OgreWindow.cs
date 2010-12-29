@@ -1038,25 +1038,57 @@ namespace MogreFramework
         }
         public Bitmap getCap()
         {
-            MemoryStream ms = new MemoryStream();
-            VideoInfoHeader videoheader = new VideoInfoHeader();
-            AMMediaType grab = new AMMediaType();
-            samplegrabber.GetConnectedMediaType(grab);
-            videoheader = (VideoInfoHeader)Marshal.PtrToStructure(grab.formatPtr, typeof(VideoInfoHeader));
-            int width = videoheader.BmiHeader.Width;
-            int height = videoheader.BmiHeader.Height;
-            Bitmap b = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-            uint bytesPerPixel = (uint)(24 >> 3);
-            uint extraBytes = ((uint)width * bytesPerPixel) % 4;
-            uint adjustedLineSize = bytesPerPixel * ((uint)width + extraBytes);
-            uint sizeOfImageData = (uint)(height) * adjustedLineSize;
-            BitmapData bd1 = b.LockBits(new System.Drawing.Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-            int bufsize = (int)sizeOfImageData;
-            int n = samplegrabber.GetCurrentBuffer(ref bufsize, bd1.Scan0);
-            b.UnlockBits(bd1);
-            b.RotateFlip(RotateFlipType.RotateNoneFlipY);
-            return b;
+            try
+            {
+                MemoryStream ms = new MemoryStream();
+                VideoInfoHeader videoheader = new VideoInfoHeader();
+                AMMediaType grab = new AMMediaType();
+
+                samplegrabber.GetConnectedMediaType(grab);
+                videoheader = (VideoInfoHeader)Marshal.PtrToStructure(grab.formatPtr, typeof(VideoInfoHeader));
+                int width = videoheader.BmiHeader.Width;
+                int height = videoheader.BmiHeader.Height;
+                Bitmap b = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                uint bytesPerPixel = (uint)(24 >> 3);
+                uint extraBytes = ((uint)width * bytesPerPixel) % 4;
+                uint adjustedLineSize = bytesPerPixel * ((uint)width + extraBytes);
+                uint sizeOfImageData = (uint)(height) * adjustedLineSize;
+                BitmapData bd1 = b.LockBits(new System.Drawing.Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                int bufsize = (int)sizeOfImageData;
+                int n = samplegrabber.GetCurrentBuffer(ref bufsize, bd1.Scan0);
+                b.UnlockBits(bd1);
+                b.RotateFlip(RotateFlipType.RotateNoneFlipY);
+                return b;
+            }
+            catch (Exception ex)
+            {
+                log(ex.ToString());
+                return null;
+            }
         }
+
+        public delegate Bitmap getCapDelegate();
+        public Bitmap getCap2()
+        {
+            if (this.InvokeRequired)
+            {
+                getCapDelegate dele = new getCapDelegate(getCap3);
+                object o = this.Invoke(dele);
+                if (o != null)
+                    return (Bitmap)o;
+                else return null;
+            }
+            else
+            {
+                return getCap3();
+            }
+        }
+        private Bitmap getCap3()
+        {
+            return getCap();
+        }
+
+
         private Bitmap ResizeBitmap(Bitmap b, int nWidth, int nHeight)
         {
             Bitmap result = new Bitmap(nWidth, nHeight);

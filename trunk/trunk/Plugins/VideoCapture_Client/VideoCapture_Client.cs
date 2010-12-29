@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Mogre;
 using MogreFramework;
 using ExtraMegaBlob.References;
+using System.Drawing;
 namespace ExtraMegaBlob
 {
     public class plugin : ExtraMegaBlob.References.ClientPlugin
@@ -26,10 +27,12 @@ namespace ExtraMegaBlob
             log("starting up!");
             if (!TextureManager.Singleton.ResourceExists(capTexture))
             {
-                TexturePtr lTextureWithRtt = TextureManager.Singleton.CreateManual(capTexture, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME,
-                    TextureType.TEX_TYPE_2D, 640, 480, 0, PixelFormat.PF_R8G8B8,
-                    (int)Mogre.TextureUsage.TU_DYNAMIC, null, false, 0);
-                OgreWindow.Instance.textures.Add(lTextureWithRtt);
+                //OgreWindow.Instance.textures.Add(TextureManager.Singleton.CreateManual(capTexture, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME,
+                //    TextureType.TEX_TYPE_2D, 640, 480, 0, PixelFormat.PF_BYTE_BGR,
+                //    (int)Mogre.TextureUsage.TU_DYNAMIC, null, false, 0));
+
+                OgreWindow.Instance.textures.Add(TextureManager.Singleton.CreateManual(capTexture, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME,
+                    TextureType.TEX_TYPE_2D, 640, 480, 0, PixelFormat.PF_BYTE_BGR));
             }
         }
         public override void shutdown()
@@ -63,13 +66,40 @@ namespace ExtraMegaBlob
         {
             if (captureTimer.elapsed)
             {
-                byte[] capFrameBytes = OgreWindow.Instance.getCapSerialized(OgreWindow.imgFmt.JPG);
-                OgreWindow.Instance.setCapStatusImage(capFrameBytes);
-                sendCap(capFrameBytes);
-                OgreWindow.Instance.textures.Replace(capTexture, capFrameBytes);
+                Textures textures = OgreWindow.Instance.textures;
+                //byte[] capFrameBytes = OgreWindow.Instance.getCapSerialized(OgreWindow.imgFmt.JPG);
+                Bitmap bmp = OgreWindow.Instance.getCap();
+                byte[] rgbData = textures.ConvertImageToRgbValues(bmp);
+                textures.Replace2(rgbData, capTexture);
+                //OgreWindow.Instance.setCapStatusImage(capFrameBytes);
+                //sendCap(capFrameBytes);
+                //OgreWindow.Instance.textures.Replace2(capFrameBytes, capTexture);
                 captureTimer.start();
             }
         }
+        //private void updateThread()
+        //{
+        //    while (running)
+        //    {
+        //        Thread.Sleep(100);
+        //        if (captureTimer.elapsed)
+        //        {
+        //            Textures textures = OgreWindow.Instance.textures;
+        //            //byte[] capFrameBytes = OgreWindow.Instance.getCapSerialized(OgreWindow.imgFmt.JPG);
+        //            Bitmap bmp = OgreWindow.Instance.getCap2();
+        //            if (bmp != null)
+        //            {
+        //                byte[] rgbData = textures.ConvertImageToRgbValues(bmp);
+        //                textures.Replace2(rgbData, capTexture);
+        //                //OgreWindow.Instance.setCapStatusImage(capFrameBytes);
+        //                //sendCap(capFrameBytes);
+        //                //OgreWindow.Instance.textures.Replace2(capFrameBytes, capTexture);
+        //            }
+        //            captureTimer.start();
+        //        }
+        //    }
+        //}
+        //new Thread(new ThreadStart(updateThread)).Start();
         public override void frameHook(float interpolation)
         {
         }

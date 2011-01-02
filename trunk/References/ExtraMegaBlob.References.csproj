@@ -138,10 +138,12 @@
     <Compile Include="Config.cs" />
     <Compile Include="ConfigUsingSqliteDatabase.cs" />
     <Compile Include="Encryption.cs" />
+    <Compile Include="Entities.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="Lights.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="Memories.cs" />
     <Compile Include="Memory.cs" />
@@ -151,6 +153,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ClientPlugin.cs" />
     <Compile Include="ResourceConnector.cs" />
+    <Compile Include="SceneNodes.cs" />
     <Compile Include="Serialize.cs" />
     <Compile Include="ServerPlugin.cs" />
     <Compile Include="SharpZipLib\Adler32.cs" />

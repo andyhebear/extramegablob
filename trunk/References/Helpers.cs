@@ -59,6 +59,16 @@ namespace ExtraMegaBlob.References
                     return false;
             }
         }
+        public static bool isSkeletonFile(string path)
+        {
+            switch (Path.GetExtension(path).ToLower())
+            {
+                case ".skeleton":
+                    return true;
+                default:
+                    return false;
+            }
+        }
         public static bool isMeshFile(string path)
         {
             switch (Path.GetExtension(path).ToLower())

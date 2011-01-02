@@ -61,10 +61,19 @@ namespace ExtraMegaBlob.Client
                     _textureAdded(pathRel);
                 if (Helpers.isMeshFile(pathRel))
                     _meshAdded(pathRel);
+                if (Helpers.isSkeletonFile(pathRel))
+                    _skeletonAdded(pathRel);
 
                 bool s = false;
                 try { string md5 = Encryption.md5_file(pathAbs); s = true; }
-                catch (Exception ex) { log(ex.Message); }
+                catch (UnauthorizedAccessException ex1)
+                {
+                }
+                catch (Exception ex)
+                {
+                    log(ex.Message);
+                }
+
                 if (s) files2.Add(pathRel, Encryption.md5_file(pathAbs));
             }
             this.md5table = files2;
@@ -107,6 +116,8 @@ namespace ExtraMegaBlob.Client
                         _textureDeleted(pathRel);
                     if (Helpers.isMeshFile(pathRel))
                         _meshDeleted(pathRel);
+                    if (Helpers.isSkeletonFile(pathRel))
+                        _skeletonDeleted(pathRel);
                 }
             if (Helpers.isPluginFile(pathRel) && Helpers.isClientPlugin(pathRel))
                 _pluginAdded(pathRel);
@@ -114,6 +125,8 @@ namespace ExtraMegaBlob.Client
                 _textureAdded(pathRel);
             if (Helpers.isMeshFile(pathRel))
                 _meshAdded(pathRel);
+            if (Helpers.isSkeletonFile(pathRel))
+                _skeletonAdded(pathRel);
             md5table[pathRel] = md5;
             log("saved: " + pathRel);
         }
@@ -140,6 +153,11 @@ namespace ExtraMegaBlob.Client
             if (Helpers.isMeshFile(pathRelNew))
                 _meshAdded(pathRelNew);
 
+            if (Helpers.isSkeletonFile(pathRelOld))
+                _skeletonDeleted(pathRelOld);
+            if (Helpers.isSkeletonFile(pathRelNew))
+                _skeletonAdded(pathRelNew);
+
             md5table.Remove(pathRelOld);
             md5table.Add(pathRelNew, md5);
 
@@ -158,6 +176,8 @@ namespace ExtraMegaBlob.Client
                     _textureDeleted(pathRel);
                 if (Helpers.isMeshFile(pathRel))
                     _meshDeleted(pathRel);
+                if (Helpers.isSkeletonFile(pathRel))
+                    _skeletonDeleted(pathRel);
                 File.Delete(pathAbs);
             }
             md5table.Remove(pathRel);
@@ -170,6 +190,24 @@ namespace ExtraMegaBlob.Client
             if (!object.Equals(null, this.route_toserver))
             {
                 route_toserver(ev);
+            }
+        }
+        public delegate void skeletonDeletedDelegate(string pathRelSkeletonFile);
+        public event skeletonDeletedDelegate skeletonDeleted;
+        private void _skeletonDeleted(string pathRelSkeletonFile)
+        {
+            if (!object.Equals(null, this.skeletonDeleted))
+            {
+                skeletonDeleted(pathRelSkeletonFile);
+            }
+        }
+        public delegate void skeletonAddedDelegate(string pathRelSkeletonFile);
+        public event skeletonAddedDelegate skeletonAdded;
+        private void _skeletonAdded(string pathRelSkeletonFile)
+        {
+            if (!object.Equals(null, this.skeletonAdded))
+            {
+                skeletonAdded(pathRelSkeletonFile);
             }
         }
         public delegate void meshDeletedDelegate(string pathRelMeshFile);

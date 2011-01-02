@@ -78,16 +78,11 @@ namespace MogreFramework
         public int Add(string pathRelFile)
         {
             MeshPtr mesh = MeshManager.Singleton.CreateManual(pathRelFile, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME, loader);
+            //mesh.Load();
             lock (allMeshes)
             {
                 return allMeshes.Add(mesh);
             }
-            //ent = OgreWindow.Instance.mSceneMgr.CreateEntity(mesh.Name);
-            //ent.CastShadows = true;
-            //SceneNode sn = OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode();
-            //sn.AttachObject(ent);
-            //sn.Position += new Mogre.Vector3((float)Helpers.RandomInt(0, 10, ref ran), (float)Helpers.RandomInt(0, 10, ref ran), (float)Helpers.RandomInt(0, 10, ref ran));
-            //sn.Rotate(new Quaternion(.28f, 0f, -.95f, .16f));
         }
         public int Add(MeshPtr o)
         {
@@ -173,19 +168,8 @@ namespace MogreFramework
                 }
             }
         }
-
         public void shutdown()
         {
-            //MeshManager.Singleton.UnloadAll();
-            //int r = this.Count;
-            //for (int i = r - 1; i > -1; i--)
-            //{
-            //    //this[i];
-            //    //OgreWindow.Instance.mSceneMgr.des
-            //    ((Mesh)this[i]).Dispose();
-            //    MeshManager.Singleton.UnloadAll();
-            //}
-
             foreach (MeshPtr ptr in this)
             {
                 ptr.Unload();
@@ -193,7 +177,6 @@ namespace MogreFramework
                 ptr.Dispose();
             }
             MeshManager.Singleton.UnloadAll();
-
         }
     }
 }

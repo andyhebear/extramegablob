@@ -26,6 +26,7 @@ namespace ExtraMegaBlob.Client
                 conf = new Config();
 
                 OgreWindow.Instance.textures = new Textures(ThingPath.path_cache);
+                OgreWindow.Instance.skeletons = new Skeletons(ThingPath.path_cache);
                 OgreWindow.Instance.meshes = new Meshes(ThingPath.path_cache);
 
                 netClient = new ClientNetwork();
@@ -52,6 +53,8 @@ namespace ExtraMegaBlob.Client
                 cache.textureDeleted += new CacheManager.textureDeletedDelegate(cache_textureDeleted);
                 cache.meshAdded += new CacheManager.meshAddedDelegate(cache_meshAdded);
                 cache.meshDeleted += new CacheManager.meshDeletedDelegate(cache_meshDeleted);
+                cache.skeletonAdded += new CacheManager.skeletonAddedDelegate(cache_skeletonAdded);
+                cache.skeletonDeleted += new CacheManager.skeletonDeletedDelegate(cache_skeletonDeleted);
 
                 //LogManager lm = new LogManager();
 
@@ -117,6 +120,20 @@ namespace ExtraMegaBlob.Client
             }
             quit();
         }
+        void cache_skeletonDeleted(string pathRelSkeletonFile)
+        {
+            OgreWindow.Instance.pause();
+            try { OgreWindow.Instance.skeletons.RemoveAt(pathRelSkeletonFile); }
+            catch (Exception ex) { log(ex.ToString()); }
+            OgreWindow.Instance.unpause();
+        }
+        void cache_skeletonAdded(string pathRelSkeletonFile)
+        {
+            OgreWindow.Instance.pause();
+            try { OgreWindow.Instance.skeletons.Add(pathRelSkeletonFile); }
+            catch (Exception ex) { log(ex.ToString()); }
+            OgreWindow.Instance.unpause();
+        }
         void DefaultLog_MessageLogged(string message, LogMessageLevel lml, bool maskDebug, string logName)
         {
 
@@ -157,6 +174,7 @@ namespace ExtraMegaBlob.Client
             OgreWindow.Instance.Close();
             OgreWindow.Instance.meshes.shutdown();
             OgreWindow.Instance.textures.shutdown();
+            OgreWindow.Instance.skeletons.shutdown();
             OgreWindow.Instance.mRoot.Dispose();
             OgreWindow.Instance.mRoot = null;
             OgreWindow.Instance.mWindow = null;

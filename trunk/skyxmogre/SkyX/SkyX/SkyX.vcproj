@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="SkyX"
 	ProjectGUID="{64A262CF-6722-4443-A84D-BA5FE3BD87D5}"
 	RootNamespace="SkyX"
@@ -44,7 +44,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="C:/ogrenew/Include;&quot;include&quot;"
+				AdditionalIncludeDirectories="C:\Users\Matt\Desktop\extramegablob\ogre\libinclude;C:\Users\Matt\Desktop\extramegablob\ogre\include;C:/ogrenew/Include;include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;HYDRAX_EXPORTS;SKYX_LIB"
 				ExceptionHandling="1"
 				RuntimeLibrary="2"

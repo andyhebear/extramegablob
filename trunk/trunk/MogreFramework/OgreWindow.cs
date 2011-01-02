@@ -65,6 +65,7 @@ namespace MogreFramework
         }
         public Textures textures = null;
         public Meshes meshes = null;
+        public Skeletons skeletons = null;
 
         #region mouse and kb input
         static string[] g_DeviceType = {"OISUnknown", "OISKeyboard", "OISMouse", "OISJoyStick",

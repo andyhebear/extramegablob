@@ -3,6 +3,7 @@ using System.Collections;
 using ExtraMegaBlob.References;
 using Mogre;
 using MogreFramework;
+using System.Threading;
 namespace ExtraMegaBlob.Client
 {
     public class ClientPluginManager
@@ -78,13 +79,24 @@ namespace ExtraMegaBlob.Client
                 pluginNameLookup[pathRel] = plugin.Name();
                 if (addClientPlugin(plugin))
                 {
-                    try { addPluginSphere(plugin.Name()); }
-                    catch (Exception ex) { log(ex.ToString()); }
+                    //try { addPluginSphere(plugin.Name()); }
+                    //catch (Exception ex) { log(ex.ToString()); }
+                    pendingPluginSpheres.Add(plugin.Name());
                 }
 
                 listChanged(this.allPlugins);
             }
         }
+        private bool sphereResourcesReady
+        {
+            get
+            {
+                if (TextureManager.Singleton == null) return false;
+                if (!TextureManager.Singleton.ResourceExists("\\normalNoiseColor.png")) return false;
+                return true;
+            }
+        }
+        private ArrayList pendingPluginSpheres = new ArrayList();
         string sphereNamePrefix = "";
         private void addPluginSphere(string pluginName)
         {
@@ -151,6 +163,23 @@ namespace ExtraMegaBlob.Client
             ClientPluginCompiler.onLog += new LogDelegate(compiler_onLog);
             ClientClasses.onLogMessage += new LogDelegate(ClientClasses_onLogMessage);
             sphereNamePrefix = ran.Next(int.MaxValue).ToString();
+            new Thread(new ThreadStart(sphereAddThread)).Start();
+        }
+        void sphereAddThread()
+        {
+            while (!g)
+            {
+                Thread.Sleep(100);
+                if (sphereResourcesReady)
+                    for (int i = 0; i < pendingPluginSpheres.Count; i++)
+                    {
+                        string plugName = (string)pendingPluginSpheres[i];
+                        try { addPluginSphere(plugName); }
+                        catch (Exception ex) { log(ex.ToString()); }
+                        pendingPluginSpheres.RemoveAt(i);
+                        break;
+                    }
+            }
         }
         void ClientClasses_onLogMessage(string msg)
         {

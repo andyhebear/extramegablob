@@ -139,7 +139,7 @@ namespace MogreFramework
             texBuffer.Unlock();
             texBuffer.Dispose();
         }
-        public unsafe void WriteToTexture(byte[] bytes, string textureName)
+        public unsafe void Replace3(byte[] bytes, string textureName)
         {
             using (ResourcePtr rpt = TextureManager.Singleton.GetByName(textureName))
             {

@@ -163,7 +163,7 @@ namespace ExtraMegaBlob
                 entities["GroundEntity"].SetMaterialName("dirt");
                 nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("ground"));
                 nodes["ground"].AttachObject(entities["GroundEntity"]);
-                nodes["ground"].Position -= new Mogre.Vector3(0f, 0f, 0f) + Location().toMogre;
+                nodes["ground"].Position = new Mogre.Vector3(0f, 0f, 0f) + Location().toMogre;
 
 
                 MeshManager.Singleton.CreatePlane("spinnycard", "General", new Plane(Mogre.Vector3.UNIT_Y, 0), 200f, 250f, 1, 1, true, 1, 1, 1, Mogre.Vector3.UNIT_X);
@@ -172,7 +172,7 @@ namespace ExtraMegaBlob
                 entities["TestPlaneEntity"].SetMaterialName("club 5");
                 nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("spinnycard"));
                 nodes["spinnycard"].AttachObject(entities["TestPlaneEntity"]);
-                nodes["spinnycard"].Position += new Mogre.Vector3(0f, 3f, 0f) + Location().toMogre;
+                nodes["spinnycard"].Position = new Mogre.Vector3(0f, 3f, 0f) + Location().toMogre;
                 nodes["spinnycard"].Scale(.001f, .001f, .001f);
 
                 entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("tongitstable", "\\TongIts\\tongitstable.mesh"));
@@ -194,7 +194,7 @@ namespace ExtraMegaBlob
                 entities["drone"].SetMaterialName("wood");
                 nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("drone"));
                 nodes["drone"].AttachObject(entities["drone"]);
-                nodes["drone"].Position += new Mogre.Vector3(3f, 1f, 3f) + Location().toMogre;
+                nodes["drone"].Position = new Mogre.Vector3(3f, 1f, 3f) + Location().toMogre;
                 nodes["drone"].Scale(new Mogre.Vector3(.3f));
                 ready = true;
             }

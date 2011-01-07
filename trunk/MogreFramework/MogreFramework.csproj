@@ -174,6 +174,16 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Skeletons.cs" />
+    <Compile Include="SkyX\AtmosphereManager.cs" />
+    <Compile Include="SkyX\CloudLayer.cs" />
+    <Compile Include="SkyX\CloudsManager.cs" />
+    <Compile Include="SkyX\Enums.cs" />
+    <Compile Include="SkyX\GPUManager.cs" />
+    <Compile Include="SkyX\MeshManager.cs" />
+    <Compile Include="SkyX\MoonManager.cs" />
+    <Compile Include="SkyX\ReflectionHelper.cs" />
+    <Compile Include="SkyX\SkyManager.cs" />
+    <Compile Include="SkyX\VCloudsManager.cs" />
     <Compile Include="Splash.cs">
       <SubType>Form</SubType>
     </Compile>

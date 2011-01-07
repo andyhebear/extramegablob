@@ -134,6 +134,7 @@ namespace ExtraMegaBlob
         private void init()
         {
             log("starting up! ");
+            OgreWindow.Instance.pause();
             try
             {
                 Hashtable mats = materials;
@@ -202,6 +203,7 @@ namespace ExtraMegaBlob
             {
                 log(ex.ToString());
             }
+            OgreWindow.Instance.unpause();
         }
         private AnimationState walkState = null;
         public override void startup()

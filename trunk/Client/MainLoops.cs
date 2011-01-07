@@ -133,8 +133,19 @@ namespace ExtraMegaBlob.Client
 
             OgreWindow.Instance.mSceneMgr.SetShadowUseInfiniteFarPlane(true);
             sm.AmbientLight = ColourValue.Black;
+            
+
+            
             //sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_STENCIL_ADDITIVE;
             //sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_STENCIL_MODULATIVE;
+
+            sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_NONE;
+            //sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_TEXTURE_ADDITIVE;
+            //sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED;
+            //sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_TEXTURE_MODULATIVE;
+            //sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_TEXTURE_MODULATIVE_INTEGRATED;
+            
+
 
             sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_NONE; //skyx breaks when shadows are enabled!
 

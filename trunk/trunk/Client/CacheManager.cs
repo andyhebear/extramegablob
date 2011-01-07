@@ -66,7 +66,7 @@ namespace ExtraMegaBlob.Client
 
                 bool s = false;
                 try { string md5 = Encryption.md5_file(pathAbs); s = true; }
-                catch (UnauthorizedAccessException ex1)
+                catch (UnauthorizedAccessException)
                 {
                 }
                 catch (Exception ex)

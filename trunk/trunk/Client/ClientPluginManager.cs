@@ -100,6 +100,7 @@ namespace ExtraMegaBlob.Client
         string sphereNamePrefix = "";
         private void addPluginSphere(string pluginName)
         {
+            OgreWindow.Instance.pause();
             string meshName = sphereNamePrefix + "_SphereMesh_" + pluginName;
             string entityName = sphereNamePrefix + "_SphereEntity_" + pluginName;
             string materialName = sphereNamePrefix + "_SphereMaterial_" + pluginName;
@@ -114,6 +115,7 @@ namespace ExtraMegaBlob.Client
             sphereNode.Position = ClientClasses[pluginName].Location().toMogre;
             Helpers.setEntityOpacity(sphereEntity, .9f);
             //sphereNode.SetScale(new Mogre.Vector3(2f));
+            OgreWindow.Instance.unpause();
         }
 
         private void delPluginSphere(string pluginName)

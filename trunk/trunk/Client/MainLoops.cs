@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using ExtraMegaBlob.References;
 using Mogre;
 using MogreFramework;
+using SkyX;
 #region disable annoying warnings
 #pragma warning disable 162 //CS0162: Unreachable code detected
 #pragma warning disable 168 //CS0168: The variable 'XYZ' is declared but never used
@@ -120,27 +121,95 @@ namespace ExtraMegaBlob.Client
             }
             quit();
         }
-        void cache_skeletonDeleted(string pathRelSkeletonFile)
+        protected SkyManager manager;
+        private string TerrainMaterialName = "Terrain";
+        Entities entities = new Entities();
+        SceneNodes nodes = new SceneNodes();
+        private void SceneCreating()
+        {
+            SceneManager sm = OgreWindow.Instance.mSceneMgr;
+            Root root = OgreWindow.Instance.mRoot;
+            Camera camera = OgreWindow.Instance.mCamera;
+
+            OgreWindow.Instance.mSceneMgr.SetShadowUseInfiniteFarPlane(true);
+            sm.AmbientLight = ColourValue.Black;
+            //sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_STENCIL_ADDITIVE;
+            //sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_STENCIL_MODULATIVE;
+
+            sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_NONE; //skyx breaks when shadows are enabled!
+
+            camera.FarClipDistance = 30000;
+            camera.NearClipDistance = .25f;
+
+            //camera.SetPosition(20000, 500, 20000);
+            //camera.SetDirection(1, 0, 0);
+
+
+
+            manager = new SkyManager(sm, OgreWindow.Instance.mCamera);
+            manager.Create();
+
+
+            //manager.GPUManager.AddGroundPass(material.GetTechnique(0).CreatePass(), 5000, SceneBlendType.SBT_TRANSPARENT_COLOUR);
+
+            // Add a basic cloud layer
+            manager.CloudsManager.Add(new CloudLayer.LayerOptions());
+
+            //Add frame evnet
+            //root.FrameStarted += new FrameListener.FrameStartedHandler(FrameStarted);
+            
+            
+            
+            
+            
+            
+            OgreWindow.Instance.SceneReady = true;
+        }
+        private void cache_skeletonDeleted(string pathRelSkeletonFile)
         {
             OgreWindow.Instance.pause();
             try { OgreWindow.Instance.skeletons.RemoveAt(pathRelSkeletonFile); }
             catch (Exception ex) { log(ex.ToString()); }
             OgreWindow.Instance.unpause();
         }
-        void cache_skeletonAdded(string pathRelSkeletonFile)
+        private void cache_skeletonAdded(string pathRelSkeletonFile)
         {
             OgreWindow.Instance.pause();
             try { OgreWindow.Instance.skeletons.Add(pathRelSkeletonFile); }
             catch (Exception ex) { log(ex.ToString()); }
             OgreWindow.Instance.unpause();
         }
-        void DefaultLog_MessageLogged(string message, LogMessageLevel lml, bool maskDebug, string logName)
+        private void DefaultLog_MessageLogged(string message, LogMessageLevel lml, bool maskDebug, string logName)
         {
 
             log(lml.ToString() + ": " + message);
         }
         private bool Root_FrameStarted(FrameEvent evt)
         {
+            //SceneManager sm = OgreWindow.Instance.mSceneMgr;
+            //Root root = OgreWindow.Instance.mRoot;
+            //Camera cam = OgreWindow.Instance.mCamera;
+
+            //// Check camera height
+            //RaySceneQuery raySceneQuery = sm.CreateRayQuery(new Ray(cam.Position + new Mogre.Vector3(0, 1000000, 0), Mogre.Vector3.NEGATIVE_UNIT_Y));
+            //RaySceneQueryResult qryResult = raySceneQuery.Execute();
+
+            //RaySceneQueryResult.Iterator it = qryResult.Begin();
+            //if (it != qryResult.End() && it.Value.worldFragment != null)
+            //{
+            //    if (cam.DerivedPosition.y < it.Value.worldFragment.singleIntersection.y + 30)
+            //    {
+            //        cam.SetPosition(cam.Position.x,
+            //                            it.Value.worldFragment.singleIntersection.y + 30,
+            //                            cam.Position.z);
+            //    }
+
+            //    it.MoveNext();
+            //}
+            
+            manager.TimeMultiplier = 0.1f;
+            manager.Update(evt.timeSinceLastFrame);
+
             try
             {
                 ClientPluginManager.FrameStartedHooks(interpolation);
@@ -151,8 +220,69 @@ namespace ExtraMegaBlob.Client
             }
             return true;
         }
+        protected void HandleInput()
+        {
+            //base.HandleInput(evt);
+
+            // Show/Hide information
+
+            OgreWindow win = OgreWindow.Instance;
+
+            if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_F1))
+            {
+                showInformation = !showInformation;
+
+            }
+
+            if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_1) && !(OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_LSHIFT) || OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_RSHIFT)))
+            {
+                manager.TimeMultiplier = 1.0f;
+            }
+            if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_1) && (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_LSHIFT) || OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_RSHIFT)))
+            {
+                manager.TimeMultiplier = -1.0f;
+            }
+
+
+        }
+        private String GetConfigString()
+        {
+            AtmosphereManager atmo = manager.AtmosphereManager;
+            int hour = (int)atmo.Time.x;
+
+            int min = (int)((atmo.Time.x - hour) * 60);
+
+
+            String timeStr = Mogre.StringConverter.ToString(hour) + ":" + Mogre.StringConverter.ToString(min);
+            String str = "SkyX Plugin demo (Press F1 to show/hide information)";
+            if (showInformation)
+            {
+                str += " - Simuation paused - \n";
+            }
+            else
+            {
+                str += "\n-------------------------------------------------------------\nTime: " + timeStr + "\\n";
+            }
+
+            if (showInformation)
+            {
+                str += "-------------------------------------------------------------\n";
+                str += "Time: " + timeStr + " [1, Shift+1] (+/-).\n";
+                str += "Rayleigh multiplier: " + Mogre.StringConverter.ToString(atmo.RayleighMultiplier) + " [2, Shift+2] (+/-).\n";
+                str += "Mie multiplier: " + Mogre.StringConverter.ToString(atmo.MieMultiplier) + " [3, Shift+3] (+/-).\n";
+                str += "Exposure: " + Mogre.StringConverter.ToString(atmo.Exposure) + " [4, Shift+4] (+/-).\n";
+                str += "Inner radius: " + Mogre.StringConverter.ToString(atmo.InnerRadius) + " [5, Shift+5] (+/-).\n";
+                str += "Outer radius: " + Mogre.StringConverter.ToString(atmo.OuterRadius) + " [6, Shift+6] (+/-).\n";
+                str += "Number of samples: " + Mogre.StringConverter.ToString(atmo.NumberOfSamples) + " [7, Shift+7] (+/-).\n";
+                str += "Height position: " + Mogre.StringConverter.ToString(atmo.HeightPosition) + " [8, Shift+8] (+/-).\n";
+            }
+
+            return str;
+        }
+        protected bool showInformation;
         private void update()
         {
+            HandleInput();
             checkOgreException();
             try
             {
@@ -261,13 +391,7 @@ namespace ExtraMegaBlob.Client
                 return null;
             }
         }
-        private void SceneCreating()
-        {
-            //OgreWindow.Instance.mSceneMgr.SetShadowUseInfiniteFarPlane(true);
-            OgreWindow.Instance.mSceneMgr.AmbientLight = ColourValue.Black;
-            OgreWindow.Instance.mSceneMgr.ShadowTechnique = ShadowTechnique.SHADOWTYPE_STENCIL_ADDITIVE;
-            OgreWindow.Instance.SceneReady = true;
-        }
+
         private void checkOgreException()
         {
             if (Mogre.OgreException.IsThrown)

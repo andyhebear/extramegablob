@@ -130,24 +130,26 @@ namespace ExtraMegaBlob.Client
             SceneManager sm = OgreWindow.Instance.mSceneMgr;
             Root root = OgreWindow.Instance.mRoot;
             Camera camera = OgreWindow.Instance.mCamera;
-
+            Viewport vp = OgreWindow.Instance.mViewport;
             OgreWindow.Instance.mSceneMgr.SetShadowUseInfiniteFarPlane(true);
             sm.AmbientLight = ColourValue.Black;
-            
 
-            
+
+
+            #region shadows
             //sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_STENCIL_ADDITIVE;
             //sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_STENCIL_MODULATIVE;
 
-            sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_NONE;
+            sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_NONE; //skyx breaks when shadows are enabled!
             //sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_TEXTURE_ADDITIVE;
             //sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED;
             //sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_TEXTURE_MODULATIVE;
-            //sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_TEXTURE_MODULATIVE_INTEGRATED;
+            //sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_TEXTURE_MODULATIVE_INTEGRATED; 
+            #endregion
             
 
 
-            sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_NONE; //skyx breaks when shadows are enabled!
+            
 
             camera.FarClipDistance = 30000;
             camera.NearClipDistance = .25f;
@@ -168,14 +170,15 @@ namespace ExtraMegaBlob.Client
 
             //Add frame evnet
             //root.FrameStarted += new FrameListener.FrameStartedHandler(FrameStarted);
-            
-            
-            
+
+
+            hydrax = new MHydrax.MHydrax(sm, camera, vp);
             
             
             
             OgreWindow.Instance.SceneReady = true;
         }
+        private MHydrax.MHydrax hydrax = null;
         private void cache_skeletonDeleted(string pathRelSkeletonFile)
         {
             OgreWindow.Instance.pause();

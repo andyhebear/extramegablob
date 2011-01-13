@@ -604,11 +604,10 @@ namespace MogreFramework
                 //mViewport.SetDimensions(0f, 0f, (float)SETTINGS_WIDTH, (float)SETTINGS_HEIGHT);
                 //mViewport.Height = (float)SETTINGS_HEIGHT;
                 //Viewport = this.RenderWindow.AddViewport(Camera);
-                //        Viewport.BackgroundColour = ColourValue.Black;
-                //        Camera.AspectRatio = Viewport.ActualWidth / Viewport.ActualHeight;
                 //RenderWindow newWindow = mRoot.CreateRenderWindow("Autumn main RenderWindow", SETTINGS_WIDTH, SETTINGS_HEIGHT, false, misc);
                 // mRoot._getCurrentSceneManager().DestinationRenderSystem._setViewport(mWindow);
                 //CreateRenderWindow
+                mCamera.AspectRatio = (float)SETTINGS_WIDTH / (float)SETTINGS_HEIGHT;
             }
             catch (Exception ex)
             {

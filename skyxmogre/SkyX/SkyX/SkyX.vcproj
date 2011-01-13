@@ -68,7 +68,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="OgreMain.lib winmm.lib"
 				LinkIncremental="0"
-				AdditionalLibraryDirectories="&quot;C:\ogrenew\Lib&quot;;&quot;lib&quot;"
+				AdditionalLibraryDirectories="&quot;C:\Users\Matt\Desktop\OgreSDK_vc9_v1-7-1\lib\release&quot;;lib"
 				GenerateDebugInformation="true"
 				AssemblyDebug="0"
 				OptimizeReferences="2"

@@ -362,6 +362,10 @@ namespace SkyX
 		return mSkyX->getCamera()->getDerivedPosition() - getSunDirection()*mSkyX->getMeshManager()->getSkydomeRadius();
 	}
 }
+EXPORT const Ogre::Vector3& AtmosphereManager_GetSunPosition(SkyX::AtmosphereManager* ptr)
+{
+	return ptr->getSunPosition();
+}
 
 EXPORT const Ogre::Vector3& AtmosphereManager_GetTime(SkyX::AtmosphereManager* ptr)
 {

@@ -32,6 +32,17 @@ namespace SkyX
         }
 
         /// <summary>
+        /// The sun's position
+        /// </summary>
+        public Vector3 SunPosition
+        {
+            get
+            {
+                return *(((Vector3*)AtmosphereManager_GetSunPosition(NativeHandle)));
+            }
+        }
+
+        /// <summary>
         /// East position
         /// </summary>
         public Vector2 EastPosition
@@ -154,6 +165,10 @@ namespace SkyX
         
 
         #region PINVOKE
+
+        [DllImport("SkyX.dll", EntryPoint = "AtmosphereManager_GetSunPosition", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern IntPtr AtmosphereManager_GetSunPosition(IntPtr handle);
+
         [DllImport("SkyX.dll", EntryPoint = "AtmosphereManager_GetTime", CallingConvention = CallingConvention.Cdecl)]
         internal static extern IntPtr AtmosphereManager_GetTime(IntPtr handle);
 

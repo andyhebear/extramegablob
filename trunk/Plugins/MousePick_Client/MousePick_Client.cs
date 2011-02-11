@@ -76,6 +76,7 @@ namespace ExtraMegaBlob
                 if (entry.movable.Name == "MainCamera") continue;
                 if (entry.movable.Name.IndexOf("SphereEntity") > -1) continue;
                 if (entry.movable.Name.IndexOf("SkyXMeshEnt") > -1) continue;
+                if (entry.movable.Name.IndexOf("_Hydrax_GodRays_ManualObject") > -1) continue;
                 if (entry.distance < nearest)
                 {
                     nearest = entry.distance;

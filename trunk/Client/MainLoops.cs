@@ -7,6 +7,7 @@ using ExtraMegaBlob.References;
 using Mogre;
 using MogreFramework;
 using SkyX;
+using MHydrax;
 #region disable annoying warnings
 #pragma warning disable 162 //CS0162: Unreachable code detected
 #pragma warning disable 168 //CS0168: The variable 'XYZ' is declared but never used
@@ -64,6 +65,7 @@ namespace ExtraMegaBlob.Client
                 OgreWindow.Instance.InitializeOgre();
                 LogManager.Singleton.DefaultLog.MessageLogged += new LogListener.MessageLoggedHandler(DefaultLog_MessageLogged);
                 OgreWindow.Instance.mRoot.FrameStarted += new FrameListener.FrameStartedHandler(Root_FrameStarted);
+                OgreWindow.Instance.mRoot.FrameEnded += new FrameListener.FrameEndedHandler(mRoot_FrameEnded);
                 OgreWindow.Instance.Text = Program.header;
                 OgreWindow.Instance.onSend += new OgreWindow.sendDelegate(Instance_onSend);
                 OgreWindow.Instance.FormClosing += new FormClosingEventHandler(mainwindow_FormClosing);
@@ -121,7 +123,12 @@ namespace ExtraMegaBlob.Client
             }
             quit();
         }
-        protected SkyManager manager;
+        private bool mRoot_FrameEnded(FrameEvent evt)
+        {
+            hydrax.Update(evt.timeSinceLastFrame);
+            return true;
+        }
+        protected SkyManager skyManager;
         private string TerrainMaterialName = "Terrain";
         Entities entities = new Entities();
         SceneNodes nodes = new SceneNodes();
@@ -146,10 +153,10 @@ namespace ExtraMegaBlob.Client
             //sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_TEXTURE_MODULATIVE;
             //sm.ShadowTechnique = ShadowTechnique.SHADOWTYPE_TEXTURE_MODULATIVE_INTEGRATED; 
             #endregion
-            
 
 
-            
+
+
 
             camera.FarClipDistance = 30000;
             camera.NearClipDistance = .25f;
@@ -159,23 +166,111 @@ namespace ExtraMegaBlob.Client
 
 
 
-            manager = new SkyManager(sm, OgreWindow.Instance.mCamera);
-            manager.Create();
+            skyManager = new SkyManager(sm, OgreWindow.Instance.mCamera);
+            skyManager.Create();
 
 
             //manager.GPUManager.AddGroundPass(material.GetTechnique(0).CreatePass(), 5000, SceneBlendType.SBT_TRANSPARENT_COLOUR);
 
             // Add a basic cloud layer
-            manager.CloudsManager.Add(new CloudLayer.LayerOptions());
+            skyManager.CloudsManager.Add(new CloudLayer.LayerOptions());
 
             //Add frame evnet
             //root.FrameStarted += new FrameListener.FrameStartedHandler(FrameStarted);
 
+            #region MHydrax
 
+            //hydrax = new MHydrax.MHydrax(sm, camera, vp);
+
+            // Hydrax initialization code ---------------------------------------------
+            // ------------------------------------------------------------------------
+
+            // Create Hydrax object
             hydrax = new MHydrax.MHydrax(sm, camera, vp);
-            
-            
-            
+
+            // Set hydrax components.
+            hydrax.Components = MHydrax.MHydraxComponent.HYDRAX_COMPONENT_CAUSTICS |
+                                MHydrax.MHydraxComponent.HYDRAX_COMPONENT_DEPTH |
+                                MHydrax.MHydraxComponent.HYDRAX_COMPONENT_FOAM |
+                                MHydrax.MHydraxComponent.HYDRAX_COMPONENT_SMOOTH |
+                                MHydrax.MHydraxComponent.HYDRAX_COMPONENT_SUN |
+                                MHydrax.MHydraxComponent.HYDRAX_COMPONENT_UNDERWATER |
+                                MHydrax.MHydraxComponent.HYDRAX_COMPONENT_UNDERWATER_GODRAYS |
+                                MHydrax.MHydraxComponent.HYDRAX_COMPONENT_UNDERWATER_REFLECTIONS;
+
+            //' Create our projected grid module
+            //' Parameters:
+            //' Hydrax parent pointer
+            //' Noise module
+            //' Base plane
+            //' Normal mode
+            //' Projected grid options
+            MHydrax.MProjectedGrid m = new MHydrax.MProjectedGrid(hydrax,
+                                                new MHydrax.MPerlin(new MHydrax.MPerlin.MOptions(8, 0.085f, 0.49f, 1.4f, 1.27f, 2f, new Mogre.Vector3(0.5f, 50f, 150000f))),
+                                                new Plane(new Mogre.Vector3(0, 1, 0), new Mogre.Vector3(0, 0, 0)),
+                                                MHydrax.MMaterialManager.MNormalMode.NM_VERTEX,
+                                                new MHydrax.MProjectedGrid.MOptions(256, 35f, 50f, false, false, true, 3.75f));
+
+            //' Set our module
+            hydrax.SetModule(m);
+
+            //' Set all parameters instead of loading all parameters from config file:
+            //'hydrax.LoadCfg("ProjectedGridDemo.hdx")
+            //' #Main options
+            hydrax.Position = new Mogre.Vector3(5000, 0, -5000);
+            hydrax.PlanesError = 10.5f;
+            hydrax.ShaderMode = MHydrax.MMaterialManager.MShaderMode.SM_HLSL;
+            hydrax.FullReflectionDistance = 100000000000;
+            hydrax.GlobalTransparency = 0;
+            hydrax.NormalDistortion = 0.075f;
+            hydrax.WaterColor = new Mogre.Vector3(0.139765f, 0.359464f, 0.425373f);
+            //' #Sun parameters
+            hydrax.SunPosition = new Mogre.Vector3(0, 10000, 0);
+            hydrax.SunStrength = 1.75f;
+            hydrax.SunArea = 150;
+            hydrax.SunColor = new Mogre.Vector3(1f, 0.9f, 0.6f);
+            //' #Foam parameters
+            hydrax.FoamMaxDistance = 75000000;
+            hydrax.FoamScale = 0.0075f;
+            hydrax.FoamStart = 0;
+            hydrax.FoamTransparency = 1;
+            //' #Depth parameters
+            hydrax.DepthLimit = 90;
+            //' #Smooth transitions parameters
+            hydrax.SmoothPower = 5;
+            //' #Caustics parameters
+            hydrax.CausticsScale = 135;
+            hydrax.CausticsPower = 10.5f;
+            hydrax.CausticsEnd = 0.8f;
+            //' #God rays parameters
+            hydrax.GodRaysExposure = new Mogre.Vector3(0.76f, 2.46f, 2.29f);
+            hydrax.GodRaysIntensity = 0.015f;
+            hydrax.GodRaysManager.SimulationSpeed = 5;
+            hydrax.GodRaysManager.NumberOfRays = 100;
+            hydrax.GodRaysManager.RaysSize = 0.03f;
+            hydrax.GodRaysManager.ObjectsIntersectionsEnabled = false;
+            //' #Rtt quality field(0x0 = Auto)
+            //' TODO: RTTManager not wrapped yet.
+            //'<size>Rtt_Quality_Reflection=0x0
+            //'<size>Rtt_Quality_Refraction=0x0
+            //'<size>Rtt_Quality_Depth=0x0
+            //'<size>Rtt_Quality_URDepth=0x0
+            //'<size>Rtt_Quality_GPUNormalMap=0x0
+
+            //' Create water
+            hydrax.Create();
+
+            //' Hydrax initialization code end -----------------------------------------
+            //' ------------------------------------------------------------------------
+
+            //sm.AmbientLight = new ColourValue(1, 1, 1);
+            //camera.FarClipDistance = 99999 * 6;
+            //camera.Position = new Mogre.Vector3(312.902f, 206.419f, 1524.02f);
+            //camera.Orientation = new Quaternion(0.998f, -0.0121f, -0.0608f, -0.00074f);
+
+            #endregion
+
+
             OgreWindow.Instance.SceneReady = true;
         }
         private MHydrax.MHydrax hydrax = null;
@@ -220,9 +315,9 @@ namespace ExtraMegaBlob.Client
 
             //    it.MoveNext();
             //}
-            
-            manager.TimeMultiplier = 0.1f;
-            manager.Update(evt.timeSinceLastFrame);
+
+            skyManager.TimeMultiplier = 0.1f;
+            skyManager.Update(evt.timeSinceLastFrame);
 
             try
             {
@@ -250,24 +345,24 @@ namespace ExtraMegaBlob.Client
 
             if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_1) && !(OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_LSHIFT) || OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_RSHIFT)))
             {
-                manager.TimeMultiplier = 1.0f;
+                skyManager.TimeMultiplier = 1.0f;
             }
             if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_1) && (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_LSHIFT) || OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_RSHIFT)))
             {
-                manager.TimeMultiplier = -1.0f;
+                skyManager.TimeMultiplier = -1.0f;
             }
 
 
         }
         private String GetConfigString()
         {
-            AtmosphereManager atmo = manager.AtmosphereManager;
+            AtmosphereManager atmo = skyManager.AtmosphereManager;
             int hour = (int)atmo.Time.x;
 
             int min = (int)((atmo.Time.x - hour) * 60);
 
 
-            String timeStr = Mogre.StringConverter.ToString(hour) + ":" + Mogre.StringConverter.ToString(min);
+            String timeStr = hour.ToString() + ":" + min.ToString();
             String str = "SkyX Plugin demo (Press F1 to show/hide information)";
             if (showInformation)
             {
@@ -287,7 +382,7 @@ namespace ExtraMegaBlob.Client
                 str += "Exposure: " + Mogre.StringConverter.ToString(atmo.Exposure) + " [4, Shift+4] (+/-).\n";
                 str += "Inner radius: " + Mogre.StringConverter.ToString(atmo.InnerRadius) + " [5, Shift+5] (+/-).\n";
                 str += "Outer radius: " + Mogre.StringConverter.ToString(atmo.OuterRadius) + " [6, Shift+6] (+/-).\n";
-                str += "Number of samples: " + Mogre.StringConverter.ToString(atmo.NumberOfSamples) + " [7, Shift+7] (+/-).\n";
+                str += "Number of samples: " + atmo.NumberOfSamples.ToString() + " [7, Shift+7] (+/-).\n";
                 str += "Height position: " + Mogre.StringConverter.ToString(atmo.HeightPosition) + " [8, Shift+8] (+/-).\n";
             }
 
@@ -296,6 +391,16 @@ namespace ExtraMegaBlob.Client
         protected bool showInformation;
         private void update()
         {
+            //hydrax.SunStrength = skyManager.AtmosphereManager.SunIntensity;
+            //skyManager.getsu
+            //skyManager.AtmosphereManager.dir
+
+        //    Mogre.Vector3 lightDir = skyManager.AtmosphereManager.dire  mSkyX->getAtmosphereManager()->getSunDirection();
+        //    Mogre.Vector3 sunPos = skyManager.Camera.DerivedPosition  - lightDir * mSkyX->getMeshManager()->getSkydomeRadius() * 0.1;
+        //mHydrax->setSunPosition(sunPos);
+
+           // hydrax.SunPosition = skyManager.AtmosphereManager.SunPosition;
+            
             HandleInput();
             checkOgreException();
             try

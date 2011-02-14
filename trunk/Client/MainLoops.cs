@@ -65,7 +65,6 @@ namespace ExtraMegaBlob.Client
                 OgreWindow.Instance.InitializeOgre();
                 LogManager.Singleton.DefaultLog.MessageLogged += new LogListener.MessageLoggedHandler(DefaultLog_MessageLogged);
                 OgreWindow.Instance.mRoot.FrameStarted += new FrameListener.FrameStartedHandler(Root_FrameStarted);
-                OgreWindow.Instance.mRoot.FrameEnded += new FrameListener.FrameEndedHandler(mRoot_FrameEnded);
                 OgreWindow.Instance.Text = Program.header;
                 OgreWindow.Instance.onSend += new OgreWindow.sendDelegate(Instance_onSend);
                 OgreWindow.Instance.FormClosing += new FormClosingEventHandler(mainwindow_FormClosing);
@@ -83,6 +82,7 @@ namespace ExtraMegaBlob.Client
                     new Thread(new ThreadStart(netConnect)).Start();
                     new Thread(new ThreadStart(checkPluginAddQueueLoop)).Start();
                     new Thread(new ThreadStart(checkNetUpdateFileQueueLoop)).Start();
+                    new Thread(new ThreadStart(waterUpdateThread)).Start();
                     cache.init();
                     #region Primary Loop
                     while (!OgreWindow.Instance.ShuttingDown)
@@ -122,11 +122,6 @@ namespace ExtraMegaBlob.Client
                                     "An Ogre exception has occurred!");
             }
             quit();
-        }
-        private bool mRoot_FrameEnded(FrameEvent evt)
-        {
-            hydrax.Update(evt.timeSinceLastFrame);
-            return true;
         }
         protected SkyManager skyManager;
         private string TerrainMaterialName = "Terrain";
@@ -174,11 +169,33 @@ namespace ExtraMegaBlob.Client
 
             // Add a basic cloud layer
             skyManager.CloudsManager.Add(new CloudLayer.LayerOptions());
+            //skyManager.CloudsManager.
 
             //Add frame evnet
             //root.FrameStarted += new FrameListener.FrameStartedHandler(FrameStarted);
 
+
+            //hydrax = new MHydrax.MHydrax(sm, camera, vp);
+
+            //hydrax.Components = MHydraxComponent.HYDRAX_COMPONENTS_ALL;
+
+            //MHydrax.MProjectedGrid m = new MHydrax.MProjectedGrid(hydrax,
+            //                                   new MPerlin(new MPerlin.MOptions(8, 0.085f, 0.49f, 1.4f, 1.27f, 2, new Mogre.Vector3(0.5f, 50f, 150000f))),
+            //                                   new Plane(new Mogre.Vector3(0, 1, 0), new Mogre.Vector3(0, 0, 0)),
+            //                                   MMaterialManager.MNormalMode.NM_VERTEX,
+            //                                   new MProjectedGrid.MOptions(256, 35f, 50f, false, false, true, 3.75f));
+
+            //hydrax.SetModule(m);
+            //hydrax.LoadCfg("HydraxDemo.hdx");
+            //hydrax.Create();
+
+
             #region MHydrax
+
+
+
+
+
 
             //hydrax = new MHydrax.MHydrax(sm, camera, vp);
 
@@ -270,6 +287,7 @@ namespace ExtraMegaBlob.Client
 
             #endregion
 
+            
 
             OgreWindow.Instance.SceneReady = true;
         }
@@ -316,9 +334,9 @@ namespace ExtraMegaBlob.Client
             //    it.MoveNext();
             //}
 
-            skyManager.TimeMultiplier = 0.1f;
+            skyManager.TimeMultiplier = 1f;
             skyManager.Update(evt.timeSinceLastFrame);
-
+           
             try
             {
                 ClientPluginManager.FrameStartedHooks(interpolation);
@@ -329,6 +347,7 @@ namespace ExtraMegaBlob.Client
             }
             return true;
         }
+        float envThrottle = 0f;
         protected void HandleInput()
         {
             //base.HandleInput(evt);
@@ -389,6 +408,22 @@ namespace ExtraMegaBlob.Client
             return str;
         }
         protected bool showInformation;
+        private void waterUpdateThread()
+        {
+            while (!OgreWindow.Instance.ShuttingDown)
+            {
+                try
+                {
+                    OgreWindow.Instance.pause();
+
+                    hydrax.Update(.1f);
+                    envThrottle = 0f;
+                    OgreWindow.Instance.unpause();
+                }
+                catch { }
+                Thread.Sleep(100);
+            }
+        }
         private void update()
         {
             //hydrax.SunStrength = skyManager.AtmosphereManager.SunIntensity;
@@ -400,7 +435,17 @@ namespace ExtraMegaBlob.Client
         //mHydrax->setSunPosition(sunPos);
 
            // hydrax.SunPosition = skyManager.AtmosphereManager.SunPosition;
+
             
+            hydrax.SunPosition = skyManager.AtmosphereManager.SunPosition;  //WORKS!
+            //skyManager.AtmosphereManager.SunIntensity
+            //hydrax.SunStrength = skyManager.AtmosphereManager.SunIntensity;
+
+            //log(skyManager.AtmosphereManager.SunIntensity.ToString()); //doesnt change :(
+            //log(skyManager.AtmosphereManager.Exposure.ToString()); //doesnt change :(
+            //skyManager.
+            
+
             HandleInput();
             checkOgreException();
             try
@@ -664,6 +709,7 @@ namespace ExtraMegaBlob.Client
         private int MAX_FRAMESKIP { get { return 5; } }
         private long next_game_tick = DateTime.Now.Ticks;
         private float interpolation = 0f;
+
 
     }
 }

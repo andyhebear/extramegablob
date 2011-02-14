@@ -325,7 +325,7 @@ EXPORT SkyX::CloudLayer* CloudsManager_Add(SkyX::CloudsManager* ptr,float height
                                           float timeMultiplier,float distanceAttenuation,float detailAttenuation,float normalMultiplier,
                                           float heightVolume,float volumetricDisplacement)
 {
-	return ptr->add(SkyX::CloudLayer::Options(height,scale,windDirection,timeMultiplier,distanceAttenuation,detailAttenuation,normalMultiplier,heightVolume,volumetricDisplacement));
+	return ptr->add(SkyX::CloudLayer::Options(height,scale,Ogre::Vector2(1,1),timeMultiplier,distanceAttenuation,detailAttenuation,normalMultiplier,heightVolume,volumetricDisplacement));
 }
 
 

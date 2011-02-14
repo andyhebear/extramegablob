@@ -1,0 +1,36 @@
+Using MHydrax 0.5 (c) 2009 by Christian Haettig
+
+Things to do in Hydrax 0.5x:
+==================================================================
+Adjustments in *.cpp-files to work with Ogre 1.4x:
+Change these lines in MaterialManager::_createUnderwaterCompositor()
+	Ogre::PixelFormatList l;
+	l.push_back(Ogre::PF_A8R8G8B8);
+	TDef->formatList = l;    
+to:
+	TDef->format = Ogre::PF_A8R8G8B8; // New code line for Ogre 1.4.x
+
+Comment this line in Decal::setSize() if it's not already commented:
+	mProjector->setOrthoWindow(Size.x, Size.y);
+
+
+Adjustments in Hydrax-files to work with Ogre 1.7x:
+http://www.ogre3d.org/addonforums/viewtopic.php?f=20&t=11089
+==================================================================
+
+Changed Hydrax to compile as static library (*.lib). (You may still choose to not do that...)
+The result is that the managed MHydrax.dll doesn't need any native Hydrax.dlls.
+==================================================================
+
+Things to do in MHydrax project properties:
+in Framework and References: Adjust refence to Mogre.dll (the one corresponding to your current build mode)
+in C/C++: Adjust additional include directories to match yours.
+in Linker: Adjust additional library directories to match yours.
+
+
+Things to do in Samples project properties:
+in References: Adjust references to Mogre.dll and MOIS.dll (the ones corresponding to your current build mode)
+
+
+General things to do:
+Copy folder "Media" from Hydrax to MHydrax solution directory or modify the resources.cfg accordingly.

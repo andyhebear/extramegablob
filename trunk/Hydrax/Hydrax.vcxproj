@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{5506C2AB-7DD1-47BB-A77D-EB26E52BE41C}</ProjectGuid>
+    <RootNamespace>Hydrax</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\bin\debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\obj\Debug\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\bin\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\obj\Release\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>C:\Users\Matt\Desktop\new mogre\Mogre\Main\OgreSrc\build\include;C:\Users\Matt\Desktop\new mogre\Mogre\Main\OgreSrc\ogre\OgreMain\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;HYDRAX_EXPORTS;HYDRAX_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>OgreMain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Matt\Desktop\new mogre\Mogre\Main\OgreSrc\build\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>C:/OgreSDK_1_6_3/Include;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;HYDRAX_EXPORTS;HYDRAX_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <ProgramDataBaseFileName>$(OutDir)Hydrax.pdb</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>OgreMain.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\OgreSDK_1_6_3\Lib;lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>NotSet</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="include\noise\module\abs.h" />
+    <ClInclude Include="include\noise\module\add.h" />
+    <ClInclude Include="include\noise\basictypes.h" />
+    <ClInclude Include="include\noise\module\billow.h" />
+    <ClInclude Include="include\noise\module\blend.h" />
+    <ClInclude Include="include\noise\module\cache.h" />
+    <ClInclude Include="src\Hydrax\CfgFileManager.h" />
+    <ClInclude Include="include\noise\module\checkerboard.h" />
+    <ClInclude Include="include\noise\module\clamp.h" />
+    <ClInclude Include="include\noise\module\const.h" />
+    <ClInclude Include="include\noise\module\curve.h" />
+    <ClInclude Include="include\noise\model\cylinder.h" />
+    <ClInclude Include="include\noise\module\cylinders.h" />
+    <ClInclude Include="src\Hydrax\DecalsManager.h" />
+    <ClInclude Include="include\noise\module\displace.h" />
+    <ClInclude Include="include\Hydrax\Enums.h" />
+    <ClInclude Include="src\Hydrax\Enums.h" />
+    <ClInclude Include="include\noise\exception.h" />
+    <ClInclude Include="include\noise\module\exponent.h" />
+    <ClInclude Include="src\Hydrax\Noise\FFT\FFT.h" />
+    <ClInclude Include="src\Hydrax\GodRaysManager.h" />
+    <ClInclude Include="src\Hydrax\GPUNormalMapManager.h" />
+    <ClInclude Include="include\Hydrax\Help.h" />
+    <ClInclude Include="src\Hydrax\Help.h" />
+    <ClInclude Include="src\Hydrax\Hydrax.h" />
+    <ClInclude Include="include\Hydrax\Hydrax.h" />
+    <ClInclude Include="src\Hydrax\Image.h" />
+    <ClInclude Include="include\noise\interp.h" />
+    <ClInclude Include="include\noise\module\invert.h" />
+    <ClInclude Include="include\noise\latlon.h" />
+    <ClInclude Include="include\noise\model\line.h" />
+    <ClInclude Include="src\Hydrax\MaterialManager.h" />
+    <ClInclude Include="include\noise\mathconsts.h" />
+    <ClInclude Include="include\noise\module\max.h" />
+    <ClInclude Include="src\Hydrax\Mesh.h" />
+    <ClInclude Include="include\Hydrax\Mesh.h" />
+    <ClInclude Include="include\noise\module\min.h" />
+    <ClInclude Include="include\noise\misc.h" />
+    <ClInclude Include="include\noise\model\model.h" />
+    <ClInclude Include="src\Hydrax\Modules\Module.h" />
+    <ClInclude Include="include\noise\module\module.h" />
+    <ClInclude Include="include\noise\module\modulebase.h" />
+    <ClInclude Include="include\noise\module\multiply.h" />
+    <ClInclude Include="include\noise\noise.h" />
+    <ClInclude Include="src\Hydrax\Noise\Noise.h" />
+    <ClInclude Include="include\noise\noisegen.h" />
+    <ClInclude Include="include\noise\noiseutils.h" />
+    <ClInclude Include="src\Hydrax\Noise\Perlin\Perlin.h" />
+    <ClInclude Include="include\Hydrax\Perlin.h" />
+    <ClInclude Include="include\noise\module\perlin.h" />
+    <ClInclude Include="include\noise\model\plane.h" />
+    <ClInclude Include="include\noise\module\power.h" />
+    <ClInclude Include="include\Hydrax\Prerequisites.h" />
+    <ClInclude Include="src\Hydrax\Prerequisites.h" />
+    <ClInclude Include="src\Hydrax\Modules\ProjectedGrid\ProjectedGrid.h" />
+    <ClInclude Include="src\Hydrax\Modules\RadialGrid\RadialGrid.h" />
+    <ClInclude Include="include\noise\win32\resource.h" />
+    <ClInclude Include="include\noise\module\ridgedmulti.h" />
+    <ClInclude Include="include\noise\module\rotatepoint.h" />
+    <ClInclude Include="src\Hydrax\RttManager.h" />
+    <ClInclude Include="include\noise\module\scalebias.h" />
+    <ClInclude Include="include\noise\module\scalepoint.h" />
+    <ClInclude Include="include\noise\module\select.h" />
+    <ClInclude Include="src\Hydrax\Modules\SimpleGrid\SimpleGrid.h" />
+    <ClInclude Include="include\noise\model\sphere.h" />
+    <ClInclude Include="include\noise\module\spheres.h" />
+    <ClInclude Include="include\Hydrax\Structs.h" />
+    <ClInclude Include="include\noise\module\terrace.h" />
+    <ClInclude Include="src\Hydrax\TextureManager.h" />
+    <ClInclude Include="include\noise\module\translatepoint.h" />
+    <ClInclude Include="include\noise\module\turbulence.h" />
+    <ClInclude Include="include\noise\vectortable.h" />
+    <ClInclude Include="include\noise\module\voronoi.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Hydrax\CfgFileManager.cpp" />
+    <ClCompile Include="src\Hydrax\DecalsManager.cpp" />
+    <ClCompile Include="src\hydrax\Enums.cpp" />
+    <ClCompile Include="src\Hydrax\Noise\FFT\FFT.cpp" />
+    <ClCompile Include="src\Hydrax\GodRaysManager.cpp" />
+    <ClCompile Include="src\Hydrax\GPUNormalMapManager.cpp" />
+    <ClCompile Include="src\hydrax\Help.cpp" />
+    <ClCompile Include="src\hydrax\Hydrax.cpp" />
+    <ClCompile Include="src\Hydrax\Image.cpp" />
+    <ClCompile Include="src\Hydrax\MaterialManager.cpp" />
+    <ClCompile Include="src\hydrax\Mesh.cpp" />
+    <ClCompile Include="src\Hydrax\Modules\Module.cpp" />
+    <ClCompile Include="src\Hydrax\Noise\Noise.cpp" />
+    <ClCompile Include="src\Hydrax\Noise\Perlin\Perlin.cpp" />
+    <ClCompile Include="src\hydrax\Prerequisites.cpp" />
+    <ClCompile Include="src\Hydrax\Modules\ProjectedGrid\ProjectedGrid.cpp" />
+    <ClCompile Include="src\Hydrax\Modules\RadialGrid\RadialGrid.cpp" />
+    <ClCompile Include="src\Hydrax\RttManager.cpp" />
+    <ClCompile Include="src\Hydrax\Modules\SimpleGrid\SimpleGrid.cpp" />
+    <ClCompile Include="src\Hydrax\TextureManager.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

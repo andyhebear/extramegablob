@@ -15,10 +15,10 @@ namespace ExtraMegaBlob.References
             ENDPOINT
         }
         public String Name = String.Empty;
-        public Vector3 Location = new Vector3();
+        public ExtraMegaBlob.References.Vector3 Location = new ExtraMegaBlob.References.Vector3();
         public string Endpoint = "";
 
-        public User(String Name, Vector3 Location, String Endpoint)
+        public User(String Name, ExtraMegaBlob.References.Vector3 Location, String Endpoint)
         {
             this.Name = Name;
             this.Location = Location;
@@ -32,7 +32,7 @@ namespace ExtraMegaBlob.References
         public User(SerializationInfo info, StreamingContext ctxt)
         {
             Name = (String)info.GetValue("Name", typeof(String));
-            Location = (Vector3)info.GetValue("Location", typeof(Vector3));
+            Location = (ExtraMegaBlob.References.Vector3)info.GetValue("Location", typeof(ExtraMegaBlob.References.Vector3));
             Endpoint = (String)info.GetValue("Endpoint", typeof(String));
         }
         //Serialization function.

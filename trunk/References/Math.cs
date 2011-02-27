@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
+using System.IO;
+using System.Xml;
 
 namespace ExtraMegaBlob.References
 {
     public class Vector3 : ISerializable
     {
-       
+
         public float x, y, z;
         public Vector3(float x, float y, float z)
         {
@@ -40,29 +42,30 @@ namespace ExtraMegaBlob.References
                 return new Mogre.Vector3(this.x, this.y, this.z);
             }
         }
+        public static Vector3 FromMogre(Mogre.Vector3 loc)
+        {
+            return new Vector3(loc.x, loc.y, loc.z);
+        }
+        public static Vector3 FromString(String XmlString)
+        {
+            System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(Vector3));
+            MemoryStream memoryStream = new MemoryStream(Serialize.StringToUTF8ByteArray(XmlString));
+            XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.UTF8);
+            return (Vector3)xs.Deserialize(memoryStream);
+        }
+        public override String ToString()
+        {
+            return Serialize.StaticallySerializeObject(this, typeof(Vector3));
+        }
     }
     public static class Math
     {
+
         public static void floor(ref double x)
         {
             x = System.Math.Floor(x);
         }
-        public class Vector3
-        {
-            public float x, y, z;
-            public Vector3(float x, float y, float z)
-            {
-                this.x = x;
-                this.y = y;
-                this.z = z;
-            }
-            public Vector3()
-            {
-                this.x = 0f;
-                this.y = 0f;
-                this.z = 0f;
-            }
-        }
+        
         /// <summary>
         /// This is the Cartesian version of Pythagoras' theorem. In three-dimensional space,
         /// the distance between points (x1,y1,z1) and (x2,y2,z2) is

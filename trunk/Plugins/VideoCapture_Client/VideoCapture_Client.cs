@@ -16,7 +16,7 @@ namespace ExtraMegaBlob
             Event ev = new Event();
             ev._Keyword = KeyWord.CAMCAP;
             ev._Memories = mems;
-            ev._IntendedRecipients = eventScope.SERVERSPECIFY;
+            ev._IntendedRecipients = EventTransfer.CLIENTTOSERVER;
             base.outboxMessage(this, ev);
         }
         private static TimeSpan captureInterval = new TimeSpan(0, 0, 0, 0, 1000);
@@ -69,11 +69,13 @@ namespace ExtraMegaBlob
                 Textures textures = OgreWindow.Instance.textures;
                 //byte[] capFrameBytes = OgreWindow.Instance.getCapSerialized(OgreWindow.imgFmt.JPG);
                 Bitmap bmp = OgreWindow.Instance.getCap();
+                if (bmp == null) goto end;
                 byte[] rgbData = textures.ConvertImageToRgbValues(bmp);
                 textures.Replace2(rgbData, capTexture);
                 //OgreWindow.Instance.setCapStatusImage(capFrameBytes);
                 //sendCap(capFrameBytes);
                 //OgreWindow.Instance.textures.Replace2(capFrameBytes, capTexture);
+                end:
                 captureTimer.start();
             }
         }

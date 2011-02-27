@@ -213,7 +213,7 @@ namespace ExtraMegaBlob.Client
             Event ev = new Event();
             ev._Keyword = KeyWord.CARTESIAN_SECRETPLAYERLOCATION;
             ev._Memories = mems;
-            ev._IntendedRecipients = eventScope.SERVERSPECIFY;
+            ev._IntendedRecipients = EventTransfer.CLIENTTOSERVER;
             base.outboxMessage(this, ev);
             // log("Location: X=" + imAt.x.ToString() + " Y=" + imAt.y.ToString() + " Z=" + imAt.z.ToString());
         }

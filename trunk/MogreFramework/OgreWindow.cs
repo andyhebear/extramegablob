@@ -1040,6 +1040,7 @@ namespace MogreFramework
         {
             try
             {
+                if (samplegrabber == null) return null;
                 MemoryStream ms = new MemoryStream();
                 VideoInfoHeader videoheader = new VideoInfoHeader();
                 AMMediaType grab = new AMMediaType();

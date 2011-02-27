@@ -55,7 +55,7 @@ namespace ExtraMegaBlob.Server
                         }
                         Event outevent = new Event();
                         outevent._Keyword = KeyWord.EVENT_CHATMESSAGE;
-                        outevent._IntendedRecipients = eventScope.CLIENTSPECIFY;
+                        outevent._IntendedRecipients = EventTransfer.SERVERTOCLIENT;
                         outevent._Memories = new Memories();
                         outevent._Memories.Add(new Memory("text", KeyWord.NIL, message, null));
                         outevent._Memories.Add(new Memory("username", KeyWord.NIL, senderName, null));

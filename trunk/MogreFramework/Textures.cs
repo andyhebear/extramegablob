@@ -109,7 +109,7 @@ namespace MogreFramework
             PixelBox imagBox = image.GetPixelBox();
             uint bytes = imagBox.GetConsecutiveSize();
             byte[] rgbValues = new byte[bytes];
-            Marshal.Copy( imagBox.data, rgbValues, 0, (int)bytes);
+            Marshal.Copy(imagBox.data, rgbValues, 0, (int)bytes);
             image.Dispose();
             fs2.Close();
             ms.Close();
@@ -117,6 +117,7 @@ namespace MogreFramework
         }
         public byte[] ConvertImageToRgbValues(Bitmap image)
         {
+            if (image == null) throw new ArgumentException("The Bitmap may not be null");
             System.Drawing.Imaging.BitmapData bmpData = image.LockBits(
                 new System.Drawing.Rectangle(0, 0, image.Width, image.Height),
                 System.Drawing.Imaging.ImageLockMode.ReadOnly,

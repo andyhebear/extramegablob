@@ -31,6 +31,7 @@
     {
         NIL,
         MOVEPLAYER,
+        ROTATEPLAYER,
         PREVENTMOUSEPICK,
 
         CACHE_CLIENTDELETEFILE,

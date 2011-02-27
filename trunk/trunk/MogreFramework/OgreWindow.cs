@@ -343,10 +343,10 @@ namespace MogreFramework
         public bool ShuttingDown { set { if (value) { _ShuttingDown = true; } } get { return _ShuttingDown; } }
         private bool _ShuttingDown = false;
 
-        public SceneNode cameraNode = null;
-        public SceneNode cameraYawNode = null;
-        public SceneNode cameraPitchNode = null;
-        public SceneNode cameraRollNode = null;
+        //public SceneNode cameraNode = null;
+        //public SceneNode cameraYawNode = null;
+        //public SceneNode cameraPitchNode = null;
+        //public SceneNode cameraRollNode = null;
         public delegate void SceneEventHandler();
         public event SceneEventHandler SceneCreating;
         public bool pauseEvents = false;
@@ -462,7 +462,7 @@ namespace MogreFramework
             //mCamera.LookAt(Mogre.Vector3.ZERO);
             mCamera = mSceneMgr.CreateCamera("MainCamera");
             mCamera.NearClipDistance = 1;
-            mCamera.AutoAspectRatio = true;
+            mCamera.AutoAspectRatio = false;
             // mCamera.Position = new Mogre.Vector3(0, 0, 300);
             // mCamera.LookAt(Mogre.Vector3.ZERO);
             //// Create the camera's thop node (which will only handle position).
@@ -477,15 +477,15 @@ namespace MogreFramework
             //this->cameraRollNode = this->cameraPitchNode->createChildSceneNode();
             //this->cameraRollNode->attachObject(this->camera);
             // Create the camera's top node (which will only handle position).
-            cameraNode = mSceneMgr.RootSceneNode.CreateChildSceneNode();
+            //cameraNode = mSceneMgr.RootSceneNode.CreateChildSceneNode();
             // Create the camera's yaw node as a child of camera's top node.
-            cameraYawNode = cameraNode.CreateChildSceneNode();
-            // Create the camera's pitch node as a child of camera's yaw node.
-            cameraPitchNode = cameraYawNode.CreateChildSceneNode();
-            // Create the camera's roll node as a child of camera's pitch node
-            // and attach the camera to it.
-            cameraRollNode = cameraPitchNode.CreateChildSceneNode();
-            cameraRollNode.AttachObject(mCamera);
+            //cameraYawNode = cameraNode.CreateChildSceneNode();
+            //// Create the camera's pitch node as a child of camera's yaw node.
+            //cameraPitchNode = cameraYawNode.CreateChildSceneNode();
+            //// Create the camera's roll node as a child of camera's pitch node
+            //// and attach the camera to it.
+            //cameraRollNode = cameraPitchNode.CreateChildSceneNode();
+            //cameraRollNode.AttachObject(mCamera);
         }
         /// <summary>
         /// Creates the viewport for this class.

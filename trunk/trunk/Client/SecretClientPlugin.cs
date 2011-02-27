@@ -206,10 +206,10 @@ namespace ExtraMegaBlob.Client
         private void sendLocationBeacon()
         {
             Memories mems = new Memories();
-            Mogre.Vector3 imAt = OgreWindow.Instance.cameraNode.Position;
-            mems.Add(new Memory("", KeyWord.CARTESIAN_X, imAt.x.ToString(), null));
-            mems.Add(new Memory("", KeyWord.CARTESIAN_Y, imAt.y.ToString(), null));
-            mems.Add(new Memory("", KeyWord.CARTESIAN_Z, imAt.z.ToString(), null));
+            //Mogre.Vector3 imAt = OgreWindow.Instance.cameraNode.Position;
+            //mems.Add(new Memory("", KeyWord.CARTESIAN_X, imAt.x.ToString(), null));
+            //mems.Add(new Memory("", KeyWord.CARTESIAN_Y, imAt.y.ToString(), null));
+            //mems.Add(new Memory("", KeyWord.CARTESIAN_Z, imAt.z.ToString(), null));
             Event ev = new Event();
             ev._Keyword = KeyWord.CARTESIAN_SECRETPLAYERLOCATION;
             ev._Memories = mems;

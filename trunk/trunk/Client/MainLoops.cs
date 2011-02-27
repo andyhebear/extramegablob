@@ -190,102 +190,102 @@ namespace ExtraMegaBlob.Client
             //hydrax.Create();
 
 
-            #region MHydrax
+            //#region MHydrax
 
 
 
 
 
 
+            ////hydrax = new MHydrax.MHydrax(sm, camera, vp);
+
+            //// Hydrax initialization code ---------------------------------------------
+            //// ------------------------------------------------------------------------
+
+            //// Create Hydrax object
             //hydrax = new MHydrax.MHydrax(sm, camera, vp);
 
-            // Hydrax initialization code ---------------------------------------------
-            // ------------------------------------------------------------------------
+            //// Set hydrax components.
+            //hydrax.Components = MHydrax.MHydraxComponent.HYDRAX_COMPONENT_CAUSTICS |
+            //                    MHydrax.MHydraxComponent.HYDRAX_COMPONENT_DEPTH |
+            //                    MHydrax.MHydraxComponent.HYDRAX_COMPONENT_FOAM |
+            //                    MHydrax.MHydraxComponent.HYDRAX_COMPONENT_SMOOTH |
+            //                    MHydrax.MHydraxComponent.HYDRAX_COMPONENT_SUN |
+            //                    MHydrax.MHydraxComponent.HYDRAX_COMPONENT_UNDERWATER |
+            //                    MHydrax.MHydraxComponent.HYDRAX_COMPONENT_UNDERWATER_GODRAYS |
+            //                    MHydrax.MHydraxComponent.HYDRAX_COMPONENT_UNDERWATER_REFLECTIONS;
 
-            // Create Hydrax object
-            hydrax = new MHydrax.MHydrax(sm, camera, vp);
+            ////' Create our projected grid module
+            ////' Parameters:
+            ////' Hydrax parent pointer
+            ////' Noise module
+            ////' Base plane
+            ////' Normal mode
+            ////' Projected grid options
+            //MHydrax.MProjectedGrid m = new MHydrax.MProjectedGrid(hydrax,
+            //                                    new MHydrax.MPerlin(new MHydrax.MPerlin.MOptions(8, 0.085f, 0.49f, 1.4f, 1.27f, 2f, new Mogre.Vector3(0.5f, 50f, 150000f))),
+            //                                    new Plane(new Mogre.Vector3(0, 1, 0), new Mogre.Vector3(0, 0, 0)),
+            //                                    MHydrax.MMaterialManager.MNormalMode.NM_VERTEX,
+            //                                    new MHydrax.MProjectedGrid.MOptions(256, 35f, 50f, false, false, true, 3.75f));
 
-            // Set hydrax components.
-            hydrax.Components = MHydrax.MHydraxComponent.HYDRAX_COMPONENT_CAUSTICS |
-                                MHydrax.MHydraxComponent.HYDRAX_COMPONENT_DEPTH |
-                                MHydrax.MHydraxComponent.HYDRAX_COMPONENT_FOAM |
-                                MHydrax.MHydraxComponent.HYDRAX_COMPONENT_SMOOTH |
-                                MHydrax.MHydraxComponent.HYDRAX_COMPONENT_SUN |
-                                MHydrax.MHydraxComponent.HYDRAX_COMPONENT_UNDERWATER |
-                                MHydrax.MHydraxComponent.HYDRAX_COMPONENT_UNDERWATER_GODRAYS |
-                                MHydrax.MHydraxComponent.HYDRAX_COMPONENT_UNDERWATER_REFLECTIONS;
+            ////' Set our module
+            //hydrax.SetModule(m);
 
-            //' Create our projected grid module
-            //' Parameters:
-            //' Hydrax parent pointer
-            //' Noise module
-            //' Base plane
-            //' Normal mode
-            //' Projected grid options
-            MHydrax.MProjectedGrid m = new MHydrax.MProjectedGrid(hydrax,
-                                                new MHydrax.MPerlin(new MHydrax.MPerlin.MOptions(8, 0.085f, 0.49f, 1.4f, 1.27f, 2f, new Mogre.Vector3(0.5f, 50f, 150000f))),
-                                                new Plane(new Mogre.Vector3(0, 1, 0), new Mogre.Vector3(0, 0, 0)),
-                                                MHydrax.MMaterialManager.MNormalMode.NM_VERTEX,
-                                                new MHydrax.MProjectedGrid.MOptions(256, 35f, 50f, false, false, true, 3.75f));
+            ////' Set all parameters instead of loading all parameters from config file:
+            ////'hydrax.LoadCfg("ProjectedGridDemo.hdx")
+            ////' #Main options
+            //hydrax.Position = new Mogre.Vector3(5000, 0, -5000);
+            //hydrax.PlanesError = 10.5f;
+            //hydrax.ShaderMode = MHydrax.MMaterialManager.MShaderMode.SM_HLSL;
+            //hydrax.FullReflectionDistance = 100000000000;
+            //hydrax.GlobalTransparency = 0;
+            //hydrax.NormalDistortion = 0.075f;
+            //hydrax.WaterColor = new Mogre.Vector3(0.139765f, 0.359464f, 0.425373f);
+            ////' #Sun parameters
+            //hydrax.SunPosition = new Mogre.Vector3(0, 10000, 0);
+            //hydrax.SunStrength = 1.75f;
+            //hydrax.SunArea = 150;
+            //hydrax.SunColor = new Mogre.Vector3(1f, 0.9f, 0.6f);
+            ////' #Foam parameters
+            //hydrax.FoamMaxDistance = 75000000;
+            //hydrax.FoamScale = 0.0075f;
+            //hydrax.FoamStart = 0;
+            //hydrax.FoamTransparency = 1;
+            ////' #Depth parameters
+            //hydrax.DepthLimit = 90;
+            ////' #Smooth transitions parameters
+            //hydrax.SmoothPower = 5;
+            ////' #Caustics parameters
+            //hydrax.CausticsScale = 135;
+            //hydrax.CausticsPower = 10.5f;
+            //hydrax.CausticsEnd = 0.8f;
+            ////' #God rays parameters
+            //hydrax.GodRaysExposure = new Mogre.Vector3(0.76f, 2.46f, 2.29f);
+            //hydrax.GodRaysIntensity = 0.015f;
+            //hydrax.GodRaysManager.SimulationSpeed = 5;
+            //hydrax.GodRaysManager.NumberOfRays = 100;
+            //hydrax.GodRaysManager.RaysSize = 0.03f;
+            //hydrax.GodRaysManager.ObjectsIntersectionsEnabled = false;
+            ////' #Rtt quality field(0x0 = Auto)
+            ////' TODO: RTTManager not wrapped yet.
+            ////'<size>Rtt_Quality_Reflection=0x0
+            ////'<size>Rtt_Quality_Refraction=0x0
+            ////'<size>Rtt_Quality_Depth=0x0
+            ////'<size>Rtt_Quality_URDepth=0x0
+            ////'<size>Rtt_Quality_GPUNormalMap=0x0
 
-            //' Set our module
-            hydrax.SetModule(m);
+            ////' Create water
+            //hydrax.Create();
 
-            //' Set all parameters instead of loading all parameters from config file:
-            //'hydrax.LoadCfg("ProjectedGridDemo.hdx")
-            //' #Main options
-            hydrax.Position = new Mogre.Vector3(5000, 0, -5000);
-            hydrax.PlanesError = 10.5f;
-            hydrax.ShaderMode = MHydrax.MMaterialManager.MShaderMode.SM_HLSL;
-            hydrax.FullReflectionDistance = 100000000000;
-            hydrax.GlobalTransparency = 0;
-            hydrax.NormalDistortion = 0.075f;
-            hydrax.WaterColor = new Mogre.Vector3(0.139765f, 0.359464f, 0.425373f);
-            //' #Sun parameters
-            hydrax.SunPosition = new Mogre.Vector3(0, 10000, 0);
-            hydrax.SunStrength = 1.75f;
-            hydrax.SunArea = 150;
-            hydrax.SunColor = new Mogre.Vector3(1f, 0.9f, 0.6f);
-            //' #Foam parameters
-            hydrax.FoamMaxDistance = 75000000;
-            hydrax.FoamScale = 0.0075f;
-            hydrax.FoamStart = 0;
-            hydrax.FoamTransparency = 1;
-            //' #Depth parameters
-            hydrax.DepthLimit = 90;
-            //' #Smooth transitions parameters
-            hydrax.SmoothPower = 5;
-            //' #Caustics parameters
-            hydrax.CausticsScale = 135;
-            hydrax.CausticsPower = 10.5f;
-            hydrax.CausticsEnd = 0.8f;
-            //' #God rays parameters
-            hydrax.GodRaysExposure = new Mogre.Vector3(0.76f, 2.46f, 2.29f);
-            hydrax.GodRaysIntensity = 0.015f;
-            hydrax.GodRaysManager.SimulationSpeed = 5;
-            hydrax.GodRaysManager.NumberOfRays = 100;
-            hydrax.GodRaysManager.RaysSize = 0.03f;
-            hydrax.GodRaysManager.ObjectsIntersectionsEnabled = false;
-            //' #Rtt quality field(0x0 = Auto)
-            //' TODO: RTTManager not wrapped yet.
-            //'<size>Rtt_Quality_Reflection=0x0
-            //'<size>Rtt_Quality_Refraction=0x0
-            //'<size>Rtt_Quality_Depth=0x0
-            //'<size>Rtt_Quality_URDepth=0x0
-            //'<size>Rtt_Quality_GPUNormalMap=0x0
+            ////' Hydrax initialization code end -----------------------------------------
+            ////' ------------------------------------------------------------------------
 
-            //' Create water
-            hydrax.Create();
+            ////sm.AmbientLight = new ColourValue(1, 1, 1);
+            ////camera.FarClipDistance = 99999 * 6;
+            ////camera.Position = new Mogre.Vector3(312.902f, 206.419f, 1524.02f);
+            ////camera.Orientation = new Quaternion(0.998f, -0.0121f, -0.0608f, -0.00074f);
 
-            //' Hydrax initialization code end -----------------------------------------
-            //' ------------------------------------------------------------------------
-
-            //sm.AmbientLight = new ColourValue(1, 1, 1);
-            //camera.FarClipDistance = 99999 * 6;
-            //camera.Position = new Mogre.Vector3(312.902f, 206.419f, 1524.02f);
-            //camera.Orientation = new Quaternion(0.998f, -0.0121f, -0.0608f, -0.00074f);
-
-            #endregion
+            //#endregion
 
             
 
@@ -416,7 +416,7 @@ namespace ExtraMegaBlob.Client
                 {
                     OgreWindow.Instance.pause();
 
-                    hydrax.Update(.1f);
+                    //hydrax.Update(.1f);
                     envThrottle = 0f;
                     OgreWindow.Instance.unpause();
                 }
@@ -437,7 +437,10 @@ namespace ExtraMegaBlob.Client
            // hydrax.SunPosition = skyManager.AtmosphereManager.SunPosition;
 
             
-            hydrax.SunPosition = skyManager.AtmosphereManager.SunPosition;  //WORKS!
+           // hydrax.SunPosition = skyManager.AtmosphereManager.SunPosition;  //WORKS!
+            
+            
+            
             //skyManager.AtmosphereManager.SunIntensity
             //hydrax.SunStrength = skyManager.AtmosphereManager.SunIntensity;
 

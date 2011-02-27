@@ -128,7 +128,7 @@ namespace ExtraMegaBlob
             }
             catch { OgreWindow.Instance.log("couldn't wire up camera input"); }
             #region gui updates
-            Mogre.Vector3 pos = OgreWindow.Instance.cameraNode.Position;
+            Mogre.Vector3 pos = OgreWindow.Instance.mCamera.Position;
 
 
             OgreWindow.Instance.updateCoords(OgreWindow.UI_ELEMENT.label1, "X: " + pos.x.ToString("N"));
@@ -160,11 +160,12 @@ namespace ExtraMegaBlob
             //}
             try
             {
-                Mogre.Vector3 translateTo = OgreWindow.Instance.cameraYawNode.Orientation * OgreWindow.Instance.cameraPitchNode.Orientation * TranslateVector_Camera;
-                if (translateTo.x != 0f || translateTo.y != 0f || translateTo.z != 0f)
+                //Mogre.Vector3 translateTo = OgreWindow.Instance.cameraYawNode.Orientation * OgreWindow.Instance.cameraPitchNode.Orientation * TranslateVector_Camera;
+                if (TranslateVector_Camera.x != 0f || TranslateVector_Camera.y != 0f || TranslateVector_Camera.z != 0f)
                 {
-                    OgreWindow.Instance.cameraNode.Translate(translateTo);
-                    movePlayer(translateTo);
+                    //OgreWindow.Instance.cameraNode.Translate(translateTo);
+                    movePlayer(TranslateVector_Camera);
+                    //OgreWindow.Instance.cameraNode.Orientation.
                 }
                 TranslateVector_Camera = new Mogre.Vector3();
             }
@@ -184,7 +185,6 @@ namespace ExtraMegaBlob
             ev._IntendedRecipients = EventTransfer.CLIENTTOCLIENT;
             base.outboxMessage(this, ev);
         }
-        private float RotateScale_Camera = .001f;//mouse sensitivity
         private float MoveScale_Camera_forwardback = 0f;
         private float MoveScale_Camera_leftright = 0f;
         private float MoveScale_Camera_updown = 0f;
@@ -201,13 +201,6 @@ namespace ExtraMegaBlob
         private static TimeSpan mmbClutch = new TimeSpan(0, 0, 0, 0, 100);
         private bool g_m_MouseMoved(MouseEvent arg)
         {
-            MouseState_NativePtr s = arg.state;
-            if (arg.state.buttons == 2)
-            {
-                OgreWindow.Instance.cameraYawNode.Yaw(-s.X.rel * RotateScale_Camera);
-                OgreWindow.Instance.cameraRollNode.Pitch(-s.Y.rel * RotateScale_Camera);
-            }
-            Mogre.Vector3 oldpos = OgreWindow.Instance.cameraNode.Position;
             float mouseZ = (float)OgreWindow.g_m.MouseState.Z.rel * .1f;
             //chat(mouseZ.ToString());
             if (mouseZ > 0)

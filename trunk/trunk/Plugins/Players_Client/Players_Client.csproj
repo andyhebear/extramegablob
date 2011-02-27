@@ -107,8 +107,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>mkdir "$(SolutionDir)\..\bin\servercache\Players\"
-copy "$(ProjectDir)\Players_Client.cs" "$(SolutionDir)\..\bin\servercache\Players\Players_Client.cs"</PostBuildEvent>
+    <PostBuildEvent>mkdir "$(SolutionDir)\..\bin\cache\Players\"
+copy "$(ProjectDir)\Players_Client.cs" "$(SolutionDir)\..\bin\cache\Players\Players_Client.cs"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

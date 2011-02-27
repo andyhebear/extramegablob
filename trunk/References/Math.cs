@@ -7,6 +7,7 @@ using System.Xml;
 
 namespace ExtraMegaBlob.References
 {
+
     public class Vector3 : ISerializable
     {
 

@@ -102,7 +102,6 @@ namespace ExtraMegaBlob
             {
                 Hashtable h = new Hashtable();
                 #region meshes
-                h["droneskele"] = "\\Drone.skeleton";
                 #endregion
                 return h;
             }

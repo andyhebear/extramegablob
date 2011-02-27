@@ -30,14 +30,24 @@ namespace ExtraMegaBlob
         }
         public override string[] AllowedInputNames()
         {
-            return new string[] { };
+            return new string[] { "TongIts_Client" };
         }
         public override string[] AllowedOutputNames()
         {
             return new string[] { };
         }
+        private ArrayList preventSelect = new ArrayList();
         public override void inbox(ExtraMegaBlob.References.Event ev)
         {
+            if (ev._Keyword == References.KeyWord.PREVENTMOUSEPICK)
+            {
+                string name = ev._Memories["Name"].Value;
+                if (!preventSelect.Contains(name))
+                {
+                    preventSelect.Add(name);
+                    log("Disabling Mouse Picker for: \"" + name + "\"");
+                }
+            }
         }
         public override void updateHook()
         {
@@ -48,7 +58,7 @@ namespace ExtraMegaBlob
         private ArrayList selectedNodes = new ArrayList();
         private void renderBox_MouseClick(object sender, MouseEventArgs e)
         {
-            if (e.Button != MouseButtons.Left) return; 
+            if (e.Button != MouseButtons.Left) return;
             foreach (MovableObject selectedNode in selectedNodes)
             {
                 try
@@ -80,6 +90,17 @@ namespace ExtraMegaBlob
                 if (entry.movable.Name.IndexOf("_Hydrax_GodRays_Projector_Camera") > -1) continue;
                 if (entry.movable.Name.IndexOf("_Hydrax_Projector_Camera") > -1) continue;
                 if (entry.movable.Name.IndexOf("HydraxMeshEnt") > -1) continue;
+
+                bool cancel = false;
+                foreach (string s in preventSelect)
+                {
+                    if (entry.movable.Name.IndexOf(s) > -1)
+                    {
+                        cancel = true;
+                        break;
+                    }
+                }
+                if (cancel) continue;
                 if (entry.distance < nearest)
                 {
                     nearest = entry.distance;
@@ -98,5 +119,6 @@ namespace ExtraMegaBlob
             moveableObject.ParentSceneNode.ShowBoundingBox = true;
             selectedNodes.Add(moveableObject);
         }
+
     }
 }

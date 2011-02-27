@@ -18,6 +18,7 @@ namespace ExtraMegaBlob
             {
                 Hashtable h = new Hashtable();
                 #region materials
+                h["mushroom"] = "\\TongIts\\Shiitake Mushroom Tree Shii.png";
                 h["webcam"] = "webcapCapture";
                 h["wood"] = "\\TongIts\\woodblurred.jpg";
                 h["Material/TEXFACE/woodblurred.jpg"] = "\\TongIts\\woodblurred.jpg";
@@ -88,8 +89,9 @@ namespace ExtraMegaBlob
             {
                 Hashtable h = new Hashtable();
                 #region meshes
+                h["mushroom"] = "\\TongIts\\mushroom.mesh";
                 h["table"] = "\\TongIts\\tongitstable.mesh";
-                h["drone"] = "\\Drone.mesh";
+                
                 #endregion
                 return h;
             }
@@ -150,22 +152,32 @@ namespace ExtraMegaBlob
 
                 lights.Add(OgreWindow.Instance.mSceneMgr.CreateLight("testLight2"));
                 lights["testLight2"].Type = Light.LightTypes.LT_POINT;
-                lights["testLight2"].Position = new Mogre.Vector3(88.00402f, 30.67856f, -107.2294f) + Location().toMogre;
+                lights["testLight2"].Position = new Mogre.Vector3(1.408661f, 54.81305f, -3.154539f) + Location().toMogre;
                 lights["testLight2"].DiffuseColour = ColourValue.White;
                 lights["testLight2"].SpecularColour = ColourValue.White;
 
-                MeshManager.Singleton.CreatePlane("ground",
-                    ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME,
-                    new Plane(Mogre.Vector3.UNIT_Y, 0),
-                    1500, 1500, 20, 20, true, 1, 5, 5, Mogre.Vector3.UNIT_Z);
-                // Create a ground plane
-                entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("GroundEntity", "ground"));
-                entities["GroundEntity"].CastShadows = false;
-                entities["GroundEntity"].SetMaterialName("dirt");
-                nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("ground"));
-                nodes["ground"].AttachObject(entities["GroundEntity"]);
-                nodes["ground"].Position = new Mogre.Vector3(0f, 0f, 0f) + Location().toMogre;
+                //MeshManager.Singleton.CreatePlane("ground",
+                //    ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME,
+                //    new Plane(Mogre.Vector3.UNIT_Y, 0),
+                //    1500, 1500, 20, 20, true, 1, 5, 5, Mogre.Vector3.UNIT_Z);
+                //// Create a ground plane
+                //entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("GroundEntity", "ground"));
+                //entities["GroundEntity"].CastShadows = false;
+                //entities["GroundEntity"].SetMaterialName("dirt");
+                //nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("ground"));
+                //nodes["ground"].AttachObject(entities["GroundEntity"]);
+                //nodes["ground"].Position = new Mogre.Vector3(0f, 0f, 0f) + Location().toMogre;
 
+                //our "ground" is a mushroom :)
+                entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("mushroom", "\\TongIts\\mushroom.mesh"));
+                entities["mushroom"].SetMaterialName("mushroom");
+                nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("mushroom"));
+                nodes["mushroom"].AttachObject(entities["mushroom"]);
+                nodes["mushroom"].Position = new Mogre.Vector3(0f, -20f, 0f) + Location().toMogre;
+                nodes["mushroom"].Scale(new Mogre.Vector3(100f));
+                nodes["mushroom"].Roll(new Radian(new Degree(90f)));
+                preventMousePick("mushroom");
+                
 
                 MeshManager.Singleton.CreatePlane("spinnycard", "General", new Plane(Mogre.Vector3.UNIT_Y, 0), 200f, 250f, 1, 1, true, 1, 1, 1, Mogre.Vector3.UNIT_X);
                 entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("TestPlaneEntity", "spinnycard"));
@@ -174,29 +186,17 @@ namespace ExtraMegaBlob
                 nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("spinnycard"));
                 nodes["spinnycard"].AttachObject(entities["TestPlaneEntity"]);
                 nodes["spinnycard"].Position = new Mogre.Vector3(0f, 3f, 0f) + Location().toMogre;
-                nodes["spinnycard"].Scale(.001f, .001f, .001f);
+                nodes["spinnycard"].Scale(.001f, .001f, .001f);  
 
                 entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("tongitstable", "\\TongIts\\tongitstable.mesh"));
                 nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("table"));
                 nodes["table"].AttachObject(entities["tongitstable"]);
-                nodes["table"].Position = new Mogre.Vector3(0f, 2f, 0f) + Location().toMogre;
-                nodes["table"].Scale(new Mogre.Vector3(2f));
+                nodes["table"].Position = new Mogre.Vector3(0f, 36f, 0f) + Location().toMogre;
+                nodes["table"].Scale(new Mogre.Vector3(4f));
+                preventMousePick("tongitstable");
 
 
-                OgreWindow.Instance.skeletons["\\Drone.skeleton"].Load();
-                OgreWindow.Instance.meshes["\\Drone.mesh"].Load();
-                OgreWindow.Instance.meshes["\\Drone.mesh"].SkeletonName = "\\Drone.skeleton";
-
-                entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("drone", "\\Drone.mesh"));
-                entities["drone"].CastShadows = true;
-                walkState = entities["drone"].GetAnimationState("walk");
-                walkState.Enabled = true; 
-                walkState.Loop = true;
-                entities["drone"].SetMaterialName("wood");
-                nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("drone"));
-                nodes["drone"].AttachObject(entities["drone"]);
-                nodes["drone"].Position = new Mogre.Vector3(3f, 1f, 3f) + Location().toMogre;
-                nodes["drone"].Scale(new Mogre.Vector3(.3f));
+                
                 ready = true;
             }
             catch (Exception ex)
@@ -205,7 +205,16 @@ namespace ExtraMegaBlob
             }
             OgreWindow.Instance.unpause();
         }
-        private AnimationState walkState = null;
+        private void preventMousePick(string name){
+            Memories mems = new Memories();
+            mems.Add(new Memory("Name", KeyWord.NIL, name, null));
+            Event ev = new Event();
+            ev._Keyword = KeyWord.PREVENTMOUSEPICK;
+            ev._Memories = mems;
+            ev._IntendedRecipients = EventTransfer.CLIENTTOCLIENT; 
+            base.outboxMessage(this, ev);
+        }
+        
         public override void startup()
         {
             new Thread(new ThreadStart(resourceWaitThread)).Start();
@@ -276,7 +285,7 @@ namespace ExtraMegaBlob
                     //}
                 }
                 nodes["spinnycard"].Yaw(new Radian(new Degree(1f)));
-                walkState.AddTime(.01f);
+                
             }
         }
         timer scaleLimiter = new timer(new TimeSpan(0, 0, 1));

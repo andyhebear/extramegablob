@@ -160,12 +160,29 @@ namespace ExtraMegaBlob
             //}
             try
             {
-                OgreWindow.Instance.cameraNode.Translate(OgreWindow.Instance.cameraYawNode.Orientation * OgreWindow.Instance.cameraPitchNode.Orientation * TranslateVector_Camera);
+                Mogre.Vector3 translateTo = OgreWindow.Instance.cameraYawNode.Orientation * OgreWindow.Instance.cameraPitchNode.Orientation * TranslateVector_Camera;
+                if (translateTo.x != 0f || translateTo.y != 0f || translateTo.z != 0f)
+                {
+                    OgreWindow.Instance.cameraNode.Translate(translateTo);
+                    movePlayer(translateTo);
+                }
                 TranslateVector_Camera = new Mogre.Vector3();
             }
             catch
             {
             }
+        }
+        private void movePlayer(Mogre.Vector3 loc)
+        {
+            ExtraMegaBlob.References.Vector3 loc2 = ExtraMegaBlob.References.Vector3.FromMogre(loc);
+            string locSerialized = loc2.ToString();
+            Memories mems = new Memories();
+            mems.Add(new Memory("loc", KeyWord.NIL, locSerialized, null));
+            Event ev = new Event();
+            ev._Keyword = KeyWord.MOVEPLAYER;
+            ev._Memories = mems;
+            ev._IntendedRecipients = EventTransfer.CLIENTTOCLIENT;
+            base.outboxMessage(this, ev);
         }
         private float RotateScale_Camera = .001f;//mouse sensitivity
         private float MoveScale_Camera_forwardback = 0f;

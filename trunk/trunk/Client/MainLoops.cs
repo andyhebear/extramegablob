@@ -660,7 +660,7 @@ namespace ExtraMegaBlob.Client
         private void Instance_onSend(string text)
         {
             Event e = new Event();
-            e._IntendedRecipients = eventScope.SERVERALL;
+            e._IntendedRecipients = EventTransfer.CLIENTTOSERVER;
             e._Keyword = KeyWord.EVENT_CHATMESSAGE;
             e._Source_FullyQualifiedName = "ClientMain";
             e._Memories = new Memories();

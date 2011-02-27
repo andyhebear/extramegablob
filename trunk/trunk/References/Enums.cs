@@ -30,6 +30,8 @@
     public enum KeyWord
     {
         NIL,
+        MOVEPLAYER,
+        PREVENTMOUSEPICK,
 
         CACHE_CLIENTDELETEFILE,
         CACHE_CLIENTREPORT,

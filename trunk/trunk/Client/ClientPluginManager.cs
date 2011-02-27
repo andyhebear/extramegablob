@@ -65,7 +65,7 @@ namespace ExtraMegaBlob.Client
         {
             string pluginName = (string)pluginNameLookup[pathRel];
             delClientPlugin(pluginName);
-            delPluginSphere(pluginName);
+            //delPluginSphere(pluginName);
             pluginNameLookup.Remove(pathRel);
             listChanged(this.allPlugins);
             return true;
@@ -79,9 +79,7 @@ namespace ExtraMegaBlob.Client
                 pluginNameLookup[pathRel] = plugin.Name();
                 if (addClientPlugin(plugin))
                 {
-                    //try { addPluginSphere(plugin.Name()); }
-                    //catch (Exception ex) { log(ex.ToString()); }
-                    pendingPluginSpheres.Add(plugin.Name());
+                    //pendingPluginSpheres.Add(plugin.Name());
                 }
 
                 listChanged(this.allPlugins);
@@ -219,7 +217,7 @@ namespace ExtraMegaBlob.Client
         private Random ran = new Random((int)DateTime.Now.Ticks);
         private void ClientPlugin_onOutboxMessage(ClientPlugin Sender, Event ev)
         {
-            sourceHub(ev, EventTransfer.CLIENTTOSERVER);
+            sourceHub(ev, ev._IntendedRecipients);
         }
         private void ClientPlugin_onChat(string msg)
         {
@@ -242,6 +240,7 @@ namespace ExtraMegaBlob.Client
                 case EventTransfer.TRASH:
                     return;
                 case EventTransfer.CLIENTTOCLIENT:
+                    route_toAllClients(ev);
                     return;
                 case EventTransfer.CLIENTTOSERVER:
                     _route_toServer(ev);

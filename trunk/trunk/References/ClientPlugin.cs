@@ -46,7 +46,7 @@ namespace ExtraMegaBlob.References
             }
         }
         public abstract void inbox(Event ev);
-        public abstract Vector3 Location();
+        public abstract ExtraMegaBlob.References.Vector3 Location();
         public abstract float Radius();
     }
 }

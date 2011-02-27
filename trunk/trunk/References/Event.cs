@@ -11,7 +11,7 @@ namespace ExtraMegaBlob.References
     public class Event : ISerializable
     {
         public Double _WhenSent = Time.Now;
-        public eventScope _IntendedRecipients = eventScope.NIL;
+        public EventTransfer _IntendedRecipients = EventTransfer.TRASH;
         public Double _WhenRcvd = Time.Now;
         public KeyWord _Importance = KeyWord.IMPORTANCE_4_TRASH;
         public Memories _Memories = null;
@@ -20,7 +20,7 @@ namespace ExtraMegaBlob.References
         public String _Source_FullyQualifiedName = String.Empty;
         public String _Endpoint = String.Empty;
         public Event() { }
-        internal Event(String Endpoint, String Source_FullyQualifiedName, KeyWord KeyWord, Memories Memories, Double WhenSent, Double WhenRcvd, KeyWord Importance, KeyWord DeliveryState, eventScope IntendedRecipients)
+        internal Event(String Endpoint, String Source_FullyQualifiedName, KeyWord KeyWord, Memories Memories, Double WhenSent, Double WhenRcvd, KeyWord Importance, KeyWord DeliveryState, EventTransfer IntendedRecipients)
         {
             _Endpoint = Endpoint;
             _Source_FullyQualifiedName = Source_FullyQualifiedName;
@@ -32,7 +32,7 @@ namespace ExtraMegaBlob.References
             _WhenRcvd = WhenRcvd;
             _IntendedRecipients = IntendedRecipients;
         }
-        internal Event(String Source_FullyQualifiedName, KeyWord KeyWord, Memories Memories, Double WhenSent, Double WhenRcvd, KeyWord Importance, KeyWord DeliveryState, eventScope IntendedRecipients)
+        internal Event(String Source_FullyQualifiedName, KeyWord KeyWord, Memories Memories, Double WhenSent, Double WhenRcvd, KeyWord Importance, KeyWord DeliveryState, EventTransfer IntendedRecipients)
         {
             _Source_FullyQualifiedName = Source_FullyQualifiedName;
             _DeliveryState = DeliveryState;
@@ -45,7 +45,7 @@ namespace ExtraMegaBlob.References
         }
         public Event(SerializationInfo info, StreamingContext ctxt)
         {
-            _IntendedRecipients = (eventScope)info.GetValue("_IntendedRecipients", typeof(eventScope));
+            _IntendedRecipients = (EventTransfer)info.GetValue("_IntendedRecipients", typeof(eventScope));
             _WhenSent = (Double)info.GetValue("_WhenSent", typeof(Double));
             _WhenRcvd = (Double)info.GetValue("_WhenRcvd", typeof(Double));
             _Importance = (KeyWord)info.GetValue("_Importance", typeof(KeyWord));

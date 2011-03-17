@@ -118,13 +118,15 @@ namespace ExtraMegaBlob
 
                 PhysXHelpers.StaticMeshData meshdata = new PhysXHelpers.StaticMeshData(entities["GroundEntity"].GetMesh());
                 actorDesc2.Shapes.Add(PhysXHelpers.CreateTriangleMesh(meshdata));
-
-                // finally, create the actor in the physics scene
-                Actor actor2 = OgreWindow.Instance.scene.CreateActor(actorDesc2);
-
-                // create our special actor node to tie together the scene node and actor that we can update its position later
-                ActorNode actorNode2 = new ActorNode(nodes["ground"], actor2);
-                actors.Add(actorNode2);
+                Actor actor2 = null;
+                try { actor2 = OgreWindow.Instance.scene.CreateActor(actorDesc2); }
+                catch (System.AccessViolationException ex) { log(ex.ToString()); }
+                if (actor2 != null)
+                {
+                    // create our special actor node to tie together the scene node and actor that we can update its position later
+                    ActorNode actorNode2 = new ActorNode(nodes["ground"], actor2);
+                    actors.Add(actorNode2);
+                }
                 #endregion
 
 
@@ -151,59 +153,8 @@ namespace ExtraMegaBlob
                 nodes["drone"].SetFixedYawAxis(true);
 
                 #region player physics
-
-                // CapsuleShapeDesc csd = new CapsuleShapeDesc(10, 20, this.Location().toMogre);
-
-
-
-                //Controller c = new BoxControllerDesc();
-
-
-                control = OgreWindow.Instance.physics.ControllerManager.CreateController(OgreWindow.Instance.scene, bcd);
-                //Physics..ControllerManager
-                //BodyDesc boxController = new BoxControllerDesc();
-
-                //   Camera, new eyecm.PhysX.CapsuleShapeDesc(25, 10)
-
-                //Controller cnt = new Controller();
-
-
-                //BodyDesc bodyDesc = new BodyDesc();
-
-
-                // physics
-                // attaching a body to the actor makes it dynamic, you can set things like initial velocity
-
-                // the actor properties control the mass, position and orientation
-                // if you leave the body set to null it will become a static actor and wont move
-                //ActorDesc actorDesc = new ActorDesc();
-                //actorDesc.Density = 4;
-                //actorDesc.Body = new BodyDesc();
-                //actorDesc.GlobalPosition = nodes["drone"].Position;
-                //actorDesc.GlobalOrientation = nodes["drone"].Orientation.ToRotationMatrix();
-
-                //// a quick trick the get the size of the physics shape right is to use the bounding box of the entity
-                ////actorDesc.Shapes.Add(new SphereShapeDesc(1f));//entities["drone"].BoundingBox.HalfSize * scale, entities["drone"].BoundingBox.Center * scale
-
-                //PhysXHelpers.StaticMeshData meshdata2 = new PhysXHelpers.StaticMeshData(entities["drone"].GetMesh());
-                //actorDesc.Shapes.Add(PhysXHelpers.CreateConvexHull(meshdata2));
-
-                //// finally, create the actor in the physics scene
-                //Actor actor = OgreWindow.Instance.scene.CreateActor(actorDesc);
-
-                //// create our special actor node to tie together the scene node and actor that we can update its position later
-                //ActorNode actorNode = new ActorNode(nodes["drone"], actor);
-                //actors.Add(actorNode);
-                //control.Actor = actorNode;
-
-
-
-
-                //actors["drone"].actor.BodyFlags.Kinematic = true;
-                //actors["drone"].actor.BodyFlags.FrozenRotY = true;
-                //actors["drone"].actor.BodyFlags.FrozenRotZ = true;
-                //actors["drone"].actor.BodyFlags.FrozenRotX = true;
-                //actors["drone"].actor.BodyFlags.FrozenRot = true;
+                bcd = new BoxControllerDesc();
+                control = OgreWindow.Instance.physics.ControllerManager.CreateController(OgreWindow.Instance.scene, bcd); //System.NullReferenceException
                 #endregion
 
                 nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("suspensionY"));
@@ -211,6 +162,9 @@ namespace ExtraMegaBlob
                 OgreWindow.g_m.MouseMoved += new MouseListener.MouseMovedHandler(mouseMoved);
                 middlemousetimer.reset();
                 middlemousetimer.start();
+
+                this.btnLimiter_F.reset();
+                this.btnLimiter_F.start();
                 ready = true;
                 new Thread(new ThreadStart(controlThread)).Start();
                 new Thread(new ThreadStart(positionUpdaterThread)).Start();
@@ -306,20 +260,21 @@ namespace ExtraMegaBlob
             if (!ready) return;
             switch (ev._Keyword)
             {
-                case KeyWord.MOVEPLAYER:
-
-                    //OgreWindow.Instance.cameraNode.Position = m_CamPos * node._getDerivedPosition();
-
+                case KeyWord.TONGITS_GAME_STARTING:
+                    chat("game starting");
+                    resetPlayer();
                     break;
-                case KeyWord.ROTATEPLAYER:
-                    //updateCam();
-                    //ExtraMegaBlob.References.Vector3 loc = ExtraMegaBlob.References.Vector3.FromString(ev._Memories["loc"].Value);
-                    //nodes["drone"].Translate(loc.toMogre);
+                case KeyWord.TONGITS_FREEZEPLR:
+                    tongfreeze = true;
+                    break;
+                case KeyWord.TONGITS_UNFREEZEPLR:
+                    tongfreeze = false;
                     break;
                 default:
                     break;
             }
         }
+        private bool tongfreeze = false;
         private Mogre.Vector3 getOrbitalPosition(Mogre.Vector3 focalPoint, Quaternion direction, float distanceToFocalPoint)
         {
             Mogre.Vector3 eyePos, xAxis, yAxis, zAxis;
@@ -388,17 +343,18 @@ namespace ExtraMegaBlob
             {
                 //chat("____________________________________________________________");
                 nodes["orbit0"].Pitch(s.Y.rel * RotateScale_CameraPitch);
-                if (s.X.rel != 0f)
-                {
-                    Mogre.Quaternion orient1 = control.Actor.GlobalOrientationQuaternion;
-                    Mogre.Vector3 rkAxis = new Mogre.Vector3();
-                    Degree rfAngle = new Degree();
-                    orient1.ToRotationMatrix().ToAxisAngle(out rkAxis, out rfAngle);
-                    orient2 = new Quaternion(new Radian(new Degree(rfAngle.ValueDegrees + (-s.X.rel * RotateScale_PlayerTurn))), new Mogre.Vector3(0, 1, 0));
-                    //control.Actor.GlobalOrientationQuaternion = orient2;
-                    //setOrient(orient2);
-                    spin(rfAngle.ValueDegrees + (-s.X.rel * RotateScale_PlayerTurn));
-                }
+                if (!tongfreeze)
+                    if (s.X.rel != 0f)
+                    {
+                        Mogre.Quaternion orient1 = control.Actor.GlobalOrientationQuaternion;
+                        Mogre.Vector3 rkAxis = new Mogre.Vector3();
+                        Degree rfAngle = new Degree();
+                        orient1.ToRotationMatrix().ToAxisAngle(out rkAxis, out rfAngle);
+                        orient2 = new Quaternion(new Radian(new Degree(rfAngle.ValueDegrees + (-s.X.rel * RotateScale_PlayerTurn))), new Mogre.Vector3(0, 1, 0));
+                        //control.Actor.GlobalOrientationQuaternion = orient2;
+                        //setOrient(orient2);
+                        spin(rfAngle.ValueDegrees + (-s.X.rel * RotateScale_PlayerTurn));
+                    }
                 updateCam();
             }
 
@@ -462,10 +418,12 @@ namespace ExtraMegaBlob
 
         private void setPos(Mogre.Vector3 pos)
         {
+            if (!tongfreeze)
             control.Actor.MoveGlobalPosition(pos);
         }
         private void setOrient(Quaternion orient)
         {
+            if (!tongfreeze)
             control.Actor.GlobalOrientationQuaternion = orient;
         }
         private void spin(Degree deg)
@@ -491,7 +449,8 @@ namespace ExtraMegaBlob
             resetPlayer(new Mogre.Vector3(-1.291305f, 35.18927f, 2.11423f), new Quaternion(0.2246418f, 0f, 0.9744414f, 0f));
         }
         private timer LocationBeaconInterval = new timer(new TimeSpan(0, 0, 1));//1 second player world location updates
-        private void sendLocationBeacon() 
+        private timer btnLimiter_F = new timer(new TimeSpan(0, 0, 1));//1 second player world location updates
+        private void sendLocationBeacon()
         {
             Memories mems = new Memories();
             Mogre.Vector3 imAt = control.Actor.GlobalPosition;
@@ -524,8 +483,16 @@ namespace ExtraMegaBlob
                     }
                     if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_F))
                     {
-                        resetPlayer();
-                        resetCam();
+                        if (btnLimiter_F.elapsed)
+                        {
+                            if (!tongfreeze)
+                            {
+                                resetPlayer();
+                                resetCam();
+                                sendLocationBeacon();
+                            }
+                            btnLimiter_F.start();
+                        }
                     }
                     if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_W))
                     {
@@ -643,7 +610,7 @@ namespace ExtraMegaBlob
             }
             if (ready)
             {
-             
+
 
                 walkState.AddTime(.01f);
                 actors.UpdateAllActors(.1f);
@@ -652,7 +619,7 @@ namespace ExtraMegaBlob
                 if (control.Actor == null) return;
                 if (!control.Actor.IsSleeping)
                 {
-                   // nodes["drone"].Position = control.Actor.GlobalPosition;
+                    // nodes["drone"].Position = control.Actor.GlobalPosition;
                     nodes["drone"].Position = control.Actor.GlobalPosition;
                     nodes["drone"].Orientation = control.Actor.GlobalOrientationQuaternion;
                     OgreWindow.Instance.setInfoLabelText(string.Format(" {0}f, {1}f, {2}f ", control.Actor.GlobalPosition.x, control.Actor.GlobalPosition.y, control.Actor.GlobalPosition.z));

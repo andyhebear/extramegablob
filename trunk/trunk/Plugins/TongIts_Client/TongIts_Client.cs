@@ -25,7 +25,7 @@ namespace ExtraMegaBlob
                 h["Material/TEXFACE/woodblurred.jpg"] = "\\TongIts\\woodblurred.jpg";
                 h["Material/TEXFACE/BumpyMetal.jpg"] = "\\TongIts\\BumpyMetal.jpg";
                 h["clouds"] = "\\clouds.jpg";
-               // h["dirt"] = "\\terr_dirt-grass.jpg";
+                // h["dirt"] = "\\terr_dirt-grass.jpg";
                 h["noise"] = "\\normalNoiseColor.png";
                 h["cat1"] = "\\cat2.jpg";
                 h["club 10"] = "\\TongIts\\200px-Playing_card_club_10.svg.png";
@@ -92,7 +92,7 @@ namespace ExtraMegaBlob
                 #region meshes
                 h["mushroom"] = "\\TongIts\\mushroom.mesh";
                 h["table"] = "\\TongIts\\tongitstable.mesh";
-                
+
                 #endregion
                 return h;
             }
@@ -177,7 +177,7 @@ namespace ExtraMegaBlob
                 nodes["mushroom"].Position = new Mogre.Vector3(0f, -20f, 0f) + Location().toMogre;
                 nodes["mushroom"].Scale(new Mogre.Vector3(100f));
                 nodes["mushroom"].Roll(new Radian(new Degree(90f)));
-                preventMousePick("mushroom"); 
+                preventMousePick("mushroom");
 
 
                 #region physics
@@ -191,7 +191,7 @@ namespace ExtraMegaBlob
                 // if you leave the body set to null it will become a static actor and wont move
                 ActorDesc actorDesc = new ActorDesc();
                 actorDesc.Density = 4;
-                actorDesc.Body =null;
+                actorDesc.Body = null;
                 actorDesc.GlobalPosition = nodes["mushroom"].Position;
                 actorDesc.GlobalOrientation = nodes["mushroom"].Orientation.ToRotationMatrix();
 
@@ -199,19 +199,25 @@ namespace ExtraMegaBlob
                 //actorDesc.Shapes.Add(new SphereShapeDesc(1f));//entities["drone"].BoundingBox.HalfSize * scale, entities["drone"].BoundingBox.Center * scale
 
 
+
                 PhysXHelpers.StaticMeshData meshdata = new PhysXHelpers.StaticMeshData(entities["mushroom"].GetMesh());
                 actorDesc.Shapes.Add(PhysXHelpers.CreateTriangleMesh(meshdata));
 
-
+                Actor actor = null;
                 // finally, create the actor in the physics scene
-                Actor actor = OgreWindow.Instance.scene.CreateActor(actorDesc);
-
-                // create our special actor node to tie together the scene node and actor that we can update its position later
-                ActorNode actorNode = new ActorNode(nodes["mushroom"], actor);
-                actors.Add(actorNode);
+                try { actor = OgreWindow.Instance.scene.CreateActor(actorDesc); }
+                catch { }
+                // if (actor == null)
+                //    OgreWindow.Instance.CloseForm();
+                if (actor != null)
+                {
+                    // create our special actor node to tie together the scene node and actor that we can update its position later
+                    ActorNode actorNode = new ActorNode(nodes["mushroom"], actor);
+                    actors.Add(actorNode);
+                }
                 #endregion
 
-                
+
 
                 MeshManager.Singleton.CreatePlane("spinnycard", "General", new Plane(Mogre.Vector3.UNIT_Y, 0), 200f, 250f, 1, 1, true, 1, 1, 1, Mogre.Vector3.UNIT_X);
                 entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("TestPlaneEntity", "spinnycard"));
@@ -220,7 +226,7 @@ namespace ExtraMegaBlob
                 nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("spinnycard"));
                 nodes["spinnycard"].AttachObject(entities["TestPlaneEntity"]);
                 nodes["spinnycard"].Position = new Mogre.Vector3(0f, 3f, 0f) + Location().toMogre;
-                nodes["spinnycard"].Scale(.001f, .001f, .001f);  
+                nodes["spinnycard"].Scale(.001f, .001f, .001f);
 
                 entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("tongitstable", "\\TongIts\\tongitstable.mesh"));
                 nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("table"));
@@ -230,7 +236,7 @@ namespace ExtraMegaBlob
                 preventMousePick("tongitstable");
 
 
-                
+
                 ready = true;
             }
             catch (Exception ex)
@@ -239,16 +245,17 @@ namespace ExtraMegaBlob
             }
             OgreWindow.Instance.unpause();
         }
-        private void preventMousePick(string name){
+        private void preventMousePick(string name)
+        {
             Memories mems = new Memories();
             mems.Add(new Memory("Name", KeyWord.NIL, name, null));
             Event ev = new Event();
             ev._Keyword = KeyWord.PREVENTMOUSEPICK;
             ev._Memories = mems;
-            ev._IntendedRecipients = EventTransfer.CLIENTTOCLIENT; 
+            ev._IntendedRecipients = EventTransfer.CLIENTTOCLIENT;
             base.outboxMessage(this, ev);
         }
-        
+
         public override void startup()
         {
             new Thread(new ThreadStart(resourceWaitThread)).Start();
@@ -288,12 +295,26 @@ namespace ExtraMegaBlob
             //MogreFramework.Globals.Instance.Data[];
             switch (ev._Keyword)
             {
+                case KeyWord.TONGITS_GAME_STARTING:
+                    freezePlayer();
+                    chat("game is starting");
+                    break;
                 case KeyWord.TONGITS_PLAYER_INVITE:
+                    freezePlayer();
                     if (OgreWindow.Instance.AskQuestionBool("Want to join a game of TongIts?"))
                     {
                         acceptNewGame();
-                    }  
+                    }
+                    unfreezePlayer();
                     break;
+                case KeyWord.TONGITS_CARD_DECK_PLACE:
+                    chat(string.Format("Placing a Deck Card Player:{0} Card:{1}", ev._Memories[KeyWord.TONGITS_PLAYER_NUMBER].Value, ev._Memories[KeyWord.TONGITS_CARD_DATA].Value));
+                    //if (OgreWindow.Instance.AskQuestionBool("Want to join a game of TongIts?"))
+                    //{
+                    //    acceptNewGame();
+                    //}
+                    break;
+
                 case KeyWord.TONGITS_PLAYER_NUMBER:
                     playerNumber = int.Parse(ev._Memories[KeyWord.TONGITS_PLAYER_NUMBER].Value);
                     break;
@@ -327,7 +348,7 @@ namespace ExtraMegaBlob
                 if (scaleLimiter.elapsed)
                 {
 
-                     
+
                     //if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_Z))
                     //{
                     //    testSceneNode.Scale(.3f, .3f, .3f);
@@ -337,6 +358,22 @@ namespace ExtraMegaBlob
                 nodes["spinnycard"].Yaw(new Radian(new Degree(1f)));
                 actors.UpdateAllActors(.1f);
             }
+        }
+        private void freezePlayer()
+        {
+            chat("you are now seated");
+            Event outevent = new Event();
+            outevent._Keyword = KeyWord.TONGITS_FREEZEPLR;
+            outevent._IntendedRecipients = EventTransfer.CLIENTTOCLIENT;
+            outboxMessage(this, outevent);
+        }
+        private void unfreezePlayer()
+        {
+            chat("you are now standing");
+            Event outevent = new Event();
+            outevent._Keyword = KeyWord.TONGITS_UNFREEZEPLR;
+            outevent._IntendedRecipients = EventTransfer.CLIENTTOCLIENT;
+            outboxMessage(this, outevent);
         }
         timer scaleLimiter = new timer(new TimeSpan(0, 0, 1));
 

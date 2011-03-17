@@ -49,12 +49,12 @@ namespace ExtraMegaBlob
                     }
                     break;
                 case KeyWord.TONGITS_PLAYER_INVITE_ACCEPTED:
-                    if (numPlayers < 3)
+                    if (numPlayers < NUMPLRS)
                     {
                         numPlayers++;
                         sendPlayerNumber(ev._Endpoint, numPlayers);
-                        if (numPlayers == 3)
-                            start();
+                        if (numPlayers == NUMPLRS)
+                            startNewGame();
                     }
                     break;
                 default:
@@ -62,20 +62,162 @@ namespace ExtraMegaBlob
                     break;
             }
         }
-        private void start()
+        private void startNewGame()
         {
-            if (numPlayers != 3) return;
+            openSlots = false;
+            if (numPlayers != NUMPLRS) return;
             log("game starting!");
+            initializeCards();
+            randomizeCards(10);
+            sendGameStartingSignal();
+            sendDeckToTable(random);
         }
+        private const int NUMPLRS = 1;
+
+        private void sendDeckToTable(List<Card> deck)
+        {
+            List<Card>.Enumerator cardDealer = random.GetEnumerator();
+            while (cardDealer.MoveNext())
+            {
+                for (int player = 0; player < NUMPLRS; player++)
+                {
+                    sendCardToTable(cardDealer.Current, player + 1);
+                }
+                //cardDealer.Current
+            }
+        }
+
+        private void sendGameStartingSignal()
+        {
+            Event outevent = new Event();
+            outevent._Keyword = KeyWord.TONGITS_GAME_STARTING;
+            outevent._IntendedRecipients = EventTransfer.SERVERTOCLIENT;
+            sendMessageAllUsers(outevent);
+        }
+        private void sendCardToTable(Card card, int player)
+        {
+            Event outevent = new Event();
+            outevent._Keyword = KeyWord.TONGITS_CARD_DECK_PLACE;
+            outevent._IntendedRecipients = EventTransfer.SERVERTOCLIENT;
+            outevent._Endpoint = (string)playerLkupSession[player];
+
+            outevent._Memories = new Memories();
+            outevent._Memories.Add(new Memory("", KeyWord.TONGITS_CARD_DATA, card.Name));
+            outevent._Memories.Add(new Memory("", KeyWord.TONGITS_PLAYER_NUMBER, player.ToString()));
+            //outboxMessage(this, outevent);
+            sendMessageAllUsers(outevent);
+
+        }
+        private Random ran = new Random((int)DateTime.Now.Ticks);
+        private void randomizeCards(int numRounds)
+        {
+            random = newDeck();
+
+            for (int g = 0; g < numRounds; g++)
+            {
+                for (int i = 0; i < 52; i++)
+                {
+                    int k = ran.Next(51);
+                    Card temp = random[i];
+                    random[i] = random[k];
+                    random[k] = temp;
+                }
+            }
+        }
+        private void initializeCards()
+        {
+            deck = newDeck();
+        }
+        private List<Card> newDeck()
+        {
+            #region freshDeck
+            List<Card> freshDeckNormal = new List<Card>(52);
+            freshDeckNormal.Add(new Card("club 2", 0));
+            freshDeckNormal.Add(new Card("club 3", 1));
+            freshDeckNormal.Add(new Card("club 4", 2));
+            freshDeckNormal.Add(new Card("club 5", 3));
+            freshDeckNormal.Add(new Card("club 6", 4));
+            freshDeckNormal.Add(new Card("club 7", 5));
+            freshDeckNormal.Add(new Card("club 8", 6));
+            freshDeckNormal.Add(new Card("club 9", 7));
+            freshDeckNormal.Add(new Card("club 10", 8));
+            freshDeckNormal.Add(new Card("club a", 9));
+            freshDeckNormal.Add(new Card("club j", 10));
+            freshDeckNormal.Add(new Card("club k", 11));
+            freshDeckNormal.Add(new Card("club q", 12));
+            freshDeckNormal.Add(new Card("diamond 2", 13));
+            freshDeckNormal.Add(new Card("diamond 3", 14));
+            freshDeckNormal.Add(new Card("diamond 4", 15));
+            freshDeckNormal.Add(new Card("diamond 5", 16));
+            freshDeckNormal.Add(new Card("diamond 6", 17));
+            freshDeckNormal.Add(new Card("diamond 7", 18));
+            freshDeckNormal.Add(new Card("diamond 8", 19));
+            freshDeckNormal.Add(new Card("diamond 9", 20));
+            freshDeckNormal.Add(new Card("diamond 10", 21));
+            freshDeckNormal.Add(new Card("diamond a", 22));
+            freshDeckNormal.Add(new Card("diamond j", 23));
+            freshDeckNormal.Add(new Card("diamond k", 24));
+            freshDeckNormal.Add(new Card("diamond q", 25));
+            freshDeckNormal.Add(new Card("heart 2", 26));
+            freshDeckNormal.Add(new Card("heart 3", 27));
+            freshDeckNormal.Add(new Card("heart 4", 28));
+            freshDeckNormal.Add(new Card("heart 5", 29));
+            freshDeckNormal.Add(new Card("heart 6", 30));
+            freshDeckNormal.Add(new Card("heart 7", 31));
+            freshDeckNormal.Add(new Card("heart 8", 32));
+            freshDeckNormal.Add(new Card("heart 9", 33));
+            freshDeckNormal.Add(new Card("heart 10", 34));
+            freshDeckNormal.Add(new Card("heart a", 35));
+            freshDeckNormal.Add(new Card("heart j", 36));
+            freshDeckNormal.Add(new Card("heart k", 37));
+            freshDeckNormal.Add(new Card("heart q", 38));
+            freshDeckNormal.Add(new Card("spade 2", 39));
+            freshDeckNormal.Add(new Card("spade 3", 40));
+            freshDeckNormal.Add(new Card("spade 4", 41));
+            freshDeckNormal.Add(new Card("spade 5", 42));
+            freshDeckNormal.Add(new Card("spade 6", 43));
+            freshDeckNormal.Add(new Card("spade 7", 44));
+            freshDeckNormal.Add(new Card("spade 8", 45));
+            freshDeckNormal.Add(new Card("spade 9", 46));
+            freshDeckNormal.Add(new Card("spade 10", 47));
+            freshDeckNormal.Add(new Card("spade a", 48));
+            freshDeckNormal.Add(new Card("spade j", 49));
+            freshDeckNormal.Add(new Card("spade k", 50));
+            freshDeckNormal.Add(new Card("spade q", 51));
+            #endregion
+            return freshDeckNormal;
+        }
+        List<Card> random;
+        List<Card> deck;
+        List<Card> playerHand1;
+        List<Card> playerHand2;
+        List<Card> playerHand3;
+        private class Card
+        {
+            public Card(string Name, int index)
+            {
+                this.Name = Name;
+                this.index = index;
+            }
+            public string Name = "";
+            public int index;
+        }
+
+        Hashtable playerLkupSession = new Hashtable();
         private void sendPlayerNumber(string Endpoint, int playerNumber)
         {
+            if (playerNumber == 1)
+            {
+                playerLkupSession = new Hashtable();
+            }
+            playerLkupSession.Add(playerNumber, Endpoint);
             Event outevent = new Event();
             outevent._Keyword = KeyWord.TONGITS_PLAYER_NUMBER;
             outevent._IntendedRecipients = EventTransfer.SERVERTOCLIENT;
             outevent._Endpoint = Endpoint;
             outevent._Memories = new Memories();
             outevent._Memories.Add(new Memory("", KeyWord.TONGITS_PLAYER_NUMBER, (playerNumber.ToString())));
-            outboxMessage(this, outevent); 
+            outboxMessage(this, outevent);
         }
         private void invite(string Endpoint)
         {

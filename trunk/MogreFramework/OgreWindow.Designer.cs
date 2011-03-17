@@ -50,10 +50,15 @@ namespace MogreFramework
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.lbPluginsActive = new System.Windows.Forms.ListBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.button3 = new System.Windows.Forms.Button();
+            this.btnCpy2 = new System.Windows.Forms.Button();
+            this.tbStatus2 = new System.Windows.Forms.TextBox();
+            this.tbStatus = new System.Windows.Forms.TextBox();
+            this.btnCpy1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.pbCapture = new System.Windows.Forms.PictureBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
@@ -62,9 +67,8 @@ namespace MogreFramework
             this.pictureBox5 = new System.Windows.Forms.PictureBox();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
-            this.tabPage7 = new System.Windows.Forms.TabPage();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.lbPluginsActive = new System.Windows.Forms.ListBox();
+            this.btnCpy3 = new System.Windows.Forms.Button();
+            this.tbStatus3 = new System.Windows.Forms.TextBox();
             this.tabControl2.SuspendLayout();
             this.tabPage5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.renderBox)).BeginInit();
@@ -77,6 +81,8 @@ namespace MogreFramework
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.tabPage7.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -87,8 +93,6 @@ namespace MogreFramework
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
-            this.tabPage7.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl2
@@ -135,7 +139,6 @@ namespace MogreFramework
             this.btnSend.Text = "Send";
             this.btnSend.UseVisualStyleBackColor = true;
             this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
-            this.btnSend.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.btnSend_PreviewKeyDown);
             // 
             // tbTextToSend
             // 
@@ -336,6 +339,44 @@ namespace MogreFramework
             this.splitContainer1.SplitterDistance = 141;
             this.splitContainer1.TabIndex = 4;
             // 
+            // tabPage7
+            // 
+            this.tabPage7.Controls.Add(this.groupBox4);
+            this.tabPage7.Location = new System.Drawing.Point(4, 22);
+            this.tabPage7.Name = "tabPage7";
+            this.tabPage7.Size = new System.Drawing.Size(590, 270);
+            this.tabPage7.TabIndex = 5;
+            this.tabPage7.Text = "Plugins";
+            this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Controls.Add(this.lbPluginsActive);
+            this.groupBox4.Location = new System.Drawing.Point(3, 3);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(265, 253);
+            this.groupBox4.TabIndex = 2;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Active";
+            // 
+            // lbPluginsActive
+            // 
+            this.lbPluginsActive.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbPluginsActive.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lbPluginsActive.FormattingEnabled = true;
+            this.lbPluginsActive.HorizontalExtent = 1200;
+            this.lbPluginsActive.HorizontalScrollbar = true;
+            this.lbPluginsActive.Location = new System.Drawing.Point(14, 25);
+            this.lbPluginsActive.Name = "lbPluginsActive";
+            this.lbPluginsActive.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.lbPluginsActive.Size = new System.Drawing.Size(235, 210);
+            this.lbPluginsActive.TabIndex = 3;
+            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.groupBox2);
@@ -349,8 +390,12 @@ namespace MogreFramework
             // 
             // tabPage3
             // 
-            this.tabPage3.Controls.Add(this.textBox1);
-            this.tabPage3.Controls.Add(this.button3);
+            this.tabPage3.Controls.Add(this.btnCpy3);
+            this.tabPage3.Controls.Add(this.tbStatus3);
+            this.tabPage3.Controls.Add(this.btnCpy2);
+            this.tabPage3.Controls.Add(this.tbStatus2);
+            this.tabPage3.Controls.Add(this.tbStatus);
+            this.tabPage3.Controls.Add(this.btnCpy1);
             this.tabPage3.Controls.Add(this.groupBox1);
             this.tabPage3.Controls.Add(this.groupBox3);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
@@ -361,23 +406,41 @@ namespace MogreFramework
             this.tabPage3.Text = "status";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // btnCpy2
             // 
-            this.textBox1.Location = new System.Drawing.Point(263, 15);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(321, 20);
-            this.textBox1.TabIndex = 8;
-            this.textBox1.TabStop = false;
+            this.btnCpy2.Location = new System.Drawing.Point(542, 40);
+            this.btnCpy2.Name = "btnCpy2";
+            this.btnCpy2.Size = new System.Drawing.Size(32, 23);
+            this.btnCpy2.TabIndex = 10;
+            this.btnCpy2.Text = "cpy";
+            this.btnCpy2.UseVisualStyleBackColor = true;
+            this.btnCpy2.Click += new System.EventHandler(this.btnCpy2_Click);
             // 
-            // button3
+            // tbStatus2
             // 
-            this.button3.Location = new System.Drawing.Point(552, 41);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(32, 23);
-            this.button3.TabIndex = 8;
-            this.button3.Text = "cpy";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.tbStatus2.Location = new System.Drawing.Point(263, 42);
+            this.tbStatus2.Name = "tbStatus2";
+            this.tbStatus2.Size = new System.Drawing.Size(273, 20);
+            this.tbStatus2.TabIndex = 9;
+            this.tbStatus2.TabStop = false;
+            // 
+            // tbStatus
+            // 
+            this.tbStatus.Location = new System.Drawing.Point(263, 15);
+            this.tbStatus.Name = "tbStatus";
+            this.tbStatus.Size = new System.Drawing.Size(273, 20);
+            this.tbStatus.TabIndex = 8;
+            this.tbStatus.TabStop = false;
+            // 
+            // btnCpy1
+            // 
+            this.btnCpy1.Location = new System.Drawing.Point(542, 13);
+            this.btnCpy1.Name = "btnCpy1";
+            this.btnCpy1.Size = new System.Drawing.Size(32, 23);
+            this.btnCpy1.TabIndex = 8;
+            this.btnCpy1.Text = "cpy";
+            this.btnCpy1.UseVisualStyleBackColor = true;
+            this.btnCpy1.Click += new System.EventHandler(this.button3_Click);
             // 
             // groupBox1
             // 
@@ -468,43 +531,23 @@ namespace MogreFramework
             this.pictureBox3.TabIndex = 0;
             this.pictureBox3.TabStop = false;
             // 
-            // tabPage7
+            // btnCpy3
             // 
-            this.tabPage7.Controls.Add(this.groupBox4);
-            this.tabPage7.Location = new System.Drawing.Point(4, 22);
-            this.tabPage7.Name = "tabPage7";
-            this.tabPage7.Size = new System.Drawing.Size(590, 270);
-            this.tabPage7.TabIndex = 5;
-            this.tabPage7.Text = "Plugins";
-            this.tabPage7.UseVisualStyleBackColor = true;
+            this.btnCpy3.Location = new System.Drawing.Point(542, 66);
+            this.btnCpy3.Name = "btnCpy3";
+            this.btnCpy3.Size = new System.Drawing.Size(32, 23);
+            this.btnCpy3.TabIndex = 12;
+            this.btnCpy3.Text = "cpy";
+            this.btnCpy3.UseVisualStyleBackColor = true;
+            this.btnCpy3.Click += new System.EventHandler(this.btnCpy3_Click);
             // 
-            // groupBox4
+            // tbStatus3
             // 
-            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox4.Controls.Add(this.lbPluginsActive);
-            this.groupBox4.Location = new System.Drawing.Point(3, 3);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(265, 253);
-            this.groupBox4.TabIndex = 2;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Active";
-            // 
-            // lbPluginsActive
-            // 
-            this.lbPluginsActive.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbPluginsActive.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lbPluginsActive.FormattingEnabled = true;
-            this.lbPluginsActive.HorizontalExtent = 1200;
-            this.lbPluginsActive.HorizontalScrollbar = true;
-            this.lbPluginsActive.Location = new System.Drawing.Point(14, 25);
-            this.lbPluginsActive.Name = "lbPluginsActive";
-            this.lbPluginsActive.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lbPluginsActive.Size = new System.Drawing.Size(235, 210);
-            this.lbPluginsActive.TabIndex = 3;
+            this.tbStatus3.Location = new System.Drawing.Point(263, 68);
+            this.tbStatus3.Name = "tbStatus3";
+            this.tbStatus3.Size = new System.Drawing.Size(273, 20);
+            this.tbStatus3.TabIndex = 11;
+            this.tbStatus3.TabStop = false;
             // 
             // OgreWindow
             // 
@@ -531,6 +574,8 @@ namespace MogreFramework
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.tabPage7.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
@@ -542,8 +587,6 @@ namespace MogreFramework
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
-            this.tabPage7.ResumeLayout(false);
-            this.groupBox4.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -580,10 +623,14 @@ namespace MogreFramework
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.GroupBox groupBox1;
         public System.Windows.Forms.PictureBox pbCapture;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.TextBox tbStatus;
+        private System.Windows.Forms.Button btnCpy1;
         private System.Windows.Forms.TabPage tabPage7;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.ListBox lbPluginsActive;
+        private System.Windows.Forms.Button btnCpy2;
+        private System.Windows.Forms.TextBox tbStatus2;
+        private System.Windows.Forms.Button btnCpy3;
+        private System.Windows.Forms.TextBox tbStatus3;
     }
 }

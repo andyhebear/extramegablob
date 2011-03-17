@@ -35,7 +35,7 @@ namespace ExtraMegaBlob.References
             //cp.CompilerOptions = "/optimize";
             cp.IncludeDebugInformation = true;
             cp.ReferencedAssemblies.Add("System.dll");
-            //cp.ReferencedAssemblies.Add("Mogre.dll");
+            cp.ReferencedAssemblies.Add("Mogre.dll");
             cp.ReferencedAssemblies.Add("ExtraMegaBlob.References.dll");
             //cp.ReferencedAssemblies.Add("MogreFramework.dll");
             //cp.ReferencedAssemblies.Add("System.Windows.Forms.dll");

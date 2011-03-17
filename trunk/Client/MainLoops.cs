@@ -21,7 +21,7 @@ namespace ExtraMegaBlob.Client
 {
     public partial class Simulation
     {
-        private const bool DISABLE_NETWORK = true;
+        private const bool DISABLE_NETWORK = false;
         private const bool DISABLE_MHYDRAX = true;
         public void main()
         {

@@ -266,6 +266,7 @@ namespace ExtraMegaBlob.Client
                             found = true;
                         }
                     }
+                    found = true;//bypass security for now
                     if (found)
                     {
                         ((ClientPlugin)ClientClasses[i]).inbox(ev2);

@@ -17,6 +17,7 @@ namespace ExtraMegaBlob.References
         public String Name = String.Empty;
         public ExtraMegaBlob.References.Vector3 Location = new ExtraMegaBlob.References.Vector3();
         public string Endpoint = "";
+        public bool inRange = false;
 
         public User(String Name, ExtraMegaBlob.References.Vector3 Location, String Endpoint)
         {

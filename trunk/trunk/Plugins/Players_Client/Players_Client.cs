@@ -344,7 +344,7 @@ namespace ExtraMegaBlob
         //    return new Quaternion(w, x, y, z).ya;
         //}
         // private float 
-        private float normalizeAngle(float angle)
+        private float normalizeAngleRadian(float angle)
         {
             if (angle < 0 || angle > (float)System.Math.PI * 2) return System.Math.Abs(((float)System.Math.PI * 2) - System.Math.Abs(angle));
             else return angle;
@@ -382,9 +382,10 @@ namespace ExtraMegaBlob
                 Radian rfPAngle = new Radian();
                 Radian rfRAngle = new Radian();
                 orient1.ToRotationMatrix().ToEulerAnglesXYZ(out rfYAngle, out rfPAngle, out rfRAngle);
-                
-                rfPAngle = new Radian(new Degree(mouseRelX));
 
+                float normValueRadian = normalizeAngleRadian(new Degree(mouseRelX).ValueRadians);
+                rfPAngle = new Radian(normValueRadian);
+               // rfPAngle.ValueRadians = normalizeAngleRadians(rfPAngle.ValueDegrees);
                 //rfPAngle.ValueDegrees = normalizeAngle(rfPAngle.ValueDegrees);
 
                 //if (rfPAngle. > 360f)

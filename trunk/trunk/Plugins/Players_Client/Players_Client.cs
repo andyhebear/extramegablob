@@ -176,28 +176,28 @@ namespace ExtraMegaBlob
 
                 // the actor properties control the mass, position and orientation
                 // if you leave the body set to null it will become a static actor and wont move
-                ActorDesc actorDesc = new ActorDesc();
-                actorDesc.Density = 4;
-                actorDesc.Body = new BodyDesc();
-                actorDesc.GlobalPosition = nodes["drone"].Position;
-                actorDesc.GlobalOrientation = nodes["drone"].Orientation.ToRotationMatrix();
+                //ActorDesc actorDesc = new ActorDesc();
+                //actorDesc.Density = 4;
+                //actorDesc.Body = new BodyDesc();
+                //actorDesc.GlobalPosition = nodes["drone"].Position;
+                //actorDesc.GlobalOrientation = nodes["drone"].Orientation.ToRotationMatrix();
 
-                // a quick trick the get the size of the physics shape right is to use the bounding box of the entity
-                //actorDesc.Shapes.Add(new SphereShapeDesc(1f));//entities["drone"].BoundingBox.HalfSize * scale, entities["drone"].BoundingBox.Center * scale
+                //// a quick trick the get the size of the physics shape right is to use the bounding box of the entity
+                ////actorDesc.Shapes.Add(new SphereShapeDesc(1f));//entities["drone"].BoundingBox.HalfSize * scale, entities["drone"].BoundingBox.Center * scale
 
-                PhysXHelpers.StaticMeshData meshdata2 = new PhysXHelpers.StaticMeshData(entities["drone"].GetMesh());
-                actorDesc.Shapes.Add(PhysXHelpers.CreateConvexHull(meshdata2));
+                //PhysXHelpers.StaticMeshData meshdata2 = new PhysXHelpers.StaticMeshData(entities["drone"].GetMesh());
+                //actorDesc.Shapes.Add(PhysXHelpers.CreateConvexHull(meshdata2));
 
-                // finally, create the actor in the physics scene
-                Actor actor = OgreWindow.Instance.scene.CreateActor(actorDesc);
+                //// finally, create the actor in the physics scene
+                //Actor actor = OgreWindow.Instance.scene.CreateActor(actorDesc);
 
-                // create our special actor node to tie together the scene node and actor that we can update its position later
-                ActorNode actorNode = new ActorNode(nodes["drone"], actor);
-                actors.Add(actorNode);
+                //// create our special actor node to tie together the scene node and actor that we can update its position later
+                //ActorNode actorNode = new ActorNode(nodes["drone"], actor);
+                //actors.Add(actorNode);
                 //control.Actor = actorNode;
 
 
-                
+
 
                 //actors["drone"].actor.BodyFlags.Kinematic = true;
                 //actors["drone"].actor.BodyFlags.FrozenRotY = true;
@@ -237,7 +237,12 @@ namespace ExtraMegaBlob
                     TranslateVector_Camera.y += MoveScale_Camera_updown;
                     Mogre.Vector3 loc1 = control.Actor.GlobalPosition;
                     Mogre.Vector3 loc = control.Actor.GlobalOrientationQuaternion * TranslateVector_Camera;
-                    control.Actor.MoveGlobalPosition(loc + loc1);
+                    //control.Actor.MoveGlobalPosition(loc + loc1);
+                    setPos(loc + loc1);
+
+
+
+
                     TranslateVector_Camera = new Mogre.Vector3();
                 }
                 Thread.Sleep(1);
@@ -343,7 +348,6 @@ namespace ExtraMegaBlob
 
             return m_CamPos;
         }
-        private float RotateScale_Camera = .001f;//mouse sensitivity
         private Quaternion addQuats(Quaternion q1, Quaternion q2)
         {
             float x = q1.x + q2.x;
@@ -387,7 +391,8 @@ namespace ExtraMegaBlob
                     Degree rfAngle = new Degree();
                     orient1.ToRotationMatrix().ToAxisAngle(out rkAxis, out rfAngle);
                     orient2 = new Quaternion(new Radian(new Degree(rfAngle.ValueDegrees + (-s.X.rel * RotateScale_PlayerTurn))), new Mogre.Vector3(0, 1, 0));
-                    control.Actor.GlobalOrientationQuaternion = orient2;
+                    //control.Actor.GlobalOrientationQuaternion = orient2;
+                    setOrient(orient2);
                 }
                 updateCam();
             }
@@ -441,14 +446,23 @@ namespace ExtraMegaBlob
         private Mogre.Vector3 TranslateVector_Camera = new Mogre.Vector3();
         private const float speedcap_forwardback = .55f;
         private const float speedcap_leftright = .55f;
-        private const float speedcap_updown = .5f;
+        private const float speedcap_updown = 5.5f;
         private const float incr_forwardback = .05f;
         private const float incr_leftright = .05f;
-        private const float incr_updown = .0001f;
+        private const float incr_updown = .01f;
         private const float brakes_updown = incr_updown * 2;
         private const float brakes_forwardback = incr_forwardback * 2;
         private const float brakes_leftright = incr_leftright * 2;
         private static TimeSpan mmbClutch = new TimeSpan(0, 0, 0, 0, 100);
+
+        private void setPos(Mogre.Vector3 pos)
+        {
+            control.Actor.MoveGlobalPosition(pos);
+        }
+        private void setOrient(Quaternion orient)
+        {
+            control.Actor.GlobalOrientationQuaternion = orient;
+        }
 
         private void controlThread()
         {
@@ -533,6 +547,7 @@ namespace ExtraMegaBlob
                             MoveScale_Camera_updown += incr_updown;
                         if (MoveScale_Camera_updown < brakes_updown && MoveScale_Camera_updown > -brakes_updown)
                             MoveScale_Camera_updown = 0f;
+
                     }
                     else
                     {
@@ -542,11 +557,16 @@ namespace ExtraMegaBlob
                     //TranslateVector_Camera.x -= MoveScale_Camera_leftright;
                     //TranslateVector_Camera.y += MoveScale_Camera_updown;
 
+                    if (MoveScale_Camera_updown != 0f)
+                    {
+                        control.Actor.AddForce(new Mogre.Vector3(0f, MoveScale_Camera_updown, 0f));
+                        chat(MoveScale_Camera_updown.ToString());
+                    }
 
-                
+
 
                     //control.Actor.AddForce(loc);
-                    
+
 
 
                     //actors["drone"].actor.AddLocalTorque(new Mogre.Vector3(0f, 1000f, 0f));
@@ -576,8 +596,18 @@ namespace ExtraMegaBlob
 
 
                 walkState.AddTime(.01f);
-                //actors.UpdateAllActors(.1f);
-                actors.UpdateActor(.1f, "drone", control.Actor);
+                actors.UpdateAllActors(.1f);
+                // actors.UpdateActor(.1f, "drone", control.Actor);
+
+                if (control.Actor == null) return;
+                if (!control.Actor.IsSleeping)
+                {
+                    nodes["drone"].Position = control.Actor.GlobalPosition;
+                    nodes["drone"].Position = control.Actor.GlobalPosition;
+                    nodes["drone"].Orientation = control.Actor.GlobalOrientationQuaternion;
+                }
+
+
             }
         }
         timer scaleLimiter = new timer(new TimeSpan(0, 0, 1));
@@ -585,7 +615,7 @@ namespace ExtraMegaBlob
         private bool ready = false;
         public override void frameHook(float interpolation)
         {
-            
+
             //if (MoveScale_Camera_updown != 0)
             //{
             //    float s = MoveScale_Camera_updown * (interpolation + 1);

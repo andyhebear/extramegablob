@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Collections;
 using System.IO;
 using System.Threading;
+using Mogre.PhysX;
 namespace ExtraMegaBlob
 {
     public class plugin : ExtraMegaBlob.References.ClientPlugin
@@ -24,7 +25,7 @@ namespace ExtraMegaBlob
                 h["Material/TEXFACE/woodblurred.jpg"] = "\\TongIts\\woodblurred.jpg";
                 h["Material/TEXFACE/BumpyMetal.jpg"] = "\\TongIts\\BumpyMetal.jpg";
                 h["clouds"] = "\\clouds.jpg";
-                h["dirt"] = "\\terr_dirt-grass.jpg";
+               // h["dirt"] = "\\terr_dirt-grass.jpg";
                 h["noise"] = "\\normalNoiseColor.png";
                 h["cat1"] = "\\cat2.jpg";
                 h["club 10"] = "\\TongIts\\200px-Playing_card_club_10.svg.png";
@@ -106,6 +107,7 @@ namespace ExtraMegaBlob
                 return h;
             }
         }
+        private ActorNodes actors = new ActorNodes();
         private SceneNodes nodes = new SceneNodes();
         private Entities entities = new Entities();
         private Lights lights = new Lights();
@@ -175,7 +177,40 @@ namespace ExtraMegaBlob
                 nodes["mushroom"].Position = new Mogre.Vector3(0f, -20f, 0f) + Location().toMogre;
                 nodes["mushroom"].Scale(new Mogre.Vector3(100f));
                 nodes["mushroom"].Roll(new Radian(new Degree(90f)));
-                preventMousePick("mushroom");
+                preventMousePick("mushroom"); 
+
+
+                #region physics
+
+                // physics
+                // attaching a body to the actor makes it dynamic, you can set things like initial velocity
+                BodyDesc bodyDesc = new BodyDesc();
+                bodyDesc.LinearVelocity = new Mogre.Vector3(0, 2, 5);
+
+                // the actor properties control the mass, position and orientation
+                // if you leave the body set to null it will become a static actor and wont move
+                ActorDesc actorDesc = new ActorDesc();
+                actorDesc.Density = 4;
+                actorDesc.Body =null;
+                actorDesc.GlobalPosition = nodes["mushroom"].Position;
+                actorDesc.GlobalOrientation = nodes["mushroom"].Orientation.ToRotationMatrix();
+
+                // a quick trick the get the size of the physics shape right is to use the bounding box of the entity
+                //actorDesc.Shapes.Add(new SphereShapeDesc(1f));//entities["drone"].BoundingBox.HalfSize * scale, entities["drone"].BoundingBox.Center * scale
+
+
+                PhysXHelpers.StaticMeshData meshdata = new PhysXHelpers.StaticMeshData(entities["mushroom"].GetMesh());
+                actorDesc.Shapes.Add(PhysXHelpers.CreateTriangleMesh(meshdata));
+
+
+                // finally, create the actor in the physics scene
+                Actor actor = OgreWindow.Instance.scene.CreateActor(actorDesc);
+
+                // create our special actor node to tie together the scene node and actor that we can update its position later
+                ActorNode actorNode = new ActorNode(nodes["mushroom"], actor);
+                actors.Add(actorNode);
+                #endregion
+
                 
 
                 MeshManager.Singleton.CreatePlane("spinnycard", "General", new Plane(Mogre.Vector3.UNIT_Y, 0), 200f, 250f, 1, 1, true, 1, 1, 1, Mogre.Vector3.UNIT_X);
@@ -284,7 +319,7 @@ namespace ExtraMegaBlob
                     //}
                 }
                 nodes["spinnycard"].Yaw(new Radian(new Degree(1f)));
-                
+                actors.UpdateAllActors(.1f);
             }
         }
         timer scaleLimiter = new timer(new TimeSpan(0, 0, 1));

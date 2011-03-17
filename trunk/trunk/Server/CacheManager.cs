@@ -172,7 +172,7 @@ namespace ExtraMegaBlob.Server
                     _pluginAdded(pathRel);
                 bool s = false;
                 try { string md5 = Encryption.md5_file(pathAbs); s = true; }
-                catch (Exception ex) { log(ex.Message); }
+                catch (Exception ex) { /*log(ex.Message);*/ }
                 if (s) files2.Add(pathRel, Encryption.md5_file(pathAbs));
             }
             this.md5table = files2;

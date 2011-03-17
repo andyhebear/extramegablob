@@ -129,6 +129,7 @@ namespace ExtraMegaBlob.References
             cp.ReferencedAssemblies.Add("System.Drawing.dll");
             //cp.ReferencedAssemblies.Add("MOIS_d.dll");
             cp.ReferencedAssemblies.Add("MOIS.dll");
+            cp.ReferencedAssemblies.Add("eyecm.PhysX.dll");
             //cp.OutputAssembly = Path.GetDirectoryName(sourceFile) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(sourceFile) + ".dll";
             string srcFilExt = System.IO.Path.GetExtension(sourceFile);
             string srcFilNam_minuspath = System.IO.Path.GetFileName(sourceFile);

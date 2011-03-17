@@ -21,7 +21,6 @@ namespace ExtraMegaBlob.Client
                 onLogMessage(msg);
             }
         }
-
         public override String ToString()
         {
             Serialize Serialization = new Serialize();
@@ -35,12 +34,10 @@ namespace ExtraMegaBlob.Client
             return (ClientPlugins)xs.Deserialize(memoryStream);
         }
         private ArrayList allPlugins = new ArrayList();
-        //Deserialization constructor
         public ClientPlugins(SerializationInfo info, StreamingContext ctxt)
         {
             allPlugins = (ArrayList)info.GetValue("allRooms", typeof(ArrayList));
         }
-        //Serialization function.
         public void GetObjectData(SerializationInfo info, StreamingContext ctxt)
         {
             info.AddValue("allRooms", allPlugins);
@@ -98,7 +95,6 @@ namespace ExtraMegaBlob.Client
                 }
             }
         }
-        //Normal Constructor
         public ClientPlugins()
         {
             allPlugins = new ArrayList();
@@ -142,28 +138,6 @@ namespace ExtraMegaBlob.Client
                 }
             }
         }
-        //internal void setWindow(OgreWindow win)
-        //{
-        //    for (int i = 0; i < allPlugins.Count; i++)
-        //    {
-        //        if (!object.Equals(null, allPlugins[i]))
-        //        {
-        //            ((ClientPlugin)allPlugins[i]).setWindow(win);
-        //        }
-        //    }
-        //}
-        //internal void AssignInputDevices(InputManager inputManager, Keyboard inputKeyboard, Mouse inputMouse)
-        //{
-        //    for (int i = 0; i < allPlugins.Count; i++)
-        //    {
-        //        if (!object.Equals(null, allPlugins[i]))
-        //        {
-        //            ((ClientPlugin)allPlugins[i]).inputmanager = inputManager;
-        //            ((ClientPlugin)allPlugins[i]).keyboard = inputKeyboard;
-        //            ((ClientPlugin)allPlugins[i]).mouse = inputMouse;
-        //        }
-        //    }
-        //}
         internal void Shutdown()
         {
             for (int i = 0; i < allPlugins.Count; i++)
@@ -175,17 +149,6 @@ namespace ExtraMegaBlob.Client
             }
             allPlugins = new ArrayList();
         }
-        //public int IndexOf(KeyWord KeyWord)
-        //{
-        //    for (int i = 0; i < allRooms.Count; i++)
-        //    {
-        //        if (((Memory)allRooms[i]).Key == KeyWord)
-        //        {
-        //            return i;
-        //        }
-        //    }
-        //    return -1;
-        //}
         public void RemoveAt(String Name)
         {
             int i = IndexOf(Name);

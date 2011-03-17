@@ -213,7 +213,7 @@ namespace ExtraMegaBlob
                 middlemousetimer.start();
                 ready = true;
                 new Thread(new ThreadStart(controlThread)).Start();
-
+                new Thread(new ThreadStart(positionUpdaterThread)).Start();
 
                 localY = nodes["drone"]._getDerivedOrientation() * Mogre.Vector3.UNIT_Y;
                 localZ = nodes["drone"]._getDerivedOrientation() * Mogre.Vector3.UNIT_Z;
@@ -226,7 +226,23 @@ namespace ExtraMegaBlob
             OgreWindow.Instance.unpause();
             log("done starting up! ");
         }
-
+        private void positionUpdaterThread()
+        {
+            while (ready)
+            {
+                if (MoveScale_Camera_forwardback != 0 || MoveScale_Camera_leftright != 0 || MoveScale_Camera_updown != 0)
+                {
+                    TranslateVector_Camera.z -= MoveScale_Camera_forwardback;
+                    TranslateVector_Camera.x -= MoveScale_Camera_leftright;
+                    TranslateVector_Camera.y += MoveScale_Camera_updown;
+                    Mogre.Vector3 loc1 = control.Actor.GlobalPosition;
+                    Mogre.Vector3 loc = control.Actor.GlobalOrientationQuaternion * TranslateVector_Camera;
+                    control.Actor.MoveGlobalPosition(loc + loc1);
+                    TranslateVector_Camera = new Mogre.Vector3();
+                }
+                Thread.Sleep(1);
+            }
+        }
         private Mogre.Vector3 localY = new Mogre.Vector3();
         private Mogre.Vector3 localZ = new Mogre.Vector3();
         private Mogre.Vector3 localX = new Mogre.Vector3();
@@ -362,7 +378,7 @@ namespace ExtraMegaBlob
             MouseState_NativePtr s = arg.state;
             if (arg.state.buttons == 2)
             {
-                chat("____________________________________________________________");
+                //chat("____________________________________________________________");
                 nodes["orbit0"].Pitch(s.Y.rel * RotateScale_CameraPitch);
                 if (s.X.rel != 0f)
                 {
@@ -426,8 +442,8 @@ namespace ExtraMegaBlob
         private const float speedcap_forwardback = .55f;
         private const float speedcap_leftright = .55f;
         private const float speedcap_updown = .5f;
-        private const float incr_forwardback = .005f;
-        private const float incr_leftright = .005f;
+        private const float incr_forwardback = .05f;
+        private const float incr_leftright = .05f;
         private const float incr_updown = .0001f;
         private const float brakes_updown = incr_updown * 2;
         private const float brakes_forwardback = incr_forwardback * 2;
@@ -522,16 +538,15 @@ namespace ExtraMegaBlob
                     {
                         MoveScale_Camera_updown = 0f;
                     }
-                    TranslateVector_Camera.z -= MoveScale_Camera_forwardback;
-                    TranslateVector_Camera.x -= MoveScale_Camera_leftright;
-                    TranslateVector_Camera.y += MoveScale_Camera_updown;
+                    //TranslateVector_Camera.z -= MoveScale_Camera_forwardback;
+                    //TranslateVector_Camera.x -= MoveScale_Camera_leftright;
+                    //TranslateVector_Camera.y += MoveScale_Camera_updown;
 
 
-                    Mogre.Vector3 loc1 = control.Actor.GlobalPosition;
-                    Mogre.Vector3 loc = nodes["drone"]._getDerivedOrientation() * TranslateVector_Camera;
+                
 
                     //control.Actor.AddForce(loc);
-                    control.Actor.MoveGlobalPosition(loc + loc1);
+                    
 
 
                     //actors["drone"].actor.AddLocalTorque(new Mogre.Vector3(0f, 1000f, 0f));
@@ -558,6 +573,8 @@ namespace ExtraMegaBlob
             }
             if (ready)
             {
+
+
                 walkState.AddTime(.01f);
                 //actors.UpdateAllActors(.1f);
                 actors.UpdateActor(.1f, "drone", control.Actor);
@@ -568,37 +585,36 @@ namespace ExtraMegaBlob
         private bool ready = false;
         public override void frameHook(float interpolation)
         {
-            TranslateVector_Camera.z -= MoveScale_Camera_forwardback * (interpolation + 1);
-            TranslateVector_Camera.x -= MoveScale_Camera_leftright * (interpolation + 1);
-            TranslateVector_Camera.y += MoveScale_Camera_updown * (interpolation + 1);
+            
             //if (MoveScale_Camera_updown != 0)
             //{
             //    float s = MoveScale_Camera_updown * (interpolation + 1);
             //    TranslateVector_Camera.y += s;
             //    MoveScale_Camera_updown -= s;
             //}
-            try
-            {
-                //Mogre.Vector3 translateTo = OgreWindow.Instance.cameraYawNode.Orientation * OgreWindow.Instance.cameraPitchNode.Orientation * TranslateVector_Camera;
-                if (TranslateVector_Camera.x != 0f || TranslateVector_Camera.y != 0f || TranslateVector_Camera.z != 0f)
-                {
-                    updateCam();
+            //try
+            //{
+            //    ////Mogre.Vector3 translateTo = OgreWindow.Instance.cameraYawNode.Orientation * OgreWindow.Instance.cameraPitchNode.Orientation * TranslateVector_Camera;
+            //    //if (TranslateVector_Camera.x != 0f || TranslateVector_Camera.y != 0f || TranslateVector_Camera.z != 0f)
+            //    //{
+            //    //    updateCam();
 
-                    Mogre.Vector3 loc = nodes["drone"]._getDerivedOrientation() * TranslateVector_Camera;
+            //    //    Mogre.Vector3 loc = nodes["drone"]._getDerivedOrientation() * TranslateVector_Camera;
 
-                    //nodes["drone"].Translate(nodes["drone"]._getDerivedOrientation() * TranslateVector_Camera); //limited to x/z - works
-                    //actors["drone"].actor.AddLocalForce(loc);
-                    //if (actors["drone"].actor.IsSleeping) actors["drone"].actor.WakeUp(.1f);
-                    //actors["drone"].actor.LinearVelocity = loc; //kinda works
+            //    //    //nodes["drone"].Translate(nodes["drone"]._getDerivedOrientation() * TranslateVector_Camera); //limited to x/z - works
+            //    //    //actors["drone"].actor.AddLocalForce(loc);
+            //    //    //if (actors["drone"].actor.IsSleeping) actors["drone"].actor.WakeUp(.1f);
+            //    //    //actors["drone"].actor.LinearVelocity = loc; //kinda works
 
-                    // actors["drone"].actor.MoveGlobalPosition(actors["drone"].actor.GlobalPosition + loc);
+            //    //    // actors["drone"].actor.MoveGlobalPosition(actors["drone"].actor.GlobalPosition + loc);
 
-                }
-                TranslateVector_Camera = new Mogre.Vector3();
-            }
-            catch
-            {
-            }
+            //    //}
+
+            //    TranslateVector_Camera = new Mogre.Vector3();
+            //}
+            //catch
+            //{
+            //}
         }
         private Random ran = new Random((int)DateTime.Now.Ticks);
 

@@ -288,14 +288,30 @@ namespace ExtraMegaBlob
             //MogreFramework.Globals.Instance.Data[];
             switch (ev._Keyword)
             {
-                case KeyWord.CARTESIAN_SECRETPLAYERLOCATION:
+                case KeyWord.TONGITS_PLAYER_INVITE:
+                    if (OgreWindow.Instance.AskQuestionBool("Want to join a game of TongIts?"))
+                    {
+                        acceptNewGame();
+                    }  
                     break;
+                case KeyWord.TONGITS_PLAYER_NUMBER:
+                    playerNumber = int.Parse(ev._Memories[KeyWord.TONGITS_PLAYER_NUMBER].Value);
+                    break;
+
                 default:
                     //log(ev._Keyword + " from " + ev._Source_FullyQualifiedName);
                     //log(ev._WhenRcvd.ToString());
                     break;
             }
         }
+        public void acceptNewGame()
+        {
+            Event outevent = new Event();
+            outevent._Keyword = KeyWord.TONGITS_PLAYER_INVITE_ACCEPTED;
+            outevent._IntendedRecipients = EventTransfer.CLIENTTOSERVER;
+            outboxMessage(this, outevent);
+        }
+        private int playerNumber = 0;
         public override void updateHook()
         {
             if (t.elapsed)

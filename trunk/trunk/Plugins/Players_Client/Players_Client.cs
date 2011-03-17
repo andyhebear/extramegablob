@@ -240,7 +240,11 @@ namespace ExtraMegaBlob
                     //control.Actor.MoveGlobalPosition(loc + loc1);
                     setPos(loc + loc1);
 
-
+                    if (LocationBeaconInterval.elapsed)
+                    {
+                        sendLocationBeacon();
+                        LocationBeaconInterval.start();
+                    }
 
 
                     TranslateVector_Camera = new Mogre.Vector3();
@@ -392,7 +396,8 @@ namespace ExtraMegaBlob
                     orient1.ToRotationMatrix().ToAxisAngle(out rkAxis, out rfAngle);
                     orient2 = new Quaternion(new Radian(new Degree(rfAngle.ValueDegrees + (-s.X.rel * RotateScale_PlayerTurn))), new Mogre.Vector3(0, 1, 0));
                     //control.Actor.GlobalOrientationQuaternion = orient2;
-                    setOrient(orient2);
+                    //setOrient(orient2);
+                    spin(rfAngle.ValueDegrees + (-s.X.rel * RotateScale_PlayerTurn));
                 }
                 updateCam();
             }
@@ -463,7 +468,48 @@ namespace ExtraMegaBlob
         {
             control.Actor.GlobalOrientationQuaternion = orient;
         }
+        private void spin(Degree deg)
+        {
+            Mogre.Quaternion orient1 = control.Actor.GlobalOrientationQuaternion;
 
+            Mogre.Vector3 rkAxis = new Mogre.Vector3();
+            Degree rfAngle = new Degree();
+            orient1.ToRotationMatrix().ToAxisAngle(out rkAxis, out rfAngle);
+            Mogre.Quaternion orient2 = new Quaternion(new Radian(deg), new Mogre.Vector3(0, 1, 0));
+            //control.Actor.GlobalOrientationQuaternion = orient2;
+            //setOrient(orient2);
+            setOrient(orient2);
+        }
+        private void resetCam()
+        {
+            updateCam();
+            //nodes["orbit0"].Orientation = new Quaternion(-0.4837169f, -0.5147877f, 0.4847109f, -0.5158446f);
+            //updateCam();
+        }
+        private void resetPlayer()
+        {
+            resetPlayer(new Mogre.Vector3(-1.291305f, 35.18927f, 2.11423f), new Quaternion(0.2246418f, 0f, 0.9744414f, 0f));
+        }
+        private timer LocationBeaconInterval = new timer(new TimeSpan(0, 0, 1));//1 second player world location updates
+        private void sendLocationBeacon() 
+        {
+            Memories mems = new Memories();
+            Mogre.Vector3 imAt = control.Actor.GlobalPosition;
+            mems.Add(new Memory("", KeyWord.CARTESIAN_X, imAt.x.ToString(), null));
+            mems.Add(new Memory("", KeyWord.CARTESIAN_Y, imAt.y.ToString(), null));
+            mems.Add(new Memory("", KeyWord.CARTESIAN_Z, imAt.z.ToString(), null));
+            Event ev = new Event();
+            ev._Keyword = KeyWord.CARTESIAN_SECRETPLAYERLOCATION;
+            ev._Memories = mems;
+            ev._IntendedRecipients = EventTransfer.CLIENTTOSERVER;
+            base.outboxMessage(this, ev);
+            // log("Location: X=" + imAt.x.ToString() + " Y=" + imAt.y.ToString() + " Z=" + imAt.z.ToString());
+        }
+        private void resetPlayer(Mogre.Vector3 loc, Quaternion orient)
+        {
+            setPos(loc);
+            setOrient(orient);
+        }
         private void controlThread()
         {
             while (ready)
@@ -476,9 +522,11 @@ namespace ExtraMegaBlob
                     {
                         middleMouseState = middleMouseStates.idle;
                     }
-
-
-
+                    if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_F))
+                    {
+                        resetPlayer();
+                        resetCam();
+                    }
                     if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_W))
                     {
 
@@ -584,6 +632,8 @@ namespace ExtraMegaBlob
 
             }
         }
+
+
         public override void updateHook()
         {
             if (t.elapsed)
@@ -593,7 +643,7 @@ namespace ExtraMegaBlob
             }
             if (ready)
             {
-
+             
 
                 walkState.AddTime(.01f);
                 actors.UpdateAllActors(.1f);
@@ -602,9 +652,12 @@ namespace ExtraMegaBlob
                 if (control.Actor == null) return;
                 if (!control.Actor.IsSleeping)
                 {
-                    nodes["drone"].Position = control.Actor.GlobalPosition;
+                   // nodes["drone"].Position = control.Actor.GlobalPosition;
                     nodes["drone"].Position = control.Actor.GlobalPosition;
                     nodes["drone"].Orientation = control.Actor.GlobalOrientationQuaternion;
+                    OgreWindow.Instance.setInfoLabelText(string.Format(" {0}f, {1}f, {2}f ", control.Actor.GlobalPosition.x, control.Actor.GlobalPosition.y, control.Actor.GlobalPosition.z));
+                    OgreWindow.Instance.setInfoLabelText2(string.Format(" {0}f, {1}f, {2}f, {3}f ", control.Actor.GlobalOrientationQuaternion.w, control.Actor.GlobalOrientationQuaternion.x, control.Actor.GlobalOrientationQuaternion.y, control.Actor.GlobalOrientationQuaternion.z));
+                    OgreWindow.Instance.setInfoLabelText3(string.Format(" {0}f, {1}f, {2}f, {3}f ", nodes["orbit0"]._getDerivedOrientation().w, nodes["orbit0"]._getDerivedOrientation().x, nodes["orbit0"]._getDerivedOrientation().y, nodes["orbit0"]._getDerivedOrientation().z));
                 }
 
 

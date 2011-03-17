@@ -141,11 +141,7 @@ namespace ExtraMegaBlob.Client
         public override void updateHook()//called every 10ms
         {
             if (!ready) return;
-            if (LocationBeaconInterval.elapsed)
-            {
-                sendLocationBeacon();
-                LocationBeaconInterval.start();
-            }
+
             if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_T))
             {
                 //take screenshot
@@ -202,21 +198,7 @@ namespace ExtraMegaBlob.Client
             this._shutdown = true;
             log("shutting down");
         }
-        private timer LocationBeaconInterval = new timer(new TimeSpan(0, 0, 1));//1 second player world location updates
-        private void sendLocationBeacon()
-        {
-            Memories mems = new Memories();
-            //Mogre.Vector3 imAt = OgreWindow.Instance.cameraNode.Position;
-            //mems.Add(new Memory("", KeyWord.CARTESIAN_X, imAt.x.ToString(), null));
-            //mems.Add(new Memory("", KeyWord.CARTESIAN_Y, imAt.y.ToString(), null));
-            //mems.Add(new Memory("", KeyWord.CARTESIAN_Z, imAt.z.ToString(), null));
-            Event ev = new Event();
-            ev._Keyword = KeyWord.CARTESIAN_SECRETPLAYERLOCATION;
-            ev._Memories = mems;
-            ev._IntendedRecipients = EventTransfer.CLIENTTOSERVER;
-            base.outboxMessage(this, ev);
-            // log("Location: X=" + imAt.x.ToString() + " Y=" + imAt.y.ToString() + " Z=" + imAt.z.ToString());
-        }
+     
         private Random ran = new Random((int)DateTime.Now.Ticks);
         private void addZelBox()
         {

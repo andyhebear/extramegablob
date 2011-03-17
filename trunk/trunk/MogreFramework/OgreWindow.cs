@@ -302,8 +302,8 @@ namespace MogreFramework
                     LabelSetText(label4, status);
                     break;
                 case UI_ELEMENT.textBox1:
-                    TextBoxClear(textBox1);
-                    TextBoxAppendText(textBox1, status);
+                    TextBoxClear(tbStatus);
+                    TextBoxAppendText(tbStatus, status);
                     break;
                 //case UI_ELEMENT.label5:
                 //    LabelSetText(label5, status);
@@ -681,6 +681,18 @@ namespace MogreFramework
         {
             ListBoxItemAddAndScrollDown(lbChatProximity, msg);
         }
+        public void setInfoLabelText(string text)
+        {
+            TextBoxSetText(tbStatus, text);
+        }
+        public void setInfoLabelText2(string text)
+        {
+            TextBoxSetText(tbStatus2, text);
+        }
+        public void setInfoLabelText3(string text)
+        {
+            TextBoxSetText(tbStatus3, text);
+        }
         public void setPluginsActive(string[] activePlugins)
         {
             string[] ap2 = new string[activePlugins.Length];
@@ -702,9 +714,6 @@ namespace MogreFramework
             {
                 ListBoxItemAdd(lbPluginsActive, plugName);
             }
-        }
-        private void btnSend_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
         }
         private void tbTextToSend_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
@@ -1143,8 +1152,26 @@ namespace MogreFramework
 
         private void button3_Click(object sender, EventArgs e)
         {
-            try { Clipboard.SetText(textBox1.Text); }
+            try { Clipboard.SetText(tbStatus.Text); }
             catch (Exception ex) { log(ex.Message); }
+        }
+
+        private void btnCpy2_Click(object sender, EventArgs e)
+        {
+            try { Clipboard.SetText(tbStatus2.Text); }
+            catch (Exception ex) { log(ex.Message); }
+        }
+
+        private void btnCpy3_Click(object sender, EventArgs e)
+        {
+            try { Clipboard.SetText(tbStatus3.Text); }
+            catch (Exception ex) { log(ex.Message); }
+        }
+        public bool AskQuestionBool(string question)
+        {
+            DialogResult result;
+            result = MessageBox.Show(question, "Question", MessageBoxButtons.YesNo);
+            return (result == System.Windows.Forms.DialogResult.Yes) ? true : false;
         }
     }
 }

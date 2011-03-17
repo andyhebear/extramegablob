@@ -88,6 +88,27 @@ namespace ExtraMegaBlob.References
                 Mogre.Math.Sqr(point2.z - point1.z)
                 ));
         }
+        /// <summary>
+        /// This is the Cartesian version of Pythagoras' theorem. In three-dimensional space,
+        /// the distance between points (x1,y1,z1) and (x2,y2,z2) is
+        /// http://upload.wikimedia.org/math/3/a/e/3ae1d79e0bfcc8f38223c7df4a7320c5.png
+        /// which can be obtained by two consecutive applications of Pythagoras' theorem.
+        /// http://en.wikipedia.org/wiki/Cartesian_coordinate_system#Distance_between_two_points
+        /// the square root of (
+        ///      ((point2.x - point1.x)squared) + 
+        ///      ((point2.y - point1.y)squared) + 
+        ///      ((point2.z - point1.z)squared)
+        /// )
+        /// </summary>
+        public static float distanceBetweenPythagCartesian(References.Vector3 point1, References.Vector3 point2)
+        {
+
+            return Mogre.Math.Sqrt(
+                (Mogre.Math.Sqr(point2.x - point1.x) +
+                Mogre.Math.Sqr(point2.y - point1.y) +
+                Mogre.Math.Sqr(point2.z - point1.z)
+                ));
+        }
         public static void clamp_lo(float low, ref float inval)
         {
             if (inval < low)

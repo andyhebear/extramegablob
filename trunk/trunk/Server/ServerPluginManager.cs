@@ -124,7 +124,7 @@ namespace ExtraMegaBlob.Server
             string l = "";
             if (transfer == EventTransfer.SERVERTOCLIENT && ev._Endpoint != "")
                 l = " -> " + ev._Endpoint;
-            //log(ev._Keyword.ToString() + " -> " + transfer.ToString() + l);
+            log(ev._Keyword.ToString() + " -> " + transfer.ToString() + l);
             switch (transfer)
             {
                 case EventTransfer.TRASH:
@@ -155,6 +155,7 @@ namespace ExtraMegaBlob.Server
                             found = true;
                         }
                     }
+                    found = true;//bypass security for now
                     if (found)
                     {
                         ((ServerPlugin)ServerClasses[i]).inbox(ev2);

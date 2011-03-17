@@ -326,7 +326,25 @@ namespace MogreFramework
             try { Object.AppendText(Text); }
             catch { }
         }
-
+        public delegate void TextBoxSetTextDelegate(TextBox Object, String Text);
+        public virtual void TextBoxSetText(TextBox Object, String Text)
+        {
+            if (this.InvokeRequired)
+            {
+                TextBoxSetTextDelegate dele = new TextBoxSetTextDelegate(TextBoxSetText2);
+                try { this.Invoke(dele, new object[] { Object, Text }); }
+                catch { }
+            }
+            else
+            {
+                TextBoxSetText2(Object, Text);
+            }
+        }
+        private void TextBoxSetText2(TextBox Object, String Text)
+        {
+            try { Object.Text = Text; }
+            catch { }
+        }
         //label
         public delegate void LabelClearDelegate(Label Object);
         public virtual void LabelClear(Label Object)

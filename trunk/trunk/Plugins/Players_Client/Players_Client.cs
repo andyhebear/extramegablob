@@ -52,7 +52,7 @@ namespace ExtraMegaBlob
         private ActorNodes actors = new ActorNodes();
         private Entities entities = new Entities();
         private Lights lights = new Lights();
-        private CapsuleControllerDesc ccd = new CapsuleControllerDesc();
+        //private CapsuleControllerDesc ccd = new CapsuleControllerDesc();
         private BoxControllerDesc bcd = new BoxControllerDesc();
         private BoxController control = null;
         private void resourceWaitThread()
@@ -197,7 +197,7 @@ namespace ExtraMegaBlob
                 //control.Actor = actorNode;
 
 
-
+                
 
                 //actors["drone"].actor.BodyFlags.Kinematic = true;
                 //actors["drone"].actor.BodyFlags.FrozenRotY = true;
@@ -216,6 +216,8 @@ namespace ExtraMegaBlob
 
 
                 localY = nodes["drone"]._getDerivedOrientation() * Mogre.Vector3.UNIT_Y;
+                localZ = nodes["drone"]._getDerivedOrientation() * Mogre.Vector3.UNIT_Z;
+                localX = nodes["drone"]._getDerivedOrientation() * Mogre.Vector3.UNIT_X;
             }
             catch (Exception ex)
             {
@@ -226,6 +228,8 @@ namespace ExtraMegaBlob
         }
 
         private Mogre.Vector3 localY = new Mogre.Vector3();
+        private Mogre.Vector3 localZ = new Mogre.Vector3();
+        private Mogre.Vector3 localX = new Mogre.Vector3();
         private void preventMousePick(string name)
         {
             Memories mems = new Memories();
@@ -349,78 +353,26 @@ namespace ExtraMegaBlob
             if (angle < 0 || angle > (float)System.Math.PI * 2) return System.Math.Abs(((float)System.Math.PI * 2) - System.Math.Abs(angle));
             else return angle;
         }
+        private Quaternion orient2 = new Quaternion();
+
         private bool mouseMoved(MouseEvent arg)
         {
-            float RotateScale_CameraX = .1f;//mouse sensitivity
-            float RotateScale_CameraY = .001f;//mouse sensitivity
+            float RotateScale_CameraPitch = .001f;//mouse sensitivity
+            float RotateScale_PlayerTurn = .05f;//mouse sensitivity
             MouseState_NativePtr s = arg.state;
             if (arg.state.buttons == 2)
             {
-                float mouseRelX = (float)s.X.rel * (float)RotateScale_CameraX;
                 chat("____________________________________________________________");
-                chat(mouseRelX.ToString());
-                //nodes["drone"].Yaw(-s.X.rel * RotateScale_Camera);
-                //actors["drone"].actor.AddForce(new Mogre.Vector3(-s.X.rel * RotateScale_Camera, 0f, 0f), ForceModes.Force, true);
-               // Mogre.Vector3 orientationdeltaX = new Mogre.Vector3(s.X.rel * RotateScale_CameraX, 0f, 0f);
-
-                //chat("x.rel:" + s.X.rel.ToString());
-                //control.
-                //Quaternion orientationDelta2 = orientationdeltaX.GetRotationTo(new Mogre.Vector3(0, 0, 0));
-
-                //actors["drone"].actor.AngularVelocity = orientationdelta;
-                nodes["orbit0"].Pitch(s.Y.rel * RotateScale_CameraY);
-                //nodes["drone"].Yaw(-s.X.rel * RotateScale_Camera);
-
-                //  Mogre.Matrix3 matrix1 = control.Actor.GlobalOrientation.;
-                // Mogre.Matrix3 matrix2 = orientationdeltaX
-
-                Mogre.Quaternion orient1 = control.Actor.GlobalOrientationQuaternion;
-                //Mogre.Quaternion orient2 = new Quaternion(new Radian(new Degree(45f)), orientationdeltaX);
-
-
-                Radian rfYAngle = new Radian();
-                Radian rfPAngle = new Radian();
-                Radian rfRAngle = new Radian();
-                orient1.ToRotationMatrix().ToEulerAnglesXYZ(out rfYAngle, out rfPAngle, out rfRAngle);
-
-                float normValueRadian = normalizeAngleRadian(new Degree(mouseRelX).ValueRadians);
-                rfPAngle = new Radian(normValueRadian);
-               // rfPAngle.ValueRadians = normalizeAngleRadians(rfPAngle.ValueDegrees);
-                //rfPAngle.ValueDegrees = normalizeAngle(rfPAngle.ValueDegrees);
-
-                //if (rfPAngle. > 360f)
-                //    rfPAngle = 0f;
-                //if (rfPAngle < 0f)
-                //    rfPAngle = 360f;
-
-                //rfYAngle.Valu
-                chat(rfPAngle.ValueDegrees.ToString());
-                Matrix3 mat2 = new Matrix3();
-                mat2.FromEulerAnglesYXZ(rfYAngle, rfPAngle, rfRAngle);
-                Quaternion mOrientDest = new Quaternion();
-                mOrientDest.FromRotationMatrix(mat2);
-                //Quaternion g = localY.GetRotationTo(Mogre.Vector3.UNIT_Y);
-                //chat(g.ToString());
-                //mat.ToEulerAnglesYXZ(yRad, pRad, rRad);
-
-                // Quaternion orient3 = new Quaternion((Quaternion)(orient1 * orient2));
-
-
-
-
-                //pRad +=Ogre::Degree(0.8 * timeSinceLastFrame);
-
-
-                //control.Actor.AddForce(loc);
-                //control.Actor.MoveGlobalOrientation(mOrientDest);
-                control.Actor.GlobalOrientationQuaternion = mOrientDest;
-
-
-                //myBodyX05->addTorque(Vector3(0, 30000, 0)); //*(100*100*10*5000)/1000);      
-                //myBodyX06->addTorque(Vector3(0, 120000, 0)); //*(100*100*10*5000)/1000);   
-                //actors["drone"].actor.GlobalOrientationQuaternion += orientationDelta2;
-                //actors["drone"].actor.MoveGlobalOrientation(actors["drone"].actor.GlobalOrientationQuaternion + orientationDelta2);
-
+                nodes["orbit0"].Pitch(s.Y.rel * RotateScale_CameraPitch);
+                if (s.X.rel != 0f)
+                {
+                    Mogre.Quaternion orient1 = control.Actor.GlobalOrientationQuaternion;
+                    Mogre.Vector3 rkAxis = new Mogre.Vector3();
+                    Degree rfAngle = new Degree();
+                    orient1.ToRotationMatrix().ToAxisAngle(out rkAxis, out rfAngle);
+                    orient2 = new Quaternion(new Radian(new Degree(rfAngle.ValueDegrees + (-s.X.rel * RotateScale_PlayerTurn))), new Mogre.Vector3(0, 1, 0));
+                    control.Actor.GlobalOrientationQuaternion = orient2;
+                }
                 updateCam();
             }
 

@@ -12,6 +12,7 @@ using DirectShowLib;
 using Mogre;
 using MOIS;
 using ExtraMegaBlob;
+using Mogre.PhysX;
 #pragma warning disable 168 //CS0168: The variable 'ex' is declared but never used
 namespace MogreFramework
 {
@@ -66,7 +67,8 @@ namespace MogreFramework
         public Textures textures = null;
         public Meshes meshes = null;
         public Skeletons skeletons = null;
-
+        public Physics physics;
+        public Scene scene;
         #region mouse and kb input
         static string[] g_DeviceType = {"OISUnknown", "OISKeyboard", "OISMouse", "OISJoyStick",
 							 "OISTablet", "OISOther"};

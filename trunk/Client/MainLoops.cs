@@ -8,6 +8,8 @@ using Mogre;
 using MogreFramework;
 using SkyX;
 using MHydrax;
+using Mogre.PhysX;
+
 #region disable annoying warnings
 #pragma warning disable 162 //CS0162: Unreachable code detected
 #pragma warning disable 168 //CS0168: The variable 'XYZ' is declared but never used
@@ -85,6 +87,7 @@ namespace ExtraMegaBlob.Client
                     new Thread(new ThreadStart(checkPluginAddQueueLoop)).Start();
                     new Thread(new ThreadStart(checkNetUpdateFileQueueLoop)).Start();
                     new Thread(new ThreadStart(waterUpdateThread)).Start();
+
                     cache.init();
                     #region Primary Loop
                     while (!OgreWindow.Instance.ShuttingDown)
@@ -270,10 +273,34 @@ namespace ExtraMegaBlob.Client
             }
             #endregion
 
+            #region physics
+            // create the root object
+            OgreWindow.Instance.physics = Physics.Create();
+            OgreWindow.Instance.physics.Parameters.SkinWidth = 0.0025f;
 
+            // setup default scene params
+            SceneDesc sceneDesc = new SceneDesc();
+            sceneDesc.SetToDefault();
+            sceneDesc.Gravity = new Mogre.Vector3(0, -9.8f, 0);
+            sceneDesc.UpAxis = 1; // NX_Y in c++ (I couldn't find the equivilent enum for C#)
+
+            // your class should implement IUserContactReport to use this
+            //sceneDesc.UserContactReport = this;
+
+            OgreWindow.Instance.scene = OgreWindow.Instance.physics.CreateScene(sceneDesc);
+
+            // default material
+            OgreWindow.Instance.scene.Materials[0].Restitution = 0.5f;
+            OgreWindow.Instance.scene.Materials[0].StaticFriction = 0.5f;
+            OgreWindow.Instance.scene.Materials[0].DynamicFriction = 0.5f;
+
+            // begin simulation
+            OgreWindow.Instance.scene.Simulate(0);
+            #endregion
 
             OgreWindow.Instance.SceneReady = true;
         }
+
         private MHydrax.MHydrax hydrax = null;
         private void cache_skeletonDeleted(string pathRelSkeletonFile)
         {
@@ -409,6 +436,10 @@ namespace ExtraMegaBlob.Client
         }
         private void update()
         {
+            OgreWindow.Instance.scene.FlushStream();
+            OgreWindow.Instance.scene.FetchResults(SimulationStatuses.AllFinished, true);
+            OgreWindow.Instance.scene.Simulate(.1f);
+
             if (!DISABLE_MHYDRAX)
                 hydrax.SunPosition = skyManager.AtmosphereManager.SunPosition;  //WORKS!
             HandleInput();
@@ -427,6 +458,7 @@ namespace ExtraMegaBlob.Client
         {
             if (OgreWindow.Instance.ShuttingDown) return;
             OgreWindow.Instance.ShuttingDown = true;
+            OgreWindow.Instance.physics.Dispose();
             ClientPluginManager.shutdown();
             netClient.disconnect();
             saveScreenshot();
@@ -440,6 +472,7 @@ namespace ExtraMegaBlob.Client
             OgreWindow.Instance.mCamera = null;
             OgreWindow.Instance.mViewport = null;
             OgreWindow.Instance.mSceneMgr = null;
+
         }
         private CacheManager cache;
         private ClientPluginManager ClientPluginManager;
@@ -582,7 +615,6 @@ namespace ExtraMegaBlob.Client
         private void netClient_onConnectCompleted(string host, string port)
         {
             log("Connected to: " + host + ":" + port);
-
             cache.sendReport();
         }
         private void cache_route_toserver(Event ev)

@@ -86,6 +86,9 @@
     <Reference Include="ExtraMegaBlob.References">
       <HintPath>..\..\bin\ExtraMegaBlob.References.dll</HintPath>
     </Reference>
+    <Reference Include="eyecm.PhysX">
+      <HintPath>..\..\bin\eyecm.PhysX.dll</HintPath>
+    </Reference>
     <Reference Include="Mogre">
       <HintPath>..\..\bin\Mogre.dll</HintPath>
     </Reference>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace ExtraMegaBlob.Client
 {
@@ -39,6 +40,7 @@ namespace ExtraMegaBlob.Client
         {
             try
             {
+                if (File.Exists("log2.txt")) File.Delete("log2.txt");
                 Simulation g = new Simulation();
                 g.main();
             }

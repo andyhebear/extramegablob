@@ -26,9 +26,18 @@
         Green = 2,
         Blue = 4
     };
-
+    
     public enum KeyWord
     {
+        DATA_QUATERNION_W,
+        DATA_QUATERNION_X,
+        DATA_QUATERNION_Y,
+        DATA_QUATERNION_Z,
+        DATA_VECTOR3_X,
+        DATA_VECTOR3_Y,
+        DATA_VECTOR3_Z,
+        PLAYER_RESET,
+
         NIL,
         MOVEPLAYER,
         ROTATEPLAYER,

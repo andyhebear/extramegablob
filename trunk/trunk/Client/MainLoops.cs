@@ -64,7 +64,7 @@ namespace ExtraMegaBlob.Client
 
                 //LogManager lm = new LogManager();
 
-
+                
                 OgreWindow.Instance.SceneCreating += new OgreWindow.SceneEventHandler(SceneCreating);
                 OgreWindow.Instance.InitializeOgre();
                 LogManager.Singleton.DefaultLog.MessageLogged += new LogListener.MessageLoggedHandler(DefaultLog_MessageLogged);
@@ -670,19 +670,26 @@ namespace ExtraMegaBlob.Client
         }
         private void netClient_onReceiveEvent(Event msg)
         {
-            ClientPluginManager.sourceHub(msg, EventTransfer.SERVERTOCLIENT);
-            if (msg._Keyword == KeyWord.CACHE_CLIENTRENAMEFILE)
+            try
             {
-                cache.renameFile(msg);
+                ClientPluginManager.sourceHub(msg, EventTransfer.SERVERTOCLIENT);
+                if (msg._Keyword == KeyWord.CACHE_CLIENTRENAMEFILE)
+                {
+                    cache.renameFile(msg);
+                }
+                if (msg._Keyword == KeyWord.CACHE_CLIENTDELETEFILE)
+                {
+                    cache.deleteFile(msg);
+                }
+                if (msg._Keyword == KeyWord.CACHE_CLIENTUPDATEFILE)
+                {
+                    //cache.updateFile(msg);
+                    netUpdateFileQueue.Add(msg);
+                }
             }
-            if (msg._Keyword == KeyWord.CACHE_CLIENTDELETEFILE)
+            catch (Exception ex)
             {
-                cache.deleteFile(msg);
-            }
-            if (msg._Keyword == KeyWord.CACHE_CLIENTUPDATEFILE)
-            {
-                //cache.updateFile(msg);
-                netUpdateFileQueue.Add(msg);
+                log(ex.ToString());
             }
         }
         private void clientPluginManager_route_toserver(Event msg)

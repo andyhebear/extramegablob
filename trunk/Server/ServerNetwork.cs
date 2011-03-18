@@ -98,13 +98,23 @@ namespace ExtraMegaBlob.Server
             }
             else
             {
-                string[] endpoints = ev._Endpoint.Split(',');
+                string[] endpoints = unique(ev._Endpoint.Split(','));
                 foreach (string endp in endpoints)
                 {
                     if (null != outQueueRoot[endp])
                         ((ArrayList)outQueueRoot[endp]).Add(ev);
                 }
             }
+        }
+        private string[] unique(string[] notunique)
+        {
+            ArrayList al = new ArrayList();
+            foreach (string endp in notunique)
+            {
+                if (!al.Contains(endp))
+                    al.Add(endp);
+            }
+            return (string[])al.ToArray(typeof(string));
         }
         public void sendEventFromPlugin(ServerPlugin Sender, Event ev)
         {
@@ -128,7 +138,7 @@ namespace ExtraMegaBlob.Server
             }
             else
             {
-                string[] endpoints = ev._Endpoint.Split(',');
+                string[] endpoints = unique(ev._Endpoint.Split(','));
                 foreach (string endp in allEndpoints)
                 {
                     bool found = false;

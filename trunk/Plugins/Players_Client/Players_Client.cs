@@ -656,7 +656,7 @@ namespace ExtraMegaBlob
             if (ready)
             {
 
-
+                nodes["baseball"].Yaw(new Radian(new Degree(1f)));
                 walkState.AddTime(.01f);
                 actors.UpdateAllActors(.1f);
                 // actors.UpdateActor(.1f, "drone", control.Actor);

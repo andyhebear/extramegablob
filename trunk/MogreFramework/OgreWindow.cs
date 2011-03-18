@@ -264,6 +264,12 @@ namespace MogreFramework
                 return "[" + DateTime.Now.ToString(logTimeFormat) + "] ";
             }
         }
+        public static void append(string logMessage, TextWriter w)
+        {
+            w.Write("{0}", logMessage);
+            w.Flush();
+        }
+
         public void log(string what)
         {
             if (this._ShuttingDown) return;
@@ -272,6 +278,19 @@ namespace MogreFramework
                 this.ListBoxItemAddAndScrollDown(listBox1, x);
             else
                 this.ListBoxItemAdd(listBox1, x);
+            try
+            {
+                using (StreamWriter w = File.AppendText("log2.txt"))
+                {
+                    append(x, w);
+                    w.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+               // MessageBox.Show(ex.ToString());
+            }
+
         }
         public enum UI_ELEMENT
         {

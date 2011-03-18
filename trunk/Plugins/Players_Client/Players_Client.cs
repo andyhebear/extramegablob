@@ -260,9 +260,22 @@ namespace ExtraMegaBlob
             if (!ready) return;
             switch (ev._Keyword)
             {
-                case KeyWord.TONGITS_GAME_STARTING:
-                    chat("game starting");
-                    resetPlayer();
+                case KeyWord.PLAYER_RESET:
+                    chat("resetting player");
+
+                    Quaternion q = new Quaternion(
+                        float.Parse(ev._Memories[KeyWord.DATA_QUATERNION_W].Value),
+                        float.Parse(ev._Memories[KeyWord.DATA_QUATERNION_X].Value),
+                        float.Parse(ev._Memories[KeyWord.DATA_QUATERNION_Y].Value),
+                        float.Parse(ev._Memories[KeyWord.DATA_QUATERNION_Z].Value));
+
+                    Mogre.Vector3 v = new Mogre.Vector3(
+                        float.Parse(ev._Memories[KeyWord.DATA_VECTOR3_X].Value),
+                        float.Parse(ev._Memories[KeyWord.DATA_VECTOR3_Y].Value),
+                        float.Parse(ev._Memories[KeyWord.DATA_VECTOR3_Z].Value));
+
+                    resetPlayer(v, q);
+
                     break;
                 case KeyWord.TONGITS_FREEZEPLR:
                     tongfreeze = true;
@@ -419,12 +432,12 @@ namespace ExtraMegaBlob
         private void setPos(Mogre.Vector3 pos)
         {
             if (!tongfreeze)
-            control.Actor.MoveGlobalPosition(pos);
+                control.Actor.MoveGlobalPosition(pos);
         }
         private void setOrient(Quaternion orient)
         {
             if (!tongfreeze)
-            control.Actor.GlobalOrientationQuaternion = orient;
+                control.Actor.GlobalOrientationQuaternion = orient;
         }
         private void spin(Degree deg)
         {
@@ -444,10 +457,6 @@ namespace ExtraMegaBlob
             //nodes["orbit0"].Orientation = new Quaternion(-0.4837169f, -0.5147877f, 0.4847109f, -0.5158446f);
             //updateCam();
         }
-        private void resetPlayer()
-        {
-            resetPlayer(new Mogre.Vector3(-1.291305f, 35.18927f, 2.11423f), new Quaternion(0.2246418f, 0f, 0.9744414f, 0f));
-        }
         private timer LocationBeaconInterval = new timer(new TimeSpan(0, 0, 1));//1 second player world location updates
         private timer btnLimiter_F = new timer(new TimeSpan(0, 0, 1));//1 second player world location updates
         private void sendLocationBeacon()
@@ -464,6 +473,7 @@ namespace ExtraMegaBlob
             base.outboxMessage(this, ev);
             // log("Location: X=" + imAt.x.ToString() + " Y=" + imAt.y.ToString() + " Z=" + imAt.z.ToString());
         }
+
         private void resetPlayer(Mogre.Vector3 loc, Quaternion orient)
         {
             setPos(loc);
@@ -487,7 +497,7 @@ namespace ExtraMegaBlob
                         {
                             if (!tongfreeze)
                             {
-                                resetPlayer();
+                                resetPlayer(new Mogre.Vector3(-1.291305f, 35.18927f, 2.11423f), new Quaternion(0.2246418f, 0f, 0.9744414f, 0f));
                                 resetCam();
                                 sendLocationBeacon();
                             }

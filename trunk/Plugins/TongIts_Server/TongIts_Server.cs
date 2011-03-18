@@ -36,16 +36,16 @@ namespace ExtraMegaBlob
                     }
                     globals.Users[ev._Endpoint].Location = loc;
                     broadcastPlayerLocationAllExcept(ev._Endpoint, loc);
-                    if (!globals.Users[ev._Endpoint].inRange)
+                    float dist = References.Math.distanceBetweenPythagCartesian(loc, tableLocation);
+                    log(dist.ToString());
+                    if (dist < 30f && !globals.Users[ev._Endpoint].inRange)
                     {
-                        float dist = References.Math.distanceBetweenPythagCartesian(loc, tableLocation);
-                        log(dist.ToString());
-                        if (dist < 30f)
-                        {
-                            globals.Users[ev._Endpoint].inRange = true;
-                            if (openSlots)
-                                invite(ev._Endpoint);
-                        }
+                        globals.Users[ev._Endpoint].inRange = true;
+                        invite(ev._Endpoint);
+                    }
+                    if (dist > 30f && globals.Users[ev._Endpoint].inRange)
+                    {
+                        globals.Users[ev._Endpoint].inRange = false;
                     }
                     break;
                 case KeyWord.TONGITS_PLAYER_INVITE_ACCEPTED:

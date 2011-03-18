@@ -296,6 +296,7 @@ namespace ExtraMegaBlob
             switch (ev._Keyword)
             {
                 case KeyWord.TONGITS_GAME_STARTING:
+                    resetPlayer(playerNumber);
                     freezePlayer();
                     chat("game is starting");
                     break;
@@ -365,6 +366,44 @@ namespace ExtraMegaBlob
             Event outevent = new Event();
             outevent._Keyword = KeyWord.TONGITS_FREEZEPLR;
             outevent._IntendedRecipients = EventTransfer.CLIENTTOCLIENT;
+            outboxMessage(this, outevent);
+        }
+        private List<Quaternion> seatPositions
+        {
+            get
+            {
+                List<Quaternion> playerSeatOrientation = new List<Quaternion>();
+                playerSeatOrientation.Add(new Quaternion(0.2246418f, 0f, 0.9744414f, 0f));
+                playerSeatOrientation.Add(new Quaternion(0.9731094f, 0f, 0.2303433f, 0f));
+                playerSeatOrientation.Add(new Quaternion(0.6975411f, 0f, 0.7165448f, 0f));
+                return playerSeatOrientation;
+            }
+        }
+        private List<Mogre.Vector3> seatLocations
+        {
+            get
+            {
+                List<Mogre.Vector3> playerSeatLocation = new List<Mogre.Vector3>();
+                playerSeatLocation.Add(new Mogre.Vector3(-1.291305f, 35.18927f, 2.11423f));
+                playerSeatLocation.Add(new Mogre.Vector3(-0.03845761f, 35.18927f, -3.819804f));
+                playerSeatLocation.Add(new Mogre.Vector3(4.63741f, 35.18927f, -0.9184573f));
+                return playerSeatLocation;
+            }
+        }
+        private void resetPlayer(int playerNumber)
+        {
+            int seatPosition = 2;
+            Event outevent = new Event();
+            outevent._Keyword = KeyWord.PLAYER_RESET;
+            outevent._IntendedRecipients = EventTransfer.CLIENTTOCLIENT;
+            outevent._Memories = new Memories();
+            outevent._Memories.Add(new Memory("", KeyWord.DATA_QUATERNION_W, seatPositions[seatPosition].w.ToString()));
+            outevent._Memories.Add(new Memory("", KeyWord.DATA_QUATERNION_X, seatPositions[seatPosition].x.ToString()));
+            outevent._Memories.Add(new Memory("", KeyWord.DATA_QUATERNION_Y, seatPositions[seatPosition].y.ToString()));
+            outevent._Memories.Add(new Memory("", KeyWord.DATA_QUATERNION_Z, seatPositions[seatPosition].z.ToString()));
+            outevent._Memories.Add(new Memory("", KeyWord.DATA_VECTOR3_X, seatLocations[seatPosition].x.ToString()));
+            outevent._Memories.Add(new Memory("", KeyWord.DATA_VECTOR3_Y, seatLocations[seatPosition].y.ToString()));
+            outevent._Memories.Add(new Memory("", KeyWord.DATA_VECTOR3_Z, seatLocations[seatPosition].z.ToString()));
             outboxMessage(this, outevent);
         }
         private void unfreezePlayer()

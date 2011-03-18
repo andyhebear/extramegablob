@@ -350,7 +350,7 @@ namespace ExtraMegaBlob
         private bool mouseMoved(MouseEvent arg)
         {
             float RotateScale_CameraPitch = .001f;//mouse sensitivity
-            float RotateScale_PlayerTurn = .05f;//mouse sensitivity
+            float RotateScale_PlayerTurn = .005f;//mouse sensitivity
             MouseState_NativePtr s = arg.state;
             if (arg.state.buttons == 2)
             {
@@ -359,14 +359,18 @@ namespace ExtraMegaBlob
                 if (!tongfreeze)
                     if (s.X.rel != 0f)
                     {
-                        Mogre.Quaternion orient1 = control.Actor.GlobalOrientationQuaternion;
-                        Mogre.Vector3 rkAxis = new Mogre.Vector3();
-                        Degree rfAngle = new Degree();
-                        orient1.ToRotationMatrix().ToAxisAngle(out rkAxis, out rfAngle);
-                        orient2 = new Quaternion(new Radian(new Degree(rfAngle.ValueDegrees + (-s.X.rel * RotateScale_PlayerTurn))), new Mogre.Vector3(0, 1, 0));
-                        //control.Actor.GlobalOrientationQuaternion = orient2;
-                        //setOrient(orient2);
-                        spin(rfAngle.ValueDegrees + (-s.X.rel * RotateScale_PlayerTurn));
+                        nodes["drone"].Yaw(-s.X.rel * RotateScale_PlayerTurn);
+                        setOrient(nodes["drone"]._getDerivedOrientation());
+
+                        
+                        //Mogre.Quaternion orient1 = control.Actor.GlobalOrientationQuaternion;
+                        //Mogre.Vector3 rkAxis = new Mogre.Vector3();
+                        //Degree rfAngle = new Degree();
+                        //orient1.ToRotationMatrix().ToAxisAngle(out rkAxis, out rfAngle);
+                        //orient2 = new Quaternion(new Radian(new Degree(rfAngle.ValueDegrees + (-s.X.rel * RotateScale_PlayerTurn))), new Mogre.Vector3(0, 1, 0));
+                        ////control.Actor.GlobalOrientationQuaternion = orient2;
+                        ////setOrient(orient2);
+                        //spin(rfAngle.ValueDegrees + (-s.X.rel * RotateScale_PlayerTurn));
                     }
                 updateCam();
             }

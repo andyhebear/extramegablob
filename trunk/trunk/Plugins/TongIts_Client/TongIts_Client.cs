@@ -27,6 +27,7 @@ namespace ExtraMegaBlob
                 h["clouds"] = "\\clouds.jpg";
                 // h["dirt"] = "\\terr_dirt-grass.jpg";
                 h["noise"] = "\\normalNoiseColor.png";
+                h["blankcardface"] = "\\TongIts\\cardface-blank.png";
                 h["cat1"] = "\\cat2.jpg";
                 h["club 10"] = "\\TongIts\\200px-Playing_card_club_10.svg.png";
                 h["club 2"] = "\\TongIts\\200px-Playing_card_club_2.svg.png";
@@ -92,7 +93,7 @@ namespace ExtraMegaBlob
                 #region meshes
                 h["mushroom"] = "\\TongIts\\mushroom.mesh";
                 h["table"] = "\\TongIts\\tongitstable.mesh";
-
+                h["card"] = "\\TongIts\\Card.mesh";
                 #endregion
                 return h;
             }
@@ -218,25 +219,78 @@ namespace ExtraMegaBlob
                 #endregion
 
 
-
-                MeshManager.Singleton.CreatePlane("spinnycard", "General", new Plane(Mogre.Vector3.UNIT_Y, 0), 200f, 250f, 1, 1, true, 1, 1, 1, Mogre.Vector3.UNIT_X);
-                entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("TestPlaneEntity", "spinnycard"));
-                entities["TestPlaneEntity"].CastShadows = true;
-                entities["TestPlaneEntity"].SetMaterialName("club 5");
-                nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("spinnycard"));
-                nodes["spinnycard"].AttachObject(entities["TestPlaneEntity"]);
-                nodes["spinnycard"].Position = new Mogre.Vector3(0f, 3f, 0f) + Location().toMogre;
-                nodes["spinnycard"].Scale(.001f, .001f, .001f);
-
+                
+                #region table
                 entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("tongitstable", "\\TongIts\\tongitstable.mesh"));
                 nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("table"));
                 nodes["table"].AttachObject(entities["tongitstable"]);
                 nodes["table"].Position = new Mogre.Vector3(0f, 36f, 0f) + Location().toMogre;
                 nodes["table"].Scale(new Mogre.Vector3(4f));
-                preventMousePick("tongitstable");
+                //preventMousePick("tongitstable");
+                // physics
+                // attaching a body to the actor makes it dynamic, you can set things like initial velocity
+                bodyDesc.LinearVelocity = new Mogre.Vector3(0, 0, 0);
+
+                // the actor properties control the mass, position and orientation
+                // if you leave the body set to null it will become a static actor and wont move
+                ActorDesc tableActorDesc = new ActorDesc();
+                tableActorDesc.Density = 4;
+                tableActorDesc.Body = null;
+                tableActorDesc.GlobalPosition = nodes["table"].Position;
+                tableActorDesc.GlobalOrientation = nodes["table"].Orientation.ToRotationMatrix();
+                PhysXHelpers.StaticMeshData tableMeshData = new PhysXHelpers.StaticMeshData(entities["tongitstable"].GetMesh());
+                tableActorDesc.Shapes.Add(PhysXHelpers.CreateTriangleMesh(tableMeshData));
+
+                Actor tableActor = null;
+                // finally, create the actor in the physics scene
+                try { tableActor = OgreWindow.Instance.scene.CreateActor(tableActorDesc); }
+                catch { }
+                if (tableActor != null)
+                {
+                    actors.Add(new ActorNode(nodes["table"], tableActor));
+                }
+                #endregion
 
 
+                #region cards
 
+                Thread.Sleep(5000);
+                resetPlayer(1);
+
+                //MeshManager.Singleton.CreatePlane("spinnycard", "General", new Plane(Mogre.Vector3.UNIT_Y, 0), 200f, 250f, 1, 1, true, 1, 1, 1, Mogre.Vector3.UNIT_X);
+                entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("club 5", "\\TongIts\\Card.mesh"));
+                entities["club 5"].SetMaterialName("club 5");
+                nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("club 5"));
+                nodes["club 5"].AttachObject(entities["club 5"]);
+                nodes["club 5"].Position = new Mogre.Vector3(0f, 50f, 0f) + Location().toMogre;
+                // physics
+                // attaching a body to the actor makes it dynamic, you can set things like initial velocity
+                BodyDesc cardBodyDesc = null;
+                bodyDesc.LinearVelocity = new Mogre.Vector3(0, 6, 0);
+
+                // the actor properties control the mass, position and orientation
+                // if you leave the body set to null it will become a static actor and wont move
+                ActorDesc cardActorDesc = new ActorDesc();
+                cardActorDesc.Density = 4;
+                cardActorDesc.Body = cardBodyDesc;
+                cardActorDesc.GlobalPosition = nodes["club 5"].Position;
+                cardActorDesc.GlobalOrientation = nodes["club 5"].Orientation.ToRotationMatrix();
+                PhysXHelpers.StaticMeshData cardMeshData = new PhysXHelpers.StaticMeshData(entities["club 5"].GetMesh());
+                cardActorDesc.Shapes.Add(PhysXHelpers.CreateConvexHull(cardMeshData));
+
+                Actor cardActor = null;
+                // finally, create the actor in the physics scene
+                try { cardActor = OgreWindow.Instance.scene.CreateActor(cardActorDesc); }
+                catch { }
+                // if (actor == null)
+                //    OgreWindow.Instance.CloseForm();
+                if (cardActor != null)
+                {
+                    actors.Add(new ActorNode(nodes["club 5"], cardActor));
+                }
+
+                #endregion
+                
                 ready = true;
             }
             catch (Exception ex)
@@ -297,7 +351,7 @@ namespace ExtraMegaBlob
             {
                 case KeyWord.TONGITS_GAME_STARTING:
                     resetPlayer(this.playerNumber);
-                    freezePlayer();
+                    //freezePlayer();
                     chat("game is starting");
                     break;
                 case KeyWord.TONGITS_PLAYER_INVITE:
@@ -312,7 +366,7 @@ namespace ExtraMegaBlob
                      int playerNumber = int.Parse(ev._Memories[KeyWord.TONGITS_PLAYER_NUMBER].Value);
                     string cardName = ev._Memories[KeyWord.TONGITS_CARD_DATA].Value;
                     //chat(string.Format("Placing a Deck Card Player:{0} Card:{1}", ev._Memories[KeyWord.TONGITS_PLAYER_NUMBER].Value, ev._Memories[KeyWord.TONGITS_CARD_DATA].Value));
-                    placeCard(playerNumber, cardName);
+                    placeCard(playerNumber, "club 5");
                     break;
 
                 case KeyWord.TONGITS_PLAYER_NUMBER:
@@ -332,6 +386,7 @@ namespace ExtraMegaBlob
                 case 0://dealer
                     break;
                 case 1:
+                    actors[cardName].actor.GlobalPosition = seatLocations[playerNumber];
                     break;
             }
         }
@@ -346,27 +401,8 @@ namespace ExtraMegaBlob
         private int playerNumber = 0;
         public override void updateHook()
         {
-            if (t.elapsed)
-            {
-                t.reset();
-                t.start();
-            }
             if (ready)
             {
-                // testSceneNode.Roll(new Radian(new Degree(1f)));
-                //testSceneNode.Rotate(new Mogre.Vector3(1f,0f,0f),new Radian(new Degree(1f)));
-                // testSceneNode.Scale(2f, 2f, 2f);
-                if (scaleLimiter.elapsed)
-                {
-
-
-                    //if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_Z))
-                    //{
-                    //    testSceneNode.Scale(.3f, .3f, .3f);
-                    //    scaleLimiter.start();
-                    //}
-                }
-                nodes["spinnycard"].Yaw(new Radian(new Degree(1f)));
                 actors.UpdateAllActors(.1f);
             }
         }
@@ -432,8 +468,5 @@ namespace ExtraMegaBlob
 
         }
         private Random ran = new Random((int)DateTime.Now.Ticks);
-
-
-        ExtraMegaBlob.References.timer t = new ExtraMegaBlob.References.timer(new TimeSpan(0, 0, 0, 0, 1000));
     }
 }

@@ -34,11 +34,16 @@ namespace ExtraMegaBlob.References
         {
             get
             {
-                return (Entity)allEntities[IndexOf(key)];
+                int i = IndexOf(key);
+                if (i < 0)
+                    throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid element in the array");
+                return (Entity)allEntities[i];
             }
             set
             {
                 int i = IndexOf(key);
+                if (i < 0)
+                    throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid element in the array");
                 allEntities[i] = value;
             }
         }

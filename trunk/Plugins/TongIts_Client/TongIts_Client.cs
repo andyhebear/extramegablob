@@ -296,7 +296,7 @@ namespace ExtraMegaBlob
             switch (ev._Keyword)
             {
                 case KeyWord.TONGITS_GAME_STARTING:
-                    resetPlayer(playerNumber);
+                    resetPlayer(this.playerNumber);
                     freezePlayer();
                     chat("game is starting");
                     break;
@@ -309,11 +309,10 @@ namespace ExtraMegaBlob
                     unfreezePlayer();
                     break;
                 case KeyWord.TONGITS_CARD_DECK_PLACE:
-                    chat(string.Format("Placing a Deck Card Player:{0} Card:{1}", ev._Memories[KeyWord.TONGITS_PLAYER_NUMBER].Value, ev._Memories[KeyWord.TONGITS_CARD_DATA].Value));
-                    //if (OgreWindow.Instance.AskQuestionBool("Want to join a game of TongIts?"))
-                    //{
-                    //    acceptNewGame();
-                    //}
+                     int playerNumber = int.Parse(ev._Memories[KeyWord.TONGITS_PLAYER_NUMBER].Value);
+                    string cardName = ev._Memories[KeyWord.TONGITS_CARD_DATA].Value;
+                    //chat(string.Format("Placing a Deck Card Player:{0} Card:{1}", ev._Memories[KeyWord.TONGITS_PLAYER_NUMBER].Value, ev._Memories[KeyWord.TONGITS_CARD_DATA].Value));
+                    placeCard(playerNumber, cardName);
                     break;
 
                 case KeyWord.TONGITS_PLAYER_NUMBER:
@@ -326,6 +325,17 @@ namespace ExtraMegaBlob
                     break;
             }
         }
+        private void placeCard(int playerNumber, string cardName)
+        {
+            switch (playerNumber)
+            {
+                case 0://dealer
+                    break;
+                case 1:
+                    break;
+            }
+        }
+        
         public void acceptNewGame()
         {
             Event outevent = new Event();

@@ -112,6 +112,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)\..\bin\servercache\TongIts\"
+mkdir "$(SolutionDir)\..\bin\cache\TongIts\"
 copy "$(ProjectDir)\TongIts_Client.cs" "$(SolutionDir)\..\bin\servercache\TongIts\TongIts_Client.cs"
 copy "$(ProjectDir)\TongIts_Client.cs" "$(SolutionDir)\..\bin\cache\TongIts\TongIts_Client.cs"</PostBuildEvent>
   </PropertyGroup>

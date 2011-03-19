@@ -76,15 +76,12 @@ namespace MogreFramework
         public ActorNodes actors = new ActorNodes();
         public Entities entities = new Entities();
         public Lights lights = new Lights();
-        #endregion
-
-        #region mouse and kb input
-        static string[] g_DeviceType = {"OISUnknown", "OISKeyboard", "OISMouse", "OISJoyStick",
-							 "OISTablet", "OISOther"};
-        public static InputManager g_InputManager;
+        public InputManager g_InputManager;
         public static Keyboard g_kb;
         public static Mouse g_m;
         public static JoyStick[] g_joys;
+        #endregion
+        static string[] g_DeviceType = { "OISUnknown", "OISKeyboard", "OISMouse", "OISJoyStick", "OISTablet", "OISOther" };
         private void DoInputsStartup()
         {
             ParamList pl = new ParamList();
@@ -129,95 +126,6 @@ namespace MogreFramework
                 //g_joys[i].Vector3Moved += new JoyStickListener.Vector3MovedHandler(Vector3Moved);
             }
         }
-        //bool Vector3Moved(JoyStickEvent arg, int index)
-        //{
-        //    MOIS.Vector3 vec = arg.state.GetVector(index);
-        //    log("\n" + arg.device.Vendor() + ". Orientation # " + index
-        //        + " X Value: " + vec.x
-        //        + " Y Value: " + vec.y
-        //        + " Z Value: " + vec.z);
-        //    return true;
-        //}
-        //bool PovMoved(JoyStickEvent arg, int pov)
-        //{
-        //    log("\n" + arg.device.Vendor() + ". POV" + pov + " ");
-        //    if ((arg.state.get_mPOV(pov).direction & Pov_NativePtr.North) != 0) //Going up
-        //        Console.Write("North");
-        //    else if ((arg.state.get_mPOV(pov).direction & Pov_NativePtr.South) != 0) //Going down
-        //        Console.Write("South");
-        //    if ((arg.state.get_mPOV(pov).direction & Pov_NativePtr.East) != 0) //Going right
-        //        Console.Write("East");
-        //    else if ((arg.state.get_mPOV(pov).direction & Pov_NativePtr.West) != 0) //Going left
-        //        Console.Write("West");
-        //    if (arg.state.get_mPOV(pov).direction == Pov_NativePtr.Centered) //stopped/centered out
-        //        Console.Write("Centered");
-        //    return true;
-        //}
-        //bool JoyButtonReleased(JoyStickEvent arg, int button)
-        //{
-        //    log("\n" + arg.device.Vendor() + ". Button Released # " + button);
-        //    return true;
-        //}
-        //bool JoyButtonPressed(JoyStickEvent arg, int button)
-        //{
-        //    log("\n" + arg.device.Vendor() + ". Button Pressed # " + button);
-        //    return true;
-        //}
-        //bool AxisMoved(JoyStickEvent arg, int axis)
-        //{
-        //    //Provide a little dead zone
-        //    Axis_NativePtr axiscls = arg.state.GetAxis(axis);
-        //    if (axiscls.abs > 2500 || axiscls.abs < -2500)
-        //        log("\n" + arg.device.Vendor() + ". Axis # " + axis + " Value: " + axiscls.abs);
-        //    return true;
-        //}
-        //bool MouseReleased(MouseEvent arg, MouseButtonID id)
-        //{
-        //    MouseState_NativePtr s = arg.state;
-        //    log("\nMouse button #" + id + " released. Abs("
-        //              + s.X.abs + ", " + s.Y.abs + ", " + s.Z.abs + ") Rel("
-        //              + s.X.rel + ", " + s.Y.rel + ", " + s.Z.rel + ")");
-        //    return true;
-        //}
-        //bool MousePressed(MouseEvent arg, MouseButtonID id)
-        //{
-        //    MouseState_NativePtr s = arg.state;
-        //    log("\nMouse button #" + id + " pressed. Abs("
-        //              + s.X.abs + ", " + s.Y.abs + ", " + s.Z.abs + ") Rel("
-        //              + s.X.rel + ", " + s.Y.rel + ", " + s.Z.rel + ")");
-        //    return true;
-        //}
-        //bool MouseMoved(MouseEvent arg)
-        //{
-        //    MouseState_NativePtr s = arg.state;
-        //    //log("\nMouseMoved: Abs("
-        //    //          + s.X.abs + ", " + s.Y.abs + ", " + s.Z.abs + ") Rel("
-        //    //          + s.X.rel + ", " + s.Y.rel + ", " + s.Z.rel + ")");
-        //    multi_onMouseMove(arg);
-        //    return true;
-        //}
-        //public delegate void inp_mousemoved_dele(MouseEvent arg);
-        //public event inp_mousemoved_dele onMouseMove;
-        //private void multi_onMouseMove(MouseEvent arg){
-        //    if (!object.Equals(null, onMouseMove))
-        //    {
-        //        onMouseMove(arg);
-        //    }
-        //}
-        //bool KeyReleased(KeyEvent arg)
-        //{
-        //    if (arg.key == KeyCode.KC_ESCAPE || arg.key == KeyCode.KC_Q)
-        //        this.ShuttingDown = true;
-        //    return true;
-        //}
-        //bool KeyPressed(KeyEvent arg)
-        //{
-        //    log("\nKeyPressed {" + arg.key
-        //        + ", " + ((Keyboard)(arg.device)).GetAsString(arg.key)
-        //        + "} || Character (" + (char)arg.text + ")");
-        //    return true;
-        //}
-        #endregion
         public class timer
         {
             private DateTime startedat = DateTime.Now;
@@ -297,7 +205,7 @@ namespace MogreFramework
             }
             catch (Exception ex)
             {
-               // MessageBox.Show(ex.ToString());
+                // MessageBox.Show(ex.ToString());
             }
 
         }

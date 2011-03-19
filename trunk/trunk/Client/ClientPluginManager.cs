@@ -104,7 +104,8 @@ namespace ExtraMegaBlob.Client
             string materialName = sphereNamePrefix + "_SphereMaterial_" + pluginName;
             string sceneNodeName = sphereNamePrefix + "_SphereSceneNode_" + pluginName;
             ((MaterialPtr)MaterialManager.Singleton.Create(materialName, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME)).GetTechnique(0).GetPass(0).CreateTextureUnitState("\\normalNoiseColor.png");
-            PrimitiveGenerators.CreateSphere(meshName, ClientClasses[pluginName].Radius(), 8, 8);
+            //PrimitiveGenerators.CreateSphere(meshName, ClientClasses[pluginName].Radius(), 8, 8);
+            PrimitiveGenerators.CreateSphere(meshName, 50, 8, 8);
             Entity sphereEntity = OgreWindow.Instance.mSceneMgr.CreateEntity(entityName, meshName);
             SceneNode sphereNode = OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode(sceneNodeName);
             sphereEntity.SetMaterialName(materialName);

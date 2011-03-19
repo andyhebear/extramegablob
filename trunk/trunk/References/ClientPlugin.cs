@@ -1,5 +1,7 @@
 ﻿using MogreFramework;
 using Mogre;
+using Mogre.PhysX;
+using MOIS;
 namespace ExtraMegaBlob.References
 {
     public abstract class ClientPlugin
@@ -47,6 +49,21 @@ namespace ExtraMegaBlob.References
         }
         public abstract void inbox(Event ev);
         public abstract ExtraMegaBlob.References.Vector3 Location();
-        public abstract float Radius();
+        #region Globals
+        public SceneNodes nodes = OgreWindow.Instance.nodes;
+        public ActorNodes actors = OgreWindow.Instance.actors;
+        public Entities entities = OgreWindow.Instance.entities;
+        public Lights lights = OgreWindow.Instance.lights;
+        public Materials materials = OgreWindow.Instance.materials;
+        public Meshes meshes = OgreWindow.Instance.meshes;
+        public Skeletons skeletons = OgreWindow.Instance.skeletons;
+        public Textures textures = OgreWindow.Instance.textures;
+        public Physics physics = OgreWindow.Instance.physics;
+        public Scene scene = OgreWindow.Instance.scene;
+        public InputManager inputmanager = OgreWindow.Instance.g_InputManager;
+        public Keyboard keyboard = OgreWindow.g_kb;
+        public Mouse mouse = OgreWindow.g_m;
+        public JoyStick[] joys = OgreWindow.g_joys;
+        #endregion
     }
 }

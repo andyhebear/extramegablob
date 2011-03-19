@@ -20,10 +20,6 @@ namespace ExtraMegaBlob
         {
             return new ExtraMegaBlob.References.Vector3(163, 0, 15);
         }
-        public override float Radius()
-        {
-            return 30;
-        }
         public override string Name()
         {
             return "MousePick_Client";

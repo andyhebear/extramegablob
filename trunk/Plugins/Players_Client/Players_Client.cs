@@ -49,18 +49,6 @@ namespace ExtraMegaBlob
                 return h;
             }
         }
-        #region Globals
-        private SceneNodes nodes = OgreWindow.Instance.nodes;
-        private ActorNodes actors = OgreWindow.Instance.actors;
-        private Entities entities = OgreWindow.Instance.entities;
-        private Lights lights = OgreWindow.Instance.lights;
-        private Materials materials = OgreWindow.Instance.materials;
-        private Meshes meshes = OgreWindow.Instance.meshes;
-        private Skeletons skeletons = OgreWindow.Instance.skeletons;
-        private Textures textures = OgreWindow.Instance.textures;
-        private Physics physics = OgreWindow.Instance.physics;
-        private Scene scene = OgreWindow.Instance.scene;
-        #endregion
         private BoxControllerDesc bcd = new BoxControllerDesc();
         private BoxController control = null;
         private void resourceWaitThread()
@@ -301,10 +289,6 @@ namespace ExtraMegaBlob
         {
             //return new ExtraMegaBlob.References.Vector3(0f, -168.6846f, -1101.067f);
             return new ExtraMegaBlob.References.Vector3(0f, 0f, 0f);
-        }
-        public override float Radius()
-        {
-            return 90;
         }
         public override string Name()
         {

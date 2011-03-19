@@ -128,6 +128,10 @@
     <Reference Include="Mogre">
       <HintPath>..\bin\Mogre.dll</HintPath>
     </Reference>
+    <Reference Include="MOIS, Version=1.1.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\bin\MOIS.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite">
@@ -148,7 +152,6 @@
     <Compile Include="Globals.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Lights.cs" />
-    <Compile Include="Materials.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="Memories.cs" />
     <Compile Include="Memory.cs" />

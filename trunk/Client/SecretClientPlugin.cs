@@ -102,10 +102,6 @@ namespace ExtraMegaBlob.Client
         {
             return new ExtraMegaBlob.References.Vector3(15, 15, 15);
         }
-        public override float Radius()
-        {
-            return 30;
-        }
         public override string Name()
         {
             return "SecretClientPlugin";

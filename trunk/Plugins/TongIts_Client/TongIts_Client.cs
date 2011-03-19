@@ -9,6 +9,7 @@ using System.Collections;
 using System.IO;
 using System.Threading;
 using Mogre.PhysX;
+using MOIS;
 namespace ExtraMegaBlob
 {
     public class plugin : ExtraMegaBlob.References.ClientPlugin
@@ -112,23 +113,6 @@ namespace ExtraMegaBlob
             }
         }
 
-        #region Globals
-        private SceneNodes nodes = OgreWindow.Instance.nodes;
-        private ActorNodes actors = OgreWindow.Instance.actors;
-        private Entities entities = OgreWindow.Instance.entities;
-        private Lights lights = OgreWindow.Instance.lights;
-        private Materials materials = OgreWindow.Instance.materials;
-        private Meshes meshes = OgreWindow.Instance.meshes;
-        private Skeletons skeletons = OgreWindow.Instance.skeletons;
-        private Textures textures = OgreWindow.Instance.textures;
-        private Physics physics = OgreWindow.Instance.physics;
-        private Scene scene = OgreWindow.Instance.scene;
-        #endregion
-
-
-
-
-
         private void resourceWaitThread()
         {
             while (true)
@@ -161,10 +145,9 @@ namespace ExtraMegaBlob
                 Hashtable mats = materials_lookup;
                 foreach (DictionaryEntry mat in mats)
                 {
-                    OgreWindow.Instance.materials.Add((MaterialPtr)MaterialManager.Singleton.Create((string)mat.Key, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME));
-                    OgreWindow.Instance.materials[(string)mat.Key].GetTechnique(0).GetPass(0).CreateTextureUnitState((string)mat.Value);
+                    materials.Add((MaterialPtr)MaterialManager.Singleton.Create((string)mat.Key, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME));
+                    materials[(string)mat.Key].GetTechnique(0).GetPass(0).CreateTextureUnitState((string)mat.Value);
                 }
-
                 lights.Add(OgreWindow.Instance.mSceneMgr.CreateLight("testLight"));
                 lights["testLight"].Type = Light.LightTypes.LT_POINT;
                 lights["testLight"].Position = new Mogre.Vector3(-117.9847f, 120f, 234.2695f) + Location().toMogre;
@@ -378,10 +361,6 @@ namespace ExtraMegaBlob
         {
             //return new ExtraMegaBlob.References.Vector3(0f, -168.6846f, -1101.067f);
             return new ExtraMegaBlob.References.Vector3(0f, 0f, 0f);
-        }
-        public override float Radius()
-        {
-            return 90;
         }
         public override string Name()
         {

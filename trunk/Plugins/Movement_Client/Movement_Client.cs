@@ -19,10 +19,6 @@ namespace ExtraMegaBlob
         {
             return new ExtraMegaBlob.References.Vector3(-454.8301f, 9.800894f, 322.5049f);
         }
-        public override float Radius()
-        {
-            return 30;
-        }
         public override string Name()
         {
             return "Movement_Client";

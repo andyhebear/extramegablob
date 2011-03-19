@@ -55,6 +55,8 @@ namespace MogreFramework
             this.lbPluginsActive = new System.Windows.Forms.ListBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.btnCpy3 = new System.Windows.Forms.Button();
+            this.tbStatus3 = new System.Windows.Forms.TextBox();
             this.btnCpy2 = new System.Windows.Forms.Button();
             this.tbStatus2 = new System.Windows.Forms.TextBox();
             this.tbStatus = new System.Windows.Forms.TextBox();
@@ -67,8 +69,6 @@ namespace MogreFramework
             this.pictureBox5 = new System.Windows.Forms.PictureBox();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
-            this.btnCpy3 = new System.Windows.Forms.Button();
-            this.tbStatus3 = new System.Windows.Forms.TextBox();
             this.tabControl2.SuspendLayout();
             this.tabPage5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.renderBox)).BeginInit();
@@ -104,6 +104,7 @@ namespace MogreFramework
             this.tabControl2.SelectedIndex = 0;
             this.tabControl2.Size = new System.Drawing.Size(578, 113);
             this.tabControl2.TabIndex = 1;
+            this.tabControl2.TabStop = false;
             // 
             // tabPage5
             // 
@@ -123,6 +124,7 @@ namespace MogreFramework
             this.lbChatProximity.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbChatProximity.Enabled = false;
             this.lbChatProximity.FormattingEnabled = true;
             this.lbChatProximity.Location = new System.Drawing.Point(6, 6);
             this.lbChatProximity.Name = "lbChatProximity";
@@ -136,6 +138,7 @@ namespace MogreFramework
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(75, 23);
             this.btnSend.TabIndex = 2;
+            this.btnSend.TabStop = false;
             this.btnSend.Text = "Send";
             this.btnSend.UseVisualStyleBackColor = true;
             this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
@@ -307,6 +310,7 @@ namespace MogreFramework
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(598, 296);
             this.tabControl1.TabIndex = 9;
+            this.tabControl1.TabStop = false;
             // 
             // tabPage1
             // 
@@ -405,6 +409,24 @@ namespace MogreFramework
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "status";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // btnCpy3
+            // 
+            this.btnCpy3.Location = new System.Drawing.Point(542, 66);
+            this.btnCpy3.Name = "btnCpy3";
+            this.btnCpy3.Size = new System.Drawing.Size(32, 23);
+            this.btnCpy3.TabIndex = 12;
+            this.btnCpy3.Text = "cpy";
+            this.btnCpy3.UseVisualStyleBackColor = true;
+            this.btnCpy3.Click += new System.EventHandler(this.btnCpy3_Click);
+            // 
+            // tbStatus3
+            // 
+            this.tbStatus3.Location = new System.Drawing.Point(263, 68);
+            this.tbStatus3.Name = "tbStatus3";
+            this.tbStatus3.Size = new System.Drawing.Size(273, 20);
+            this.tbStatus3.TabIndex = 11;
+            this.tbStatus3.TabStop = false;
             // 
             // btnCpy2
             // 
@@ -531,24 +553,6 @@ namespace MogreFramework
             this.pictureBox3.TabIndex = 0;
             this.pictureBox3.TabStop = false;
             // 
-            // btnCpy3
-            // 
-            this.btnCpy3.Location = new System.Drawing.Point(542, 66);
-            this.btnCpy3.Name = "btnCpy3";
-            this.btnCpy3.Size = new System.Drawing.Size(32, 23);
-            this.btnCpy3.TabIndex = 12;
-            this.btnCpy3.Text = "cpy";
-            this.btnCpy3.UseVisualStyleBackColor = true;
-            this.btnCpy3.Click += new System.EventHandler(this.btnCpy3_Click);
-            // 
-            // tbStatus3
-            // 
-            this.tbStatus3.Location = new System.Drawing.Point(263, 68);
-            this.tbStatus3.Name = "tbStatus3";
-            this.tbStatus3.Size = new System.Drawing.Size(273, 20);
-            this.tbStatus3.TabIndex = 11;
-            this.tbStatus3.TabStop = false;
-            // 
             // OgreWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -613,7 +617,6 @@ namespace MogreFramework
         private System.Windows.Forms.TabControl tabControl2;
         private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.Button btnSend;
-        private System.Windows.Forms.TextBox tbTextToSend;
         private System.Windows.Forms.TabPage tabPage6;
         private System.Windows.Forms.PictureBox pictureBox5;
         private System.Windows.Forms.PictureBox pictureBox4;
@@ -632,5 +635,6 @@ namespace MogreFramework
         private System.Windows.Forms.TextBox tbStatus2;
         private System.Windows.Forms.Button btnCpy3;
         private System.Windows.Forms.TextBox tbStatus3;
+        public System.Windows.Forms.TextBox tbTextToSend;
     }
 }

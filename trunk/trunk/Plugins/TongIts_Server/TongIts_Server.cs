@@ -141,10 +141,10 @@ namespace ExtraMegaBlob
             freshDeckNormal.Add(new Card("club 8", 6));
             freshDeckNormal.Add(new Card("club 9", 7));
             freshDeckNormal.Add(new Card("club 10", 8));
-            freshDeckNormal.Add(new Card("club a", 9));
-            freshDeckNormal.Add(new Card("club j", 10));
-            freshDeckNormal.Add(new Card("club k", 11));
-            freshDeckNormal.Add(new Card("club q", 12));
+            freshDeckNormal.Add(new Card("club ace", 9));
+            freshDeckNormal.Add(new Card("club jack", 10));
+            freshDeckNormal.Add(new Card("club king", 11));
+            freshDeckNormal.Add(new Card("club queen", 12));
             freshDeckNormal.Add(new Card("diamond 2", 13));
             freshDeckNormal.Add(new Card("diamond 3", 14));
             freshDeckNormal.Add(new Card("diamond 4", 15));
@@ -154,10 +154,10 @@ namespace ExtraMegaBlob
             freshDeckNormal.Add(new Card("diamond 8", 19));
             freshDeckNormal.Add(new Card("diamond 9", 20));
             freshDeckNormal.Add(new Card("diamond 10", 21));
-            freshDeckNormal.Add(new Card("diamond a", 22));
-            freshDeckNormal.Add(new Card("diamond j", 23));
-            freshDeckNormal.Add(new Card("diamond k", 24));
-            freshDeckNormal.Add(new Card("diamond q", 25));
+            freshDeckNormal.Add(new Card("diamond ace", 22));
+            freshDeckNormal.Add(new Card("diamond jack", 23));
+            freshDeckNormal.Add(new Card("diamond king", 24));
+            freshDeckNormal.Add(new Card("diamond queen", 25));
             freshDeckNormal.Add(new Card("heart 2", 26));
             freshDeckNormal.Add(new Card("heart 3", 27));
             freshDeckNormal.Add(new Card("heart 4", 28));
@@ -167,10 +167,10 @@ namespace ExtraMegaBlob
             freshDeckNormal.Add(new Card("heart 8", 32));
             freshDeckNormal.Add(new Card("heart 9", 33));
             freshDeckNormal.Add(new Card("heart 10", 34));
-            freshDeckNormal.Add(new Card("heart a", 35));
-            freshDeckNormal.Add(new Card("heart j", 36));
-            freshDeckNormal.Add(new Card("heart k", 37));
-            freshDeckNormal.Add(new Card("heart q", 38));
+            freshDeckNormal.Add(new Card("heart ace", 35));
+            freshDeckNormal.Add(new Card("heart jack", 36));
+            freshDeckNormal.Add(new Card("heart king", 37));
+            freshDeckNormal.Add(new Card("heart queen", 38));
             freshDeckNormal.Add(new Card("spade 2", 39));
             freshDeckNormal.Add(new Card("spade 3", 40));
             freshDeckNormal.Add(new Card("spade 4", 41));
@@ -180,10 +180,10 @@ namespace ExtraMegaBlob
             freshDeckNormal.Add(new Card("spade 8", 45));
             freshDeckNormal.Add(new Card("spade 9", 46));
             freshDeckNormal.Add(new Card("spade 10", 47));
-            freshDeckNormal.Add(new Card("spade a", 48));
-            freshDeckNormal.Add(new Card("spade j", 49));
-            freshDeckNormal.Add(new Card("spade k", 50));
-            freshDeckNormal.Add(new Card("spade q", 51));
+            freshDeckNormal.Add(new Card("spade ace", 48));
+            freshDeckNormal.Add(new Card("spade jack", 49));
+            freshDeckNormal.Add(new Card("spade king", 50));
+            freshDeckNormal.Add(new Card("spade queen", 51));
             #endregion
             return freshDeckNormal;
         }

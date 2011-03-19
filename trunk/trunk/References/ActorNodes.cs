@@ -83,14 +83,14 @@ namespace ExtraMegaBlob.References
             {
                 int i = IndexOf(key);
                 if (i < 0)
-                    throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid element in the array");
+                    throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid ActorNode");
                 return (ActorNode)allActorNodes[i];
             }
             set
             {
                 int i = IndexOf(key);
                 if (i < 0)
-                    throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid element in the array");
+                    throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid ActorNode");
                 allActorNodes[i] = value;
             }
         }

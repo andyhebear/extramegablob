@@ -6,14 +6,14 @@ using System.IO;
 using System.Runtime.InteropServices;
 using MogreFramework;
 
-namespace ExtraMegaBlob.References
+namespace MogreFramework
 {
-    public sealed class SceneNodes2 : IEnumerable
+    public sealed class SceneNodes : IEnumerable
     {
-        private ArrayList allSceneNodes2 = new ArrayList();
+        private ArrayList allSceneNodes = new ArrayList();
         public Boolean Contains(SceneNode a)
         {
-            foreach (SceneNode tex in allSceneNodes2)
+            foreach (SceneNode tex in allSceneNodes)
             {
                 if (tex.Name == a.Name)
                 {
@@ -26,11 +26,11 @@ namespace ExtraMegaBlob.References
         {
             get
             {
-                return (SceneNode)allSceneNodes2[index];
+                return (SceneNode)allSceneNodes[index];
             }
             set
             {
-                allSceneNodes2[index] = value;
+                allSceneNodes[index] = value;
             }
         }
         public SceneNode this[String key]
@@ -40,33 +40,33 @@ namespace ExtraMegaBlob.References
                 int i = IndexOf(key);
                 if (i < 0)
                     throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid SceneNode");
-                return (SceneNode)allSceneNodes2[i];
+                return (SceneNode)allSceneNodes[i];
             }
             set
             {
                 int i = IndexOf(key);
                 if (i < 0)
                     throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid SceneNode");
-                allSceneNodes2[i] = value;
+                allSceneNodes[i] = value;
             }
         }
-        public SceneNodes2()
+        public SceneNodes()
         {
-            allSceneNodes2 = new ArrayList();
+            allSceneNodes = new ArrayList();
         }
         public int Add(SceneNode sn)
         {
             if (IndexOf(sn.Name) > 0) throw new InvalidOperationException("A SceneNode with the name \"" + sn.Name + "\" already exists.");
-            lock (allSceneNodes2)
+            lock (allSceneNodes)
             {
-                return allSceneNodes2.Add(((SceneNode)sn));
+                return allSceneNodes.Add(((SceneNode)sn));
             }
         }
         public int IndexOf(String Name)
         {
-            for (int i = 0; i < allSceneNodes2.Count; i++)
+            for (int i = 0; i < allSceneNodes.Count; i++)
             {
-                if (((SceneNode)allSceneNodes2[i]).Name == Name)
+                if (((SceneNode)allSceneNodes[i]).Name == Name)
                 {
                     return i;
                 }
@@ -75,9 +75,9 @@ namespace ExtraMegaBlob.References
         }
         public void RemoveAt(int i)
         {
-            lock (allSceneNodes2)
+            lock (allSceneNodes)
             {
-                allSceneNodes2.RemoveAt(i);
+                allSceneNodes.RemoveAt(i);
             }
         }
         public void RemoveAt(string sceneNodeName)
@@ -88,7 +88,7 @@ namespace ExtraMegaBlob.References
         {
             for (int i = 0; i < this.Count; i++)
             {
-                if (((SceneNode)allSceneNodes2[i]).Name == Name)
+                if (((SceneNode)allSceneNodes[i]).Name == Name)
                 {
                     return true;
                 }
@@ -99,25 +99,25 @@ namespace ExtraMegaBlob.References
         {
             get
             {
-                return allSceneNodes2.Count;
+                return allSceneNodes.Count;
             }
         }
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return new SceneNodeEnumerator(allSceneNodes2);
+            return new SceneNodeEnumerator(allSceneNodes);
         }
         public class SceneNodeEnumerator : IEnumerator
         {
             private int cursor = -1;
-            private ArrayList _SceneNodes2 = null;
-            public SceneNodeEnumerator(ArrayList SceneNodes2)
+            private ArrayList _SceneNodes = null;
+            public SceneNodeEnumerator(ArrayList SceneNodes)
             {
-                _SceneNodes2 = SceneNodes2;
+                _SceneNodes = SceneNodes;
             }
             public bool MoveNext()
             {
                 cursor++;
-                return (cursor < _SceneNodes2.Count);
+                return (cursor < _SceneNodes.Count);
             }
             public void Reset()
             {
@@ -129,7 +129,7 @@ namespace ExtraMegaBlob.References
                 {
                     try
                     {
-                        return _SceneNodes2[cursor];
+                        return _SceneNodes[cursor];
                     }
                     catch (IndexOutOfRangeException)
                     {
@@ -140,9 +140,9 @@ namespace ExtraMegaBlob.References
         }
         public void shutdown()
         {
-            for (int i = 0; i < allSceneNodes2.Count; i++)
+            for (int i = 0; i < allSceneNodes.Count; i++)
             {
-                OgreWindow.Instance.mSceneMgr.DestroySceneNode((SceneNode)allSceneNodes2[i]);
+                OgreWindow.Instance.mSceneMgr.DestroySceneNode((SceneNode)allSceneNodes[i]);
             }
             while (this.Count > 0)
             {

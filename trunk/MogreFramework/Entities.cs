@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections;
-using System.Runtime.Serialization;
 using Mogre;
-using System.IO;
-using System.Runtime.InteropServices;
 using MogreFramework;
 
-namespace ExtraMegaBlob.References
+namespace MogreFramework
 {
-    public sealed class SceneNodes2 : IEnumerable
+    public sealed class Entities : IEnumerable
     {
-        private ArrayList allSceneNodes2 = new ArrayList();
-        public Boolean Contains(SceneNode a)
+        private ArrayList allEntities = new ArrayList();
+        public Boolean Contains(Entity a)
         {
-            foreach (SceneNode tex in allSceneNodes2)
+            foreach (Entity tex in allEntities)
             {
                 if (tex.Name == a.Name)
                 {
@@ -22,51 +19,51 @@ namespace ExtraMegaBlob.References
             }
             return false;
         }
-        public SceneNode this[int index]
+        public Entity this[int index]
         {
             get
             {
-                return (SceneNode)allSceneNodes2[index];
+                return (Entity)allEntities[index];
             }
             set
             {
-                allSceneNodes2[index] = value;
+                allEntities[index] = value;
             }
         }
-        public SceneNode this[String key]
+        public Entity this[String key]
         {
             get
             {
                 int i = IndexOf(key);
                 if (i < 0)
-                    throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid SceneNode");
-                return (SceneNode)allSceneNodes2[i];
+                    throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid Entity");
+                return (Entity)allEntities[i];
             }
             set
             {
                 int i = IndexOf(key);
                 if (i < 0)
-                    throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid SceneNode");
-                allSceneNodes2[i] = value;
+                    throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid Entity");
+                allEntities[i] = value;
             }
         }
-        public SceneNodes2()
+        public Entities()
         {
-            allSceneNodes2 = new ArrayList();
+            allEntities = new ArrayList();
         }
-        public int Add(SceneNode sn)
+        public int Add(Entity sn)
         {
-            if (IndexOf(sn.Name) > 0) throw new InvalidOperationException("A SceneNode with the name \"" + sn.Name + "\" already exists.");
-            lock (allSceneNodes2)
+            if (IndexOf(sn.Name) > 0) throw new InvalidOperationException("A Entity with the name \"" + sn.Name + "\" already exists.");
+            lock (allEntities)
             {
-                return allSceneNodes2.Add(((SceneNode)sn));
+                return allEntities.Add(((Entity)sn));
             }
         }
         public int IndexOf(String Name)
         {
-            for (int i = 0; i < allSceneNodes2.Count; i++)
+            for (int i = 0; i < allEntities.Count; i++)
             {
-                if (((SceneNode)allSceneNodes2[i]).Name == Name)
+                if (((Entity)allEntities[i]).Name == Name)
                 {
                     return i;
                 }
@@ -75,20 +72,20 @@ namespace ExtraMegaBlob.References
         }
         public void RemoveAt(int i)
         {
-            lock (allSceneNodes2)
+            lock (allEntities)
             {
-                allSceneNodes2.RemoveAt(i);
+                allEntities.RemoveAt(i);
             }
         }
-        public void RemoveAt(string sceneNodeName)
+        public void RemoveAt(string entityName)
         {
-            RemoveAt(IndexOf(sceneNodeName));
+            RemoveAt(IndexOf(entityName));
         }
-        public Boolean keyExists(String Name)
+        public Boolean keyExists(String entityName)
         {
             for (int i = 0; i < this.Count; i++)
             {
-                if (((SceneNode)allSceneNodes2[i]).Name == Name)
+                if (((Entity)allEntities[i]).Name == entityName)
                 {
                     return true;
                 }
@@ -99,25 +96,25 @@ namespace ExtraMegaBlob.References
         {
             get
             {
-                return allSceneNodes2.Count;
+                return allEntities.Count;
             }
         }
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return new SceneNodeEnumerator(allSceneNodes2);
+            return new EntityEnumerator(allEntities);
         }
-        public class SceneNodeEnumerator : IEnumerator
+        public class EntityEnumerator : IEnumerator
         {
             private int cursor = -1;
-            private ArrayList _SceneNodes2 = null;
-            public SceneNodeEnumerator(ArrayList SceneNodes2)
+            private ArrayList _Entities = null;
+            public EntityEnumerator(ArrayList Entities)
             {
-                _SceneNodes2 = SceneNodes2;
+                _Entities = Entities;
             }
             public bool MoveNext()
             {
                 cursor++;
-                return (cursor < _SceneNodes2.Count);
+                return (cursor < _Entities.Count);
             }
             public void Reset()
             {
@@ -129,7 +126,7 @@ namespace ExtraMegaBlob.References
                 {
                     try
                     {
-                        return _SceneNodes2[cursor];
+                        return _Entities[cursor];
                     }
                     catch (IndexOutOfRangeException)
                     {
@@ -140,9 +137,9 @@ namespace ExtraMegaBlob.References
         }
         public void shutdown()
         {
-            for (int i = 0; i < allSceneNodes2.Count; i++)
+            for (int i = 0; i < allEntities.Count; i++)
             {
-                OgreWindow.Instance.mSceneMgr.DestroySceneNode((SceneNode)allSceneNodes2[i]);
+                OgreWindow.Instance.mSceneMgr.DestroyEntity((Entity)allEntities[i]);
             }
             while (this.Count > 0)
             {

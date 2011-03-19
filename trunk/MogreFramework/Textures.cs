@@ -23,6 +23,10 @@ namespace MogreFramework
             }
             return false;
         }
+        public Boolean Contains(String key)
+        {
+            return (IndexOf(key) > -1);
+        }
         public TexturePtr this[int index]
         {
             get

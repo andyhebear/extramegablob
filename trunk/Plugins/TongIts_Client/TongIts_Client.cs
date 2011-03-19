@@ -13,12 +13,13 @@ namespace ExtraMegaBlob
 {
     public class plugin : ExtraMegaBlob.References.ClientPlugin
     {
-        private Hashtable materials
+        private Hashtable materials_lookup
         {
             get
             {
                 Hashtable h = new Hashtable();
                 #region materials
+                h["baseball"] = "\\baseball-40.gif";
                 h["mushroom"] = "\\TongIts\\Shiitake Mushroom Tree Shii.png";
                 h["webcam"] = "webcapCapture";
                 h["wood"] = "\\TongIts\\woodblurred.jpg";
@@ -87,7 +88,7 @@ namespace ExtraMegaBlob
         }
         private string[] suits = { "club", "heart", "spade", "diamond" };
         private string[] faces = { "jack", "king", "queen", "ace" };
-        private Hashtable meshes
+        private Hashtable meshes_lookup
         {
             get
             {
@@ -100,7 +101,7 @@ namespace ExtraMegaBlob
                 return h;
             }
         }
-        private Hashtable skeletons
+        private Hashtable skeletons_lookup
         {
             get
             {
@@ -110,24 +111,38 @@ namespace ExtraMegaBlob
                 return h;
             }
         }
-        private ActorNodes actors = new ActorNodes();
-        private SceneNodes nodes = new SceneNodes();
-        private Entities entities = new Entities();
-        private Lights lights = new Lights();
+
+        #region Globals
+        private SceneNodes nodes = OgreWindow.Instance.nodes;
+        private ActorNodes actors = OgreWindow.Instance.actors;
+        private Entities entities = OgreWindow.Instance.entities;
+        private Lights lights = OgreWindow.Instance.lights;
+        private Materials materials = OgreWindow.Instance.materials;
+        private Meshes meshes = OgreWindow.Instance.meshes;
+        private Skeletons skeletons = OgreWindow.Instance.skeletons;
+        private Textures textures = OgreWindow.Instance.textures;
+        private Physics physics = OgreWindow.Instance.physics;
+        private Scene scene = OgreWindow.Instance.scene;
+        #endregion
+
+
+
+
+
         private void resourceWaitThread()
         {
             while (true)
             {
                 Thread.Sleep(1000);
-                foreach (DictionaryEntry de in materials)
+                foreach (DictionaryEntry de in materials_lookup)
                 {
                     if (!TextureManager.Singleton.ResourceExists((string)de.Value)) goto waitmore;
                 }
-                foreach (DictionaryEntry de in skeletons)
+                foreach (DictionaryEntry de in skeletons_lookup)
                 {
                     if (!SkeletonManager.Singleton.ResourceExists((string)de.Value)) goto waitmore;
                 }
-                foreach (DictionaryEntry de in meshes)
+                foreach (DictionaryEntry de in meshes_lookup)
                 {
                     if (!MeshManager.Singleton.ResourceExists((string)de.Value)) goto waitmore;
                 }
@@ -143,11 +158,13 @@ namespace ExtraMegaBlob
             OgreWindow.Instance.pause();
             try
             {
-                Hashtable mats = materials;
+                Hashtable mats = materials_lookup;
                 foreach (DictionaryEntry mat in mats)
                 {
-                    ((MaterialPtr)MaterialManager.Singleton.Create((string)mat.Key, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME)).GetTechnique(0).GetPass(0).CreateTextureUnitState((string)mat.Value);
+                    OgreWindow.Instance.materials.Add((MaterialPtr)MaterialManager.Singleton.Create((string)mat.Key, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME));
+                    OgreWindow.Instance.materials[(string)mat.Key].GetTechnique(0).GetPass(0).CreateTextureUnitState((string)mat.Value);
                 }
+
                 lights.Add(OgreWindow.Instance.mSceneMgr.CreateLight("testLight"));
                 lights["testLight"].Type = Light.LightTypes.LT_POINT;
                 lights["testLight"].Position = new Mogre.Vector3(-117.9847f, 120f, 234.2695f) + Location().toMogre;

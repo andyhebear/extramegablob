@@ -14,7 +14,7 @@ namespace ExtraMegaBlob
 {
     public class plugin : ExtraMegaBlob.References.ClientPlugin
     {
-        private Hashtable materials
+        private Hashtable materials_lookup
         {
             get
             {
@@ -22,12 +22,11 @@ namespace ExtraMegaBlob
                 #region materials
                 h["metal"] = "\\Players\\BumpyMetal.jpg";
                 h["dirt"] = "\\terr_dirt-grass.jpg";
-                h["baseball"] = "\\baseball-40.gif";
                 #endregion
                 return h;
             }
         }
-        private Hashtable meshes
+        private Hashtable meshes_lookup
         {
             get
             {
@@ -39,7 +38,7 @@ namespace ExtraMegaBlob
                 return h;
             }
         }
-        private Hashtable skeletons
+        private Hashtable skeletons_lookup
         {
             get
             {
@@ -50,11 +49,18 @@ namespace ExtraMegaBlob
                 return h;
             }
         }
-        private SceneNodes nodes = new SceneNodes();
-        private ActorNodes actors = new ActorNodes();
-        private Entities entities = new Entities();
-        private Lights lights = new Lights();
-        //private CapsuleControllerDesc ccd = new CapsuleControllerDesc();
+        #region Globals
+        private SceneNodes nodes = OgreWindow.Instance.nodes;
+        private ActorNodes actors = OgreWindow.Instance.actors;
+        private Entities entities = OgreWindow.Instance.entities;
+        private Lights lights = OgreWindow.Instance.lights;
+        private Materials materials = OgreWindow.Instance.materials;
+        private Meshes meshes = OgreWindow.Instance.meshes;
+        private Skeletons skeletons = OgreWindow.Instance.skeletons;
+        private Textures textures = OgreWindow.Instance.textures;
+        private Physics physics = OgreWindow.Instance.physics;
+        private Scene scene = OgreWindow.Instance.scene;
+        #endregion
         private BoxControllerDesc bcd = new BoxControllerDesc();
         private BoxController control = null;
         private void resourceWaitThread()
@@ -63,15 +69,15 @@ namespace ExtraMegaBlob
             {
                 Thread.Sleep(1000);
 
-                foreach (DictionaryEntry de in materials)
+                foreach (DictionaryEntry de in materials_lookup)
                 {
                     if (!TextureManager.Singleton.ResourceExists((string)de.Value)) goto waitmore;
                 }
-                foreach (DictionaryEntry de in skeletons)
+                foreach (DictionaryEntry de in skeletons_lookup)
                 {
                     if (!SkeletonManager.Singleton.ResourceExists((string)de.Value)) goto waitmore;
                 }
-                foreach (DictionaryEntry de in meshes)
+                foreach (DictionaryEntry de in meshes_lookup)
                 {
                     if (!MeshManager.Singleton.ResourceExists((string)de.Value)) goto waitmore;
                 }
@@ -91,10 +97,11 @@ namespace ExtraMegaBlob
             OgreWindow.Instance.pause();
             try
             {
-                Hashtable mats = materials;
+                Hashtable mats = materials_lookup;
                 foreach (DictionaryEntry mat in mats)
                 {
-                    ((MaterialPtr)MaterialManager.Singleton.Create((string)mat.Key, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME)).GetTechnique(0).GetPass(0).CreateTextureUnitState((string)mat.Value);
+                    OgreWindow.Instance.materials.Add((MaterialPtr)MaterialManager.Singleton.Create((string)mat.Key, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME));
+                    OgreWindow.Instance.materials[(string)mat.Key].GetTechnique(0).GetPass(0).CreateTextureUnitState((string)mat.Value);
                 }
                 #region ground
                 MeshManager.Singleton.CreatePlane("ground",
@@ -158,6 +165,7 @@ namespace ExtraMegaBlob
                 nodes["orbit"].Position = new Mogre.Vector3(0f, 0f, 0f);
                 nodes["orbit"].AttachObject(OgreWindow.Instance.mCamera);
                 nodes["drone"].SetFixedYawAxis(true);
+
                 #endregion
 
 
@@ -185,7 +193,7 @@ namespace ExtraMegaBlob
 
                 this.btnLimiter_F.reset();
                 this.btnLimiter_F.start();
-                
+
                 ready = true;
                 new Thread(new ThreadStart(controlThread)).Start();
                 new Thread(new ThreadStart(statusUpdaterThread)).Start();
@@ -219,13 +227,14 @@ namespace ExtraMegaBlob
         {
             while (ready)
             {
-                if (MoveScale_Camera_forwardback != 0 || MoveScale_Camera_leftright != 0 || MoveScale_Camera_updown != 0)
+                if (!control.Actor.IsDisposed)
                 {
-                    if (!control.Actor.IsDisposed)
+                    if (MoveScale_Camera_forwardback != 0 || MoveScale_Camera_leftright != 0 || MoveScale_Camera_updown != 0)
                     {
+
                         TranslateVector_Camera.z -= MoveScale_Camera_forwardback;
                         TranslateVector_Camera.x -= MoveScale_Camera_leftright;
-                        TranslateVector_Camera.y += MoveScale_Camera_updown;
+                        //TranslateVector_Camera.y += MoveScale_Camera_updown;
                         Mogre.Vector3 loc1 = control.Actor.GlobalPosition;
                         Mogre.Vector3 loc = control.Actor.GlobalOrientationQuaternion * TranslateVector_Camera;
                         setPos(loc + loc1);
@@ -237,8 +246,26 @@ namespace ExtraMegaBlob
                         }
                         TranslateVector_Camera = new Mogre.Vector3();
                     }
+                    if (middleMouseState == middleMouseStates.scrolldown)
+                    {
+                        camDistance -= .1f;
+                        if (camDistance < 0f)
+                            camDistance = 0f;
+                        updateCam();
+                    }
+                    if (middleMouseState == middleMouseStates.scrollup)
+                    {
+                        camDistance += .1f;
+                        if (camDistance > 100f)
+                            camDistance = 100f;
+                        updateCam();
+                    }
+                    if (turning_left)
+                        setOrient(control.Actor.GlobalOrientationQuaternion * ModifyAngleAroundAxis(new Degree(2 * .001f), new Mogre.Vector3(0, 1, 0)));
+                    if (turning_right)
+                        setOrient(control.Actor.GlobalOrientationQuaternion * ModifyAngleAroundAxis(new Degree(-2 * .001f), new Mogre.Vector3(0, 1, 0)));
                 }
-               
+
                 Thread.Sleep(1);
             }
         }
@@ -383,10 +410,20 @@ namespace ExtraMegaBlob
         }
         private Quaternion orient2 = new Quaternion();
 
+        private Quaternion ModifyAngleAroundAxis(Degree a, Mogre.Vector3 axis)
+        {
+            //To determine the quaternion for a rotation of α degrees/radians around an axis defined by a vector (x, y, z):
+            Quaternion q = new Quaternion();
+            q.w = (float)System.Math.Cos((double)(0.5 * a.ValueDegrees));
+            q.x = axis.x * (float)System.Math.Sin((double)(0.5 * a.ValueDegrees));
+            q.y = axis.y * (float)System.Math.Sin((double)(0.5 * a.ValueDegrees));
+            q.z = axis.z * (float)System.Math.Sin((double)(0.5 * a.ValueDegrees));
+            return q;
+        }
         private bool mouseMoved(MouseEvent arg)
         {
             float RotateScale_CameraPitch = .001f;//mouse sensitivity
-            float RotateScale_PlayerTurn = .005f;//mouse sensitivity
+            float RotateScale_PlayerTurn = .001f;//mouse sensitivity
             MouseState_NativePtr s = arg.state;
             if (arg.state.buttons == 2)
             {
@@ -395,9 +432,9 @@ namespace ExtraMegaBlob
                 if (!tongfreeze && !textBarUsage)
                     if (s.X.rel != 0f)
                     {
-                        nodes["drone"].Yaw(-s.X.rel * RotateScale_PlayerTurn);
-                        setOrient(nodes["drone"]._getDerivedOrientation());
-
+                        //nodes["drone"].Yaw(-s.X.rel * RotateScale_PlayerTurn);
+                        //setOrient(nodes["drone"]._getDerivedOrientation());
+                        setOrient(control.Actor.GlobalOrientationQuaternion * ModifyAngleAroundAxis(new Degree(-s.X.rel * RotateScale_PlayerTurn), new Mogre.Vector3(0, 1, 0)));
 
                         //Mogre.Quaternion orient1 = control.Actor.GlobalOrientationQuaternion;
                         //Mogre.Vector3 rkAxis = new Mogre.Vector3();
@@ -441,7 +478,7 @@ namespace ExtraMegaBlob
             //OgreWindow.Instance.cameraNode.Position = m_CamPos + focalPoint;
 
 
-            Mogre.Vector3 m_CamPos = getOrbitalPosition(focalPoint, direction, 50f);
+            Mogre.Vector3 m_CamPos = getOrbitalPosition(focalPoint, direction, camDistance);
             camnode.Position = m_CamPos;
             camnode.LookAt(node.Position, Node.TransformSpace.TS_WORLD);
 
@@ -454,6 +491,7 @@ namespace ExtraMegaBlob
             idle
         }
         private middleMouseStates middleMouseState = middleMouseStates.idle;
+        private float camDistance = 50f;
         private float MoveScale_Camera_forwardback = 0f;
         private float MoveScale_Camera_leftright = 0f;
         private float MoveScale_Camera_updown = 0f;
@@ -463,7 +501,7 @@ namespace ExtraMegaBlob
         private const float speedcap_updown = 5.5f;
         private const float incr_forwardback = .05f;
         private const float incr_leftright = .05f;
-        private const float incr_updown = .01f;
+        private const float incr_updown = 1f;
         private const float brakes_updown = incr_updown * 2;
         private const float brakes_forwardback = incr_forwardback * 2;
         private const float brakes_leftright = incr_leftright * 2;
@@ -589,38 +627,43 @@ namespace ExtraMegaBlob
                         MoveScale_Camera_forwardback = 0f;
                     }
                     #region strafe
-                    //if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_A))
-                    //{
+                    if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_Q))
+                    {
 
-                    //    //if (MoveScale_Camera_leftright > -speedcap_leftright)
-                    //    //    MoveScale_Camera_leftright -= incr_leftright;
-                    //    //nodes["drone"].Yaw(-1f * RotateScale_PlayerTurn);
-                    //    //setOrient(nodes["drone"]._getDerivedOrientation());
-                    //}
-                    //else if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_D))
-                    //{
-                    //    //if (MoveScale_Camera_leftright < speedcap_leftright)
-                    //    //    MoveScale_Camera_leftright += incr_leftright;
-                    //    //nodes["drone"].Yaw(1f * RotateScale_PlayerTurn);
-                    //    //setOrient(nodes["drone"]._getDerivedOrientation());
-                    //}
-                    //else if (MoveScale_Camera_leftright != 0f)
-                    //{
-                    //    if (MoveScale_Camera_leftright > 0f)
-                    //        MoveScale_Camera_leftright -= incr_leftright;
-                    //    else
-                    //        MoveScale_Camera_leftright += incr_leftright;
-                    //    if (MoveScale_Camera_leftright < brakes_leftright && MoveScale_Camera_leftright > -brakes_leftright)
-                    //        MoveScale_Camera_leftright = 0f;
-                    //}
-                    //else
-                    //{
-                    //    MoveScale_Camera_leftright = 0f;
-                    //} 
+                        if (MoveScale_Camera_leftright > -speedcap_leftright)
+                            MoveScale_Camera_leftright -= incr_leftright;
+                        //nodes["drone"].Yaw(-1f * RotateScale_PlayerTurn);
+                        //setOrient(nodes["drone"]._getDerivedOrientation());
+                    }
+                    else if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_E))
+                    {
+                        if (MoveScale_Camera_leftright < speedcap_leftright)
+                            MoveScale_Camera_leftright += incr_leftright;
+                        //nodes["drone"].Yaw(1f * RotateScale_PlayerTurn);
+                        //setOrient(nodes["drone"]._getDerivedOrientation());
+                    }
+                    else if (MoveScale_Camera_leftright != 0f)
+                    {
+                        if (MoveScale_Camera_leftright > 0f)
+                            MoveScale_Camera_leftright -= incr_leftright;
+                        else
+                            MoveScale_Camera_leftright += incr_leftright;
+                        if (MoveScale_Camera_leftright < brakes_leftright && MoveScale_Camera_leftright > -brakes_leftright)
+                            MoveScale_Camera_leftright = 0f;
+                    }
+                    else
+                    {
+                        MoveScale_Camera_leftright = 0f;
+                    } 
                     #endregion
 
                     #region Turn Left / Right
-                    if (OgreWindow.g_kb.IsKeyDown(KeyCode.KC_A) && OgreWindow.g_kb.IsKeyDown(KeyCode.KC_D))
+                    if (!OgreWindow.g_kb.IsKeyDown(KeyCode.KC_A) && !OgreWindow.g_kb.IsKeyDown(KeyCode.KC_D))
+                    {
+                        turning_left = false;
+                        turning_right = false;
+                    } 
+                    else if (OgreWindow.g_kb.IsKeyDown(KeyCode.KC_A) && OgreWindow.g_kb.IsKeyDown(KeyCode.KC_D))
                     {
                         turning_left = false;
                         turning_right = false;
@@ -636,11 +679,6 @@ namespace ExtraMegaBlob
                         turning_left = false;
                         turning_right = true;
                     }
-                    else if (!OgreWindow.g_kb.IsKeyDown(KeyCode.KC_A) && !OgreWindow.g_kb.IsKeyDown(KeyCode.KC_D))
-                    {
-                        turning_left = false;
-                        turning_right = false;
-                    } 
                     #endregion
 
                     if (middleMouseState == middleMouseStates.scrolldown)
@@ -673,8 +711,11 @@ namespace ExtraMegaBlob
 
                     if (MoveScale_Camera_updown != 0f)
                     {
-                        control.Actor.AddForce(new Mogre.Vector3(0f, MoveScale_Camera_updown, 0f));
+                        //control.Actor.AddForce(new Mogre.Vector3(0f, MoveScale_Camera_updown, 0f));
                         //chat(MoveScale_Camera_updown.ToString());
+
+                        //this.camDistance += MoveScale_Camera_updown;
+                        //resetCam();
                     }
 
 
@@ -710,9 +751,9 @@ namespace ExtraMegaBlob
             if (ready)
             {
 
-                
+
                 walkState.AddTime(.01f);
-                actors.UpdateAllActors(.1f);
+                //actors.UpdateAllActors(.1f);
                 // actors.UpdateActor(.1f, "drone", control.Actor);
 
                 if (control.Actor == null) return;
@@ -765,22 +806,22 @@ namespace ExtraMegaBlob
             //{
             //}
 
-            if (turning_left)
-            {
-                //control.Actor.AddTorque(new Mogre.Vector3(0f, 10f, 0f), ForceModes.SmoothImpulse);
-                //OgreWindow.Instance.pause();
-                nodes["drone"].Yaw(1f * 0.005f);
-                setOrient(nodes["drone"]._getDerivedOrientation());
-                //OgreWindow.Instance.unpause();
-            }
-            if (turning_right)
-            {
-                //control.Actor.AddTorque(new Mogre.Vector3(0f, -10f, 0f), ForceModes.SmoothImpulse);
-                //OgreWindow.Instance.pause();//not helping
-                nodes["drone"].Yaw(-1f * 0.005f);
-                setOrient(nodes["drone"]._getDerivedOrientation());
-                //OgreWindow.Instance.unpause();
-            }
+            //if (turning_left)
+            //{
+            //    //control.Actor.AddTorque(new Mogre.Vector3(0f, 10f, 0f), ForceModes.SmoothImpulse);
+            //    //OgreWindow.Instance.pause();
+            //    nodes["drone"].Yaw(1f * 0.005f);
+            //    setOrient(nodes["drone"]._getDerivedOrientation());
+            //    //OgreWindow.Instance.unpause();
+            //}
+            //if (turning_right)
+            //{
+            //    //control.Actor.AddTorque(new Mogre.Vector3(0f, -10f, 0f), ForceModes.SmoothImpulse);
+            //    //OgreWindow.Instance.pause();//not helping
+            //    nodes["drone"].Yaw(-1f * 0.005f);
+            //    setOrient(nodes["drone"]._getDerivedOrientation());
+            //    //OgreWindow.Instance.unpause();
+            //}
         }
         private Random ran = new Random((int)DateTime.Now.Ticks);
 

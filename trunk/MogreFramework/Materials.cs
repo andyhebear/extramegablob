@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections;
-using System.Runtime.Serialization;
 using Mogre;
-using System.IO;
-using System.Runtime.InteropServices;
 using MogreFramework;
 
-namespace ExtraMegaBlob.References
+namespace MogreFramework
 {
-    public sealed class SceneNodes2 : IEnumerable
+    public sealed class Materials : IEnumerable
     {
-        private ArrayList allSceneNodes2 = new ArrayList();
-        public Boolean Contains(SceneNode a)
+        private ArrayList allMaterials = new ArrayList();
+        public Boolean Contains(MaterialPtr a)
         {
-            foreach (SceneNode tex in allSceneNodes2)
+            foreach (MaterialPtr tex in allMaterials)
             {
                 if (tex.Name == a.Name)
                 {
@@ -22,51 +19,55 @@ namespace ExtraMegaBlob.References
             }
             return false;
         }
-        public SceneNode this[int index]
+        public Boolean Contains(String key)
+        {
+            return (IndexOf(key) > -1);
+        }
+        public MaterialPtr this[int index]
         {
             get
             {
-                return (SceneNode)allSceneNodes2[index];
+                return (MaterialPtr)allMaterials[index];
             }
             set
             {
-                allSceneNodes2[index] = value;
+                allMaterials[index] = value;
             }
         }
-        public SceneNode this[String key]
+        public MaterialPtr this[String key]
         {
             get
             {
                 int i = IndexOf(key);
                 if (i < 0)
-                    throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid SceneNode");
-                return (SceneNode)allSceneNodes2[i];
+                    throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid MaterialPtr");
+                return (MaterialPtr)allMaterials[i];
             }
             set
             {
                 int i = IndexOf(key);
                 if (i < 0)
-                    throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid SceneNode");
-                allSceneNodes2[i] = value;
+                    throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid MaterialPtr");
+                allMaterials[i] = value;
             }
         }
-        public SceneNodes2()
+        public Materials()
         {
-            allSceneNodes2 = new ArrayList();
+            allMaterials = new ArrayList();
         }
-        public int Add(SceneNode sn)
+        public int Add(MaterialPtr sn)
         {
-            if (IndexOf(sn.Name) > 0) throw new InvalidOperationException("A SceneNode with the name \"" + sn.Name + "\" already exists.");
-            lock (allSceneNodes2)
+            if (IndexOf(sn.Name) > 0) throw new InvalidOperationException("A MaterialPtr with the name \"" + sn.Name + "\" already exists.");
+            lock (allMaterials)
             {
-                return allSceneNodes2.Add(((SceneNode)sn));
+                return allMaterials.Add(((MaterialPtr)sn));
             }
         }
         public int IndexOf(String Name)
         {
-            for (int i = 0; i < allSceneNodes2.Count; i++)
+            for (int i = 0; i < allMaterials.Count; i++)
             {
-                if (((SceneNode)allSceneNodes2[i]).Name == Name)
+                if (((MaterialPtr)allMaterials[i]).Name == Name)
                 {
                     return i;
                 }
@@ -75,20 +76,20 @@ namespace ExtraMegaBlob.References
         }
         public void RemoveAt(int i)
         {
-            lock (allSceneNodes2)
+            lock (allMaterials)
             {
-                allSceneNodes2.RemoveAt(i);
+                allMaterials.RemoveAt(i);
             }
         }
-        public void RemoveAt(string sceneNodeName)
+        public void RemoveAt(string entityName)
         {
-            RemoveAt(IndexOf(sceneNodeName));
+            RemoveAt(IndexOf(entityName));
         }
-        public Boolean keyExists(String Name)
+        public Boolean keyExists(String entityName)
         {
             for (int i = 0; i < this.Count; i++)
             {
-                if (((SceneNode)allSceneNodes2[i]).Name == Name)
+                if (((MaterialPtr)allMaterials[i]).Name == entityName)
                 {
                     return true;
                 }
@@ -99,25 +100,25 @@ namespace ExtraMegaBlob.References
         {
             get
             {
-                return allSceneNodes2.Count;
+                return allMaterials.Count;
             }
         }
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return new SceneNodeEnumerator(allSceneNodes2);
+            return new MaterialPtrEnumerator(allMaterials);
         }
-        public class SceneNodeEnumerator : IEnumerator
+        public class MaterialPtrEnumerator : IEnumerator
         {
             private int cursor = -1;
-            private ArrayList _SceneNodes2 = null;
-            public SceneNodeEnumerator(ArrayList SceneNodes2)
+            private ArrayList _Materials = null;
+            public MaterialPtrEnumerator(ArrayList Materials)
             {
-                _SceneNodes2 = SceneNodes2;
+                _Materials = Materials;
             }
             public bool MoveNext()
             {
                 cursor++;
-                return (cursor < _SceneNodes2.Count);
+                return (cursor < _Materials.Count);
             }
             public void Reset()
             {
@@ -129,7 +130,7 @@ namespace ExtraMegaBlob.References
                 {
                     try
                     {
-                        return _SceneNodes2[cursor];
+                        return _Materials[cursor];
                     }
                     catch (IndexOutOfRangeException)
                     {
@@ -140,9 +141,9 @@ namespace ExtraMegaBlob.References
         }
         public void shutdown()
         {
-            for (int i = 0; i < allSceneNodes2.Count; i++)
+            for (int i = 0; i < allMaterials.Count; i++)
             {
-                OgreWindow.Instance.mSceneMgr.DestroySceneNode((SceneNode)allSceneNodes2[i]);
+                //OgreWindow.Instance.mSceneMgr.DestroyMaterialPtr((MaterialPtr)allMaterials[i]);
             }
             while (this.Count > 0)
             {

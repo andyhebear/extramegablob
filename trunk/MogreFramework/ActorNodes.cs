@@ -7,14 +7,14 @@ using Mogre.PhysX;
 using System.Collections;
 using MogreFramework;
 
-namespace ExtraMegaBlob.References
+namespace MogreFramework
 {
-    public class ActorNode2
+    public class ActorNode
     {
         public SceneNode sceneNode;
         public Actor actor;
 
-        public ActorNode2(SceneNode sceneNode, Actor actor)
+        public ActorNode(SceneNode sceneNode, Actor actor)
         {
             this.sceneNode = sceneNode;
             this.actor = actor;
@@ -38,12 +38,12 @@ namespace ExtraMegaBlob.References
             }
         }
     }
-    public sealed class ActorNodes2 : IEnumerable
+    public sealed class ActorNodes : IEnumerable
     {
         private ArrayList allActorNodes = new ArrayList();
         public void UpdateAllActors(float DeltaTime)
         {
-            foreach (ActorNode2 actorNode in allActorNodes)
+            foreach (ActorNode actorNode in allActorNodes)
                 actorNode.Update(DeltaTime);
         }
         public void UpdateActor(float DeltaTime, string ActorNodeName, Actor src)
@@ -51,13 +51,13 @@ namespace ExtraMegaBlob.References
             int i = this.IndexOf(ActorNodeName);
             if (i < 0) return;
             if (allActorNodes[i] == null) return;
-            ActorNode2 actorNode = ((ActorNode2)allActorNodes[i]);
+            ActorNode actorNode = ((ActorNode)allActorNodes[i]);
             if (actorNode == null) return;
             actorNode.Update2(DeltaTime, src);
         }
         public Boolean Contains(ActorNode a)
         {
-            foreach (ActorNode2 tex in allActorNodes)
+            foreach (ActorNode tex in allActorNodes)
             {
                 if (tex.sceneNode.Name == a.sceneNode.Name)
                 {
@@ -66,25 +66,25 @@ namespace ExtraMegaBlob.References
             }
             return false;
         }
-        public ActorNode2 this[int index]
+        public ActorNode this[int index]
         {
             get
             {
-                return (ActorNode2)allActorNodes[index];
+                return (ActorNode)allActorNodes[index];
             }
             set
             {
                 allActorNodes[index] = value;
             }
         }
-        public ActorNode2 this[String key]
+        public ActorNode this[String key]
         {
             get
             {
                 int i = IndexOf(key);
                 if (i < 0)
                     throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid ActorNode");
-                return (ActorNode2)allActorNodes[i];
+                return (ActorNode)allActorNodes[i];
             }
             set
             {
@@ -94,23 +94,23 @@ namespace ExtraMegaBlob.References
                 allActorNodes[i] = value;
             }
         }
-        public ActorNodes2()
+        public ActorNodes()
         {
             allActorNodes = new ArrayList();
         }
-        public int Add(ActorNode2 sn)
+        public int Add(ActorNode sn)
         {
             if (IndexOf(sn.sceneNode.Name) > 0) throw new InvalidOperationException("A ActorNode with the name \"" + sn.sceneNode.Name + "\" already exists.");
             lock (allActorNodes)
             {
-                return allActorNodes.Add(((ActorNode2)sn));
+                return allActorNodes.Add(((ActorNode)sn));
             }
         }
         public int IndexOf(String Name)
         {
             for (int i = 0; i < allActorNodes.Count; i++)
             {
-                if (((ActorNode2)allActorNodes[i]).sceneNode.Name == Name)
+                if (((ActorNode)allActorNodes[i]).sceneNode.Name == Name)
                 {
                     return i;
                 }
@@ -132,7 +132,7 @@ namespace ExtraMegaBlob.References
         {
             for (int i = 0; i < this.Count; i++)
             {
-                if (((ActorNode2)allActorNodes[i]).sceneNode.Name == Name)
+                if (((ActorNode)allActorNodes[i]).sceneNode.Name == Name)
                 {
                     return true;
                 }
@@ -186,7 +186,7 @@ namespace ExtraMegaBlob.References
         {
             for (int i = 0; i < allActorNodes.Count; i++)
             {
-                ((ActorNode2)allActorNodes[i]).actor.Dispose();
+                ((ActorNode)allActorNodes[i]).actor.Dispose();
             }
             while (this.Count > 0)
             {

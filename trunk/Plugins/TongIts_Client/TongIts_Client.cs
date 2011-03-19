@@ -14,6 +14,32 @@ namespace ExtraMegaBlob
 {
     public class plugin : ExtraMegaBlob.References.ClientPlugin
     {
+
+        private string[] suits = { "club", "heart", "spade", "diamond" };
+        private string[] faces = { "jack", "king", "queen", "ace" };
+        private Hashtable meshes_lookup
+        {
+            get
+            {
+                Hashtable h = new Hashtable();
+                #region meshes
+                h["mushroom"] = "\\TongIts\\mushroom.mesh";
+                h["table"] = "\\TongIts\\tongitstable.mesh";
+                h["card"] = "\\TongIts\\Card.mesh";
+                #endregion
+                return h;
+            }
+        }
+        private Hashtable skeletons_lookup
+        {
+            get
+            {
+                Hashtable h = new Hashtable();
+                #region meshes
+                #endregion
+                return h;
+            }
+        }
         private Hashtable materials_lookup
         {
             get
@@ -87,32 +113,6 @@ namespace ExtraMegaBlob
                 return h;
             }
         }
-        private string[] suits = { "club", "heart", "spade", "diamond" };
-        private string[] faces = { "jack", "king", "queen", "ace" };
-        private Hashtable meshes_lookup
-        {
-            get
-            {
-                Hashtable h = new Hashtable();
-                #region meshes
-                h["mushroom"] = "\\TongIts\\mushroom.mesh";
-                h["table"] = "\\TongIts\\tongitstable.mesh";
-                h["card"] = "\\TongIts\\Card.mesh";
-                #endregion
-                return h;
-            }
-        }
-        private Hashtable skeletons_lookup
-        {
-            get
-            {
-                Hashtable h = new Hashtable();
-                #region meshes
-                #endregion
-                return h;
-            }
-        }
-
         private void resourceWaitThread()
         {
             while (true)
@@ -333,16 +333,7 @@ namespace ExtraMegaBlob
             nodes[cardName].AttachObject(entities[cardName]);
             nodes[cardName].Position = new Mogre.Vector3(0f, 50f, 0f);
         }
-        private void preventMousePick(string name)
-        {
-            Memories mems = new Memories();
-            mems.Add(new Memory("Name", KeyWord.NIL, name, null));
-            Event ev = new Event();
-            ev._Keyword = KeyWord.PREVENTMOUSEPICK;
-            ev._Memories = mems;
-            ev._IntendedRecipients = EventTransfer.CLIENTTOCLIENT;
-            base.outboxMessage(this, ev);
-        }
+
 
         public override void startup()
         {
@@ -443,14 +434,7 @@ namespace ExtraMegaBlob
                 actors.UpdateAllActors(.1f);
             }
         }
-        private void freezePlayer()
-        {
-            chat("you are now seated");
-            Event outevent = new Event();
-            outevent._Keyword = KeyWord.TONGITS_FREEZEPLR;
-            outevent._IntendedRecipients = EventTransfer.CLIENTTOCLIENT;
-            outboxMessage(this, outevent);
-        }
+
         private List<Quaternion> seatPositions
         {
             get
@@ -477,27 +461,9 @@ namespace ExtraMegaBlob
         private void resetPlayer(int playerNumber)
         {
             int seatPosition = 2;
-            Event outevent = new Event();
-            outevent._Keyword = KeyWord.PLAYER_RESET;
-            outevent._IntendedRecipients = EventTransfer.CLIENTTOCLIENT;
-            outevent._Memories = new Memories();
-            outevent._Memories.Add(new Memory("", KeyWord.DATA_QUATERNION_W, seatPositions[seatPosition].w.ToString()));
-            outevent._Memories.Add(new Memory("", KeyWord.DATA_QUATERNION_X, seatPositions[seatPosition].x.ToString()));
-            outevent._Memories.Add(new Memory("", KeyWord.DATA_QUATERNION_Y, seatPositions[seatPosition].y.ToString()));
-            outevent._Memories.Add(new Memory("", KeyWord.DATA_QUATERNION_Z, seatPositions[seatPosition].z.ToString()));
-            outevent._Memories.Add(new Memory("", KeyWord.DATA_VECTOR3_X, seatLocations[seatPosition].x.ToString()));
-            outevent._Memories.Add(new Memory("", KeyWord.DATA_VECTOR3_Y, seatLocations[seatPosition].y.ToString()));
-            outevent._Memories.Add(new Memory("", KeyWord.DATA_VECTOR3_Z, seatLocations[seatPosition].z.ToString()));
-            outboxMessage(this, outevent);
+            resetPlayer(seatLocations[seatPosition],seatPositions[seatPosition]);
         }
-        private void unfreezePlayer()
-        {
-            chat("you are now standing");
-            Event outevent = new Event();
-            outevent._Keyword = KeyWord.TONGITS_UNFREEZEPLR;
-            outevent._IntendedRecipients = EventTransfer.CLIENTTOCLIENT;
-            outboxMessage(this, outevent);
-        }
+
         timer scaleLimiter = new timer(new TimeSpan(0, 0, 1));
 
         private bool ready = false;

@@ -65,5 +65,48 @@ namespace ExtraMegaBlob.References
         public Mouse mouse = OgreWindow.g_m;
         public JoyStick[] joys = OgreWindow.g_joys;
         #endregion
+        #region Helper Functions
+        public void preventMousePick(string name)
+        {
+            Memories mems = new Memories();
+            mems.Add(new Memory("Name", KeyWord.NIL, name, null));
+            Event ev = new Event();
+            ev._Keyword = KeyWord.PREVENTMOUSEPICK;
+            ev._Memories = mems;
+            ev._IntendedRecipients = EventTransfer.CLIENTTOCLIENT;
+            this.outboxMessage(this, ev);
+        }
+        public void freezePlayer()
+        {
+            this.chat("you are now seated");
+            Event outevent = new Event();
+            outevent._Keyword = KeyWord.PLAYER_FREEZE;
+            outevent._IntendedRecipients = EventTransfer.CLIENTTOCLIENT;
+            outboxMessage(this, outevent);
+        }
+        public void unfreezePlayer()
+        {
+            this.chat("you are now standing");
+            Event outevent = new Event();
+            outevent._Keyword = KeyWord.PLAYER_UNFREEZE;
+            outevent._IntendedRecipients = EventTransfer.CLIENTTOCLIENT;
+            outboxMessage(this, outevent);
+        }
+        public void resetPlayer(Mogre.Vector3 loc, Mogre.Quaternion pose)
+        {
+            Event outevent = new Event();
+            outevent._Keyword = KeyWord.PLAYER_RESET;
+            outevent._IntendedRecipients = EventTransfer.CLIENTTOCLIENT;
+            outevent._Memories = new Memories();
+            outevent._Memories.Add(new Memory("", KeyWord.DATA_QUATERNION_W, pose.w.ToString()));
+            outevent._Memories.Add(new Memory("", KeyWord.DATA_QUATERNION_X, pose.x.ToString()));
+            outevent._Memories.Add(new Memory("", KeyWord.DATA_QUATERNION_Y, pose.y.ToString()));
+            outevent._Memories.Add(new Memory("", KeyWord.DATA_QUATERNION_Z, pose.z.ToString()));
+            outevent._Memories.Add(new Memory("", KeyWord.DATA_VECTOR3_X, loc.x.ToString()));
+            outevent._Memories.Add(new Memory("", KeyWord.DATA_VECTOR3_Y, loc.y.ToString()));
+            outevent._Memories.Add(new Memory("", KeyWord.DATA_VECTOR3_Z, loc.z.ToString()));
+            this.outboxMessage(this, outevent);
+        }
+        #endregion
     }
 }

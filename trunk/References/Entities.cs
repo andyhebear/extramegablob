@@ -36,14 +36,14 @@ namespace ExtraMegaBlob.References
             {
                 int i = IndexOf(key);
                 if (i < 0)
-                    throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid element in the array");
+                    throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid Entity");
                 return (Entity)allEntities[i];
             }
             set
             {
                 int i = IndexOf(key);
                 if (i < 0)
-                    throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid element in the array");
+                    throw new ArgumentOutOfRangeException("key", "\"" + key + "\" is not a valid Entity");
                 allEntities[i] = value;
             }
         }

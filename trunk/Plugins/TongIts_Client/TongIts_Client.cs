@@ -38,10 +38,10 @@ namespace ExtraMegaBlob
                 h["club 7"] = "\\TongIts\\200px-Playing_card_club_7.svg.png";
                 h["club 8"] = "\\TongIts\\200px-Playing_card_club_8.svg.png";
                 h["club 9"] = "\\TongIts\\200px-Playing_card_club_9.svg.png";
-                h["club a"] = "\\TongIts\\200px-Playing_card_club_A.svg.png";
-                h["club j"] = "\\TongIts\\200px-Playing_card_club_J.svg.png";
-                h["club k"] = "\\TongIts\\200px-Playing_card_club_K.svg.png";
-                h["club q"] = "\\TongIts\\200px-Playing_card_club_Q.svg.png";
+                h["club ace"] = "\\TongIts\\200px-Playing_card_club_A.svg.png";
+                h["club jack"] = "\\TongIts\\200px-Playing_card_club_J.svg.png";
+                h["club king"] = "\\TongIts\\200px-Playing_card_club_K.svg.png";
+                h["club queen"] = "\\TongIts\\200px-Playing_card_club_Q.svg.png";
                 h["diamond 10"] = "\\TongIts\\200px-Playing_card_diamond_10.svg.png";
                 h["diamond 2"] = "\\TongIts\\200px-Playing_card_diamond_2.svg.png";
                 h["diamond 3"] = "\\TongIts\\200px-Playing_card_diamond_3.svg.png";
@@ -51,10 +51,10 @@ namespace ExtraMegaBlob
                 h["diamond 7"] = "\\TongIts\\200px-Playing_card_diamond_7.svg.png";
                 h["diamond 8"] = "\\TongIts\\200px-Playing_card_diamond_8.svg.png";
                 h["diamond 9"] = "\\TongIts\\200px-Playing_card_diamond_9.svg.png";
-                h["diamond a"] = "\\TongIts\\200px-Playing_card_diamond_A.svg.png";
-                h["diamond j"] = "\\TongIts\\200px-Playing_card_diamond_J.svg.png";
-                h["diamond k"] = "\\TongIts\\200px-Playing_card_diamond_K.svg.png";
-                h["diamond q"] = "\\TongIts\\200px-Playing_card_diamond_Q.svg.png";
+                h["diamond ace"] = "\\TongIts\\200px-Playing_card_diamond_A.svg.png";
+                h["diamond jack"] = "\\TongIts\\200px-Playing_card_diamond_J.svg.png";
+                h["diamond king"] = "\\TongIts\\200px-Playing_card_diamond_K.svg.png";
+                h["diamond queen"] = "\\TongIts\\200px-Playing_card_diamond_Q.svg.png";
                 h["heart 10"] = "\\TongIts\\200px-Playing_card_heart_10.svg.png";
                 h["heart 2"] = "\\TongIts\\200px-Playing_card_heart_2.svg.png";
                 h["heart 3"] = "\\TongIts\\200px-Playing_card_heart_3.svg.png";
@@ -64,10 +64,10 @@ namespace ExtraMegaBlob
                 h["heart 7"] = "\\TongIts\\200px-Playing_card_heart_7.svg.png";
                 h["heart 8"] = "\\TongIts\\200px-Playing_card_heart_8.svg.png";
                 h["heart 9"] = "\\TongIts\\200px-Playing_card_heart_9.svg.png";
-                h["heart a"] = "\\TongIts\\200px-Playing_card_heart_A.svg.png";
-                h["heart j"] = "\\TongIts\\200px-Playing_card_heart_J.svg.png";
-                h["heart k"] = "\\TongIts\\200px-Playing_card_heart_K.svg.png";
-                h["heart q"] = "\\TongIts\\200px-Playing_card_heart_Q.svg.png";
+                h["heart ace"] = "\\TongIts\\200px-Playing_card_heart_A.svg.png";
+                h["heart jack"] = "\\TongIts\\200px-Playing_card_heart_J.svg.png";
+                h["heart king"] = "\\TongIts\\200px-Playing_card_heart_K.svg.png";
+                h["heart queen"] = "\\TongIts\\200px-Playing_card_heart_Q.svg.png";
                 h["spade 10"] = "\\TongIts\\200px-Playing_card_spade_10.svg.png";
                 h["spade 2"] = "\\TongIts\\200px-Playing_card_spade_2.svg.png";
                 h["spade 3"] = "\\TongIts\\200px-Playing_card_spade_3.svg.png";
@@ -77,14 +77,16 @@ namespace ExtraMegaBlob
                 h["spade 7"] = "\\TongIts\\200px-Playing_card_spade_7.svg.png";
                 h["spade 8"] = "\\TongIts\\200px-Playing_card_spade_8.svg.png";
                 h["spade 9"] = "\\TongIts\\200px-Playing_card_spade_9.svg.png";
-                h["spade a"] = "\\TongIts\\200px-Playing_card_spade_A.svg.png";
-                h["spade j"] = "\\TongIts\\200px-Playing_card_spade_J.svg.png";
-                h["spade k"] = "\\TongIts\\200px-Playing_card_spade_K.svg.png";
-                h["spade q"] = "\\TongIts\\200px-Playing_card_spade_Q.svg.png";
+                h["spade ace"] = "\\TongIts\\200px-Playing_card_spade_A.svg.png";
+                h["spade jack"] = "\\TongIts\\200px-Playing_card_spade_J.svg.png";
+                h["spade king"] = "\\TongIts\\200px-Playing_card_spade_K.svg.png";
+                h["spade queen"] = "\\TongIts\\200px-Playing_card_spade_Q.svg.png";
                 #endregion
                 return h;
             }
         }
+        private string[] suits = { "club", "heart", "spade", "diamond" };
+        private string[] faces = { "jack", "king", "queen", "ace" };
         private Hashtable meshes
         {
             get
@@ -219,13 +221,13 @@ namespace ExtraMegaBlob
                 #endregion
 
 
-                
+
                 #region table
                 entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("tongitstable", "\\TongIts\\tongitstable.mesh"));
                 nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("table"));
                 nodes["table"].AttachObject(entities["tongitstable"]);
                 nodes["table"].Position = new Mogre.Vector3(0f, 36f, 0f) + Location().toMogre;
-                nodes["table"].Scale(new Mogre.Vector3(4f));
+                //nodes["table"].Scale(new Mogre.Vector3(4f));
                 //preventMousePick("tongitstable");
                 // physics
                 // attaching a body to the actor makes it dynamic, you can set things like initial velocity
@@ -251,53 +253,85 @@ namespace ExtraMegaBlob
                 }
                 #endregion
 
+                #region baseball
+                entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("baseball", "\\baseball.mesh"));
+                entities["baseball"].SetMaterialName("baseball");
+                //nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("baseball"));
+                nodes.Add(nodes["table"].CreateChildSceneNode("baseball"));
+                nodes["baseball"].AttachObject(entities["baseball"]);
+                //nodes["baseball"].SetScale(.5f, .5f, .5f);
+                nodes["baseball"].SetPosition(-3f, 7f, 3f);
+                // nodes["baseball"].SetScale(5f, 5f, 5f);
+                #endregion
 
                 #region cards
 
                 Thread.Sleep(5000);
                 resetPlayer(1);
 
-                //MeshManager.Singleton.CreatePlane("spinnycard", "General", new Plane(Mogre.Vector3.UNIT_Y, 0), 200f, 250f, 1, 1, true, 1, 1, 1, Mogre.Vector3.UNIT_X);
-                entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("club 5", "\\TongIts\\Card.mesh"));
-                entities["club 5"].SetMaterialName("club 5");
-                nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("club 5"));
-                nodes["club 5"].AttachObject(entities["club 5"]);
-                nodes["club 5"].Position = new Mogre.Vector3(0f, 50f, 0f) + Location().toMogre;
-                // physics
-                // attaching a body to the actor makes it dynamic, you can set things like initial velocity
-                BodyDesc cardBodyDesc = null;
-                bodyDesc.LinearVelocity = new Mogre.Vector3(0, 6, 0);
 
-                // the actor properties control the mass, position and orientation
-                // if you leave the body set to null it will become a static actor and wont move
-                ActorDesc cardActorDesc = new ActorDesc();
-                cardActorDesc.Density = 4;
-                cardActorDesc.Body = cardBodyDesc;
-                cardActorDesc.GlobalPosition = nodes["club 5"].Position;
-                cardActorDesc.GlobalOrientation = nodes["club 5"].Orientation.ToRotationMatrix();
-                PhysXHelpers.StaticMeshData cardMeshData = new PhysXHelpers.StaticMeshData(entities["club 5"].GetMesh());
-                cardActorDesc.Shapes.Add(PhysXHelpers.CreateConvexHull(cardMeshData));
-
-                Actor cardActor = null;
-                // finally, create the actor in the physics scene
-                try { cardActor = OgreWindow.Instance.scene.CreateActor(cardActorDesc); }
-                catch { }
-                // if (actor == null)
-                //    OgreWindow.Instance.CloseForm();
-                if (cardActor != null)
+                foreach (string suit in suits)
                 {
-                    actors.Add(new ActorNode(nodes["club 5"], cardActor));
+                    for (int i = 2; i < 11; i++)
+                    {
+                        string cardname = string.Format("{0} {1}", suit, i);
+                        createCard(cardname);
+                        placeCard(0, cardname);
+                    }
+                    foreach (string face in faces)
+                    {
+                        string cardname = string.Format("{0} {1}", suit, face);
+                        createCard(cardname);
+                        placeCard(0, cardname);
+                    }
                 }
 
+                //MeshManager.Singleton.CreatePlane("spinnycard", "General", new Plane(Mogre.Vector3.UNIT_Y, 0), 200f, 250f, 1, 1, true, 1, 1, 1, Mogre.Vector3.UNIT_X);
+
+                //// physics
+                //// attaching a body to the actor makes it dynamic, you can set things like initial velocity
+                //BodyDesc cardBodyDesc = null;
+                //bodyDesc.LinearVelocity = new Mogre.Vector3(0, 6, 0);
+
+                //// the actor properties control the mass, position and orientation
+                //// if you leave the body set to null it will become a static actor and wont move
+                //ActorDesc cardActorDesc = new ActorDesc();
+                //cardActorDesc.Density = 4;
+                //cardActorDesc.Body = cardBodyDesc;
+                //cardActorDesc.GlobalPosition = nodes["club 5"].Position;
+                //cardActorDesc.GlobalOrientation = nodes["club 5"].Orientation.ToRotationMatrix();
+                //PhysXHelpers.StaticMeshData cardMeshData = new PhysXHelpers.StaticMeshData(entities["club 5"].GetMesh());
+                //cardActorDesc.Shapes.Add(PhysXHelpers.CreateConvexHull(cardMeshData));
+
+                //Actor cardActor = null;
+                //// finally, create the actor in the physics scene
+                //try { cardActor = OgreWindow.Instance.scene.CreateActor(cardActorDesc); }
+                //catch { }
+                //// if (actor == null)
+                ////    OgreWindow.Instance.CloseForm();
+                //if (cardActor != null)
+                //{
+                //    actors.Add(new ActorNode(nodes["club 5"], cardActor));
+                //}
+
                 #endregion
-                
+
                 ready = true;
             }
+
             catch (Exception ex)
             {
                 log(ex.ToString());
             }
             OgreWindow.Instance.unpause();
+        }
+        private void createCard(string cardName)
+        {
+            entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity(cardName, "\\TongIts\\Card.mesh"));
+            entities[cardName].SetMaterialName(cardName);
+            nodes.Add(nodes["table"].CreateChildSceneNode(cardName));
+            nodes[cardName].AttachObject(entities[cardName]);
+            nodes[cardName].Position = new Mogre.Vector3(0f, 50f, 0f);
         }
         private void preventMousePick(string name)
         {
@@ -363,10 +397,10 @@ namespace ExtraMegaBlob
                     unfreezePlayer();
                     break;
                 case KeyWord.TONGITS_CARD_DECK_PLACE:
-                     int playerNumber = int.Parse(ev._Memories[KeyWord.TONGITS_PLAYER_NUMBER].Value);
+                    int playerNumber = int.Parse(ev._Memories[KeyWord.TONGITS_PLAYER_NUMBER].Value);
                     string cardName = ev._Memories[KeyWord.TONGITS_CARD_DATA].Value;
                     //chat(string.Format("Placing a Deck Card Player:{0} Card:{1}", ev._Memories[KeyWord.TONGITS_PLAYER_NUMBER].Value, ev._Memories[KeyWord.TONGITS_CARD_DATA].Value));
-                    placeCard(playerNumber, "club 5");
+                    placeCard(playerNumber, cardName);
                     break;
 
                 case KeyWord.TONGITS_PLAYER_NUMBER:
@@ -381,16 +415,22 @@ namespace ExtraMegaBlob
         }
         private void placeCard(int playerNumber, string cardName)
         {
-            switch (playerNumber)
+            nodes[cardName].Translate(cardPrimaryLocations[playerNumber].x,
+                       cardPrimaryLocations[playerNumber].y,
+                       cardPrimaryLocations[playerNumber].z);
+
+
+        }
+        private List<Mogre.Vector3> cardPrimaryLocations
+        {
+            get
             {
-                case 0://dealer
-                    break;
-                case 1:
-                    actors[cardName].actor.GlobalPosition = seatLocations[playerNumber];
-                    break;
+                List<Mogre.Vector3> playerSeatLocation = new List<Mogre.Vector3>();
+                playerSeatLocation.Add(new Mogre.Vector3(0f, 0f, 0f));//dealer's cards
+                playerSeatLocation.Add(new Mogre.Vector3(0f, -10f, 0f));//player 1's cards
+                return playerSeatLocation;
             }
         }
-        
         public void acceptNewGame()
         {
             Event outevent = new Event();
@@ -403,6 +443,7 @@ namespace ExtraMegaBlob
         {
             if (ready)
             {
+                nodes["baseball"].Yaw(new Radian(new Degree(1f)));
                 actors.UpdateAllActors(.1f);
             }
         }
@@ -430,6 +471,7 @@ namespace ExtraMegaBlob
             get
             {
                 List<Mogre.Vector3> playerSeatLocation = new List<Mogre.Vector3>();
+                playerSeatLocation.Add(new Mogre.Vector3(0f, 0f, 0f));
                 playerSeatLocation.Add(new Mogre.Vector3(-1.291305f, 35.18927f, 2.11423f));
                 playerSeatLocation.Add(new Mogre.Vector3(-0.03845761f, 35.18927f, -3.819804f));
                 playerSeatLocation.Add(new Mogre.Vector3(4.63741f, 35.18927f, -0.9184573f));

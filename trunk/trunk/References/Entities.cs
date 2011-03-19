@@ -5,7 +5,7 @@ using MogreFramework;
 
 namespace ExtraMegaBlob.References
 {
-    public sealed class Entities : IEnumerable
+    public sealed class Entities2 : IEnumerable
     {
         private ArrayList allEntities = new ArrayList();
         public Boolean Contains(Entity a)
@@ -47,7 +47,7 @@ namespace ExtraMegaBlob.References
                 allEntities[i] = value;
             }
         }
-        public Entities()
+        public Entities2()
         {
             allEntities = new ArrayList();
         }

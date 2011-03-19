@@ -64,11 +64,20 @@ namespace MogreFramework
         {
             pauserendering = false;
         }
+
+        #region Globals
+        public Materials materials = null;
         public Textures textures = null;
         public Meshes meshes = null;
         public Skeletons skeletons = null;
         public Physics physics;
         public Scene scene;
+        public SceneNodes nodes = new SceneNodes();
+        public ActorNodes actors = new ActorNodes();
+        public Entities entities = new Entities();
+        public Lights lights = new Lights();
+        #endregion
+
         #region mouse and kb input
         static string[] g_DeviceType = {"OISUnknown", "OISKeyboard", "OISMouse", "OISJoyStick",
 							 "OISTablet", "OISOther"};

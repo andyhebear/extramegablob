@@ -34,6 +34,7 @@ namespace ExtraMegaBlob.Client
                 OgreWindow.Instance.textures = new Textures(ThingPath.path_cache);
                 OgreWindow.Instance.skeletons = new Skeletons(ThingPath.path_cache);
                 OgreWindow.Instance.meshes = new Meshes(ThingPath.path_cache);
+                OgreWindow.Instance.materials = new Materials();
 
                 netClient = new ClientNetwork();
                 netClient.onLogMessage += new ClientNetwork.LogDelegate(netClient_onLogMessage);
@@ -130,8 +131,8 @@ namespace ExtraMegaBlob.Client
         }
         protected SkyManager skyManager;
         private string TerrainMaterialName = "Terrain";
-        Entities entities = new Entities();
-        SceneNodes nodes = new SceneNodes();
+        //Entities entities = new Entities();
+        //SceneNodes nodes = new SceneNodes();
         private void SceneCreating()
         {
             SceneManager sm = OgreWindow.Instance.mSceneMgr;

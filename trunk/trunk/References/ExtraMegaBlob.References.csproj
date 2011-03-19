@@ -148,6 +148,7 @@
     <Compile Include="Globals.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Lights.cs" />
+    <Compile Include="Materials.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="Memories.cs" />
     <Compile Include="Memory.cs" />

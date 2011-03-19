@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections;
 using Mogre;
-using MogreFramework;
-
-namespace ExtraMegaBlob.References
+namespace MogreFramework
 {
-    public sealed class Lights2 : IEnumerable
+    public sealed class Lights : IEnumerable
     {
         private ArrayList allLights = new ArrayList();
         public Boolean Contains(Light a)
@@ -42,7 +40,7 @@ namespace ExtraMegaBlob.References
                 allLights[i] = value;
             }
         }
-        public Lights2()
+        public Lights()
         {
             allLights = new ArrayList();
         }

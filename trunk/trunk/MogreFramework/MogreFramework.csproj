@@ -160,10 +160,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActorNodes.cs" />
+    <Compile Include="Entities.cs" />
     <Compile Include="EnumWindows.cs" />
     <Compile Include="Helpers.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Lights.cs" />
+    <Compile Include="Materials.cs" />
     <Compile Include="Meshes.cs" />
     <Compile Include="OgreWindow.cs">
       <SubType>Form</SubType>
@@ -177,6 +181,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SceneNodes.cs" />
     <Compile Include="Skeletons.cs" />
     <Compile Include="SkyX\AtmosphereManager.cs" />
     <Compile Include="SkyX\CloudLayer.cs" />

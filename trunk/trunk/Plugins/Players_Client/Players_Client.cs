@@ -88,8 +88,8 @@ namespace ExtraMegaBlob
                 Hashtable mats = materials_lookup;
                 foreach (DictionaryEntry mat in mats)
                 {
-                    OgreWindow.Instance.materials.Add((MaterialPtr)MaterialManager.Singleton.Create((string)mat.Key, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME));
-                    OgreWindow.Instance.materials[(string)mat.Key].GetTechnique(0).GetPass(0).CreateTextureUnitState((string)mat.Value);
+                    materials.Add((MaterialPtr)MaterialManager.Singleton.Create((string)mat.Key, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME));
+                    materials[(string)mat.Key].GetTechnique(0).GetPass(0).CreateTextureUnitState((string)mat.Value);
                 }
                 #region ground
                 MeshManager.Singleton.CreatePlane("ground",
@@ -249,9 +249,9 @@ namespace ExtraMegaBlob
                         updateCam();
                     }
                     if (turning_left)
-                        setOrient(control.Actor.GlobalOrientationQuaternion * ModifyAngleAroundAxis(new Degree(2 * .001f), new Mogre.Vector3(0, 1, 0)));
+                        setOrient(control.Actor.GlobalOrientationQuaternion * ModifyAngleAroundAxis(new Degree(2 * .01f), new Mogre.Vector3(0, 1, 0)));
                     if (turning_right)
-                        setOrient(control.Actor.GlobalOrientationQuaternion * ModifyAngleAroundAxis(new Degree(-2 * .001f), new Mogre.Vector3(0, 1, 0)));
+                        setOrient(control.Actor.GlobalOrientationQuaternion * ModifyAngleAroundAxis(new Degree(-2 * .01f), new Mogre.Vector3(0, 1, 0)));
                 }
 
                 Thread.Sleep(1);
@@ -260,16 +260,6 @@ namespace ExtraMegaBlob
         private Mogre.Vector3 localY = new Mogre.Vector3();
         private Mogre.Vector3 localZ = new Mogre.Vector3();
         private Mogre.Vector3 localX = new Mogre.Vector3();
-        private void preventMousePick(string name)
-        {
-            Memories mems = new Memories();
-            mems.Add(new Memory("Name", KeyWord.NIL, name, null));
-            Event ev = new Event();
-            ev._Keyword = KeyWord.PREVENTMOUSEPICK;
-            ev._Memories = mems;
-            ev._IntendedRecipients = EventTransfer.CLIENTTOCLIENT;
-            base.outboxMessage(this, ev);
-        }
         private AnimationState walkState = null;
         public override void startup()
         {
@@ -321,20 +311,20 @@ namespace ExtraMegaBlob
                         float.Parse(ev._Memories[KeyWord.DATA_VECTOR3_Y].Value),
                         float.Parse(ev._Memories[KeyWord.DATA_VECTOR3_Z].Value));
 
-                    resetPlayer(v, q);
+                    resetPlayer2(v, q);
 
                     break;
-                case KeyWord.TONGITS_FREEZEPLR:
-                    tongfreeze = true;
+                case KeyWord.PLAYER_FREEZE:
+                    player_freeze = true;
                     break;
-                case KeyWord.TONGITS_UNFREEZEPLR:
-                    tongfreeze = false;
+                case KeyWord.PLAYER_UNFREEZE:
+                    player_freeze = false;
                     break;
                 default:
                     break;
             }
         }
-        private bool tongfreeze = false;
+        private bool player_freeze = false;
         private Mogre.Vector3 getOrbitalPosition(Mogre.Vector3 focalPoint, Quaternion direction, float distanceToFocalPoint)
         {
             Mogre.Vector3 eyePos, xAxis, yAxis, zAxis;
@@ -392,8 +382,6 @@ namespace ExtraMegaBlob
             if (angle < 0 || angle > (float)System.Math.PI * 2) return System.Math.Abs(((float)System.Math.PI * 2) - System.Math.Abs(angle));
             else return angle;
         }
-        private Quaternion orient2 = new Quaternion();
-
         private Quaternion ModifyAngleAroundAxis(Degree a, Mogre.Vector3 axis)
         {
             //To determine the quaternion for a rotation of α degrees/radians around an axis defined by a vector (x, y, z):
@@ -413,7 +401,7 @@ namespace ExtraMegaBlob
             {
                 //chat("____________________________________________________________");
                 nodes["orbit0"].Pitch(s.Y.rel * RotateScale_CameraPitch);
-                if (!tongfreeze && !textBarUsage)
+                if (!player_freeze && !textBarUsage)
                     if (s.X.rel != 0f)
                     {
                         //nodes["drone"].Yaw(-s.X.rel * RotateScale_PlayerTurn);
@@ -493,7 +481,7 @@ namespace ExtraMegaBlob
 
         private void setPos(Mogre.Vector3 pos)
         {
-            if (!tongfreeze && !textBarUsage && !control.Actor.IsDisposed)
+            if (!player_freeze && !textBarUsage && !control.Actor.IsDisposed)
             {
                 control.Actor.MoveGlobalPosition(pos);
                 actors.UpdateAllActors(.0f);
@@ -502,7 +490,7 @@ namespace ExtraMegaBlob
         }
         private void setOrient(Quaternion orient)
         {
-            if (!tongfreeze && !textBarUsage && !control.Actor.IsDisposed)
+            if (!player_freeze && !textBarUsage && !control.Actor.IsDisposed)
             {
                 control.Actor.GlobalOrientationQuaternion = orient;
                 actors.UpdateAllActors(.0f);
@@ -520,12 +508,6 @@ namespace ExtraMegaBlob
             //control.Actor.GlobalOrientationQuaternion = orient2;
             //setOrient(orient2);
             setOrient(orient2);
-        }
-        private void resetCam()
-        {
-            updateCam();
-            //nodes["orbit0"].Orientation = new Quaternion(-0.4837169f, -0.5147877f, 0.4847109f, -0.5158446f);
-            //updateCam();
         }
         private timer LocationBeaconInterval = new timer(new TimeSpan(0, 0, 1));//1 second player world location updates
         private timer btnLimiter_F = new timer(new TimeSpan(0, 0, 1));//1 second player world location updates
@@ -547,7 +529,7 @@ namespace ExtraMegaBlob
             // log("Location: X=" + imAt.x.ToString() + " Y=" + imAt.y.ToString() + " Z=" + imAt.z.ToString());
         }
 
-        private void resetPlayer(Mogre.Vector3 loc, Quaternion orient)
+        private void resetPlayer2(Mogre.Vector3 loc, Quaternion orient)
         {
             setPos(loc);
             setOrient(orient);
@@ -575,10 +557,10 @@ namespace ExtraMegaBlob
                     {
                         if (btnLimiter_F.elapsed)
                         {
-                            if (!tongfreeze && !textBarUsage)
+                            if (!player_freeze && !textBarUsage)
                             {
-                                resetPlayer(new Mogre.Vector3(-1.291305f, 35.18927f, 2.11423f), new Quaternion(0.2246418f, 0f, 0.9744414f, 0f));
-                                resetCam();
+                                resetPlayer2(new Mogre.Vector3(-1.291305f, 35.18927f, 2.11423f), new Quaternion(0.2246418f, 0f, 0.9744414f, 0f));
+                                updateCam();
                                 sendLocationBeacon(new Mogre.Vector3(-1.291305f, 35.18927f, 2.11423f));
                             }
                             btnLimiter_F.start();

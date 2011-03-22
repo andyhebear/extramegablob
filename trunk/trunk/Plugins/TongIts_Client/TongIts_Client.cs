@@ -113,6 +113,39 @@ namespace ExtraMegaBlob
                 return h;
             }
         }
+        private List<Quaternion> seatPositions
+        {
+            get
+            {
+                List<Quaternion> playerSeatOrientation = new List<Quaternion>();
+                playerSeatOrientation.Add(new Quaternion(0.2246418f, 0f, 0.9744414f, 0f));
+                playerSeatOrientation.Add(new Quaternion(0.9731094f, 0f, 0.2303433f, 0f));
+                playerSeatOrientation.Add(new Quaternion(0.6975411f, 0f, 0.7165448f, 0f));
+                return playerSeatOrientation;
+            }
+        }
+        private List<Mogre.Vector3> cardPrimaryLocations
+        {
+            get
+            {
+                List<Mogre.Vector3> playerSeatLocation = new List<Mogre.Vector3>();
+                playerSeatLocation.Add(Location().toMogre + new Mogre.Vector3(0f, 0f, 0f));//dealer's cards
+                playerSeatLocation.Add(Location().toMogre + new Mogre.Vector3(0f, -10f, 0f));//player 1's cards
+                return playerSeatLocation;
+            }
+        }
+        private List<Mogre.Vector3> seatLocations
+        {
+            get
+            {
+                List<Mogre.Vector3> playerSeatLocation = new List<Mogre.Vector3>();
+                playerSeatLocation.Add(Location().toMogre + new Mogre.Vector3(0f, 0f, 0f));
+                playerSeatLocation.Add(Location().toMogre + new Mogre.Vector3(-1.291305f, 35.18927f, 2.11423f));
+                playerSeatLocation.Add(Location().toMogre + new Mogre.Vector3(-0.03845761f, 35.18927f, -3.819804f));
+                playerSeatLocation.Add(Location().toMogre + new Mogre.Vector3(4.63741f, 35.18927f, -0.9184573f));
+                return playerSeatLocation;
+            }
+        }
         private void resourceWaitThread()
         {
             while (true)
@@ -260,7 +293,7 @@ namespace ExtraMegaBlob
                 nodes.Add(nodes["table"].CreateChildSceneNode("baseball"));
                 nodes["baseball"].AttachObject(entities["baseball"]);
                 //nodes["baseball"].SetScale(.5f, .5f, .5f);
-                nodes["baseball"].SetPosition(-3f, 7f, 3f);
+                nodes["baseball"].SetPosition(Location().x, Location().y, Location().z);
                 // nodes["baseball"].SetScale(5f, 5f, 5f);
                 #endregion
 
@@ -331,7 +364,7 @@ namespace ExtraMegaBlob
             entities[cardName].SetMaterialName(cardName);
             nodes.Add(nodes["table"].CreateChildSceneNode(cardName));
             nodes[cardName].AttachObject(entities[cardName]);
-            nodes[cardName].Position = new Mogre.Vector3(0f, 50f, 0f);
+            nodes[cardName].Position = Location().toMogre + (new Mogre.Vector3(0f, 15f, 0f));
         }
 
 
@@ -350,8 +383,8 @@ namespace ExtraMegaBlob
         }
         public override ExtraMegaBlob.References.Vector3 Location()
         {
-            //return new ExtraMegaBlob.References.Vector3(0f, -168.6846f, -1101.067f);
-            return new ExtraMegaBlob.References.Vector3(0f, 0f, 0f);
+            return new ExtraMegaBlob.References.Vector3(0f, -168.6846f, -1101.067f);
+            //return new ExtraMegaBlob.References.Vector3(0f, 0f, 0f);
         }
         public override string Name()
         {
@@ -408,16 +441,7 @@ namespace ExtraMegaBlob
 
 
         }
-        private List<Mogre.Vector3> cardPrimaryLocations
-        {
-            get
-            {
-                List<Mogre.Vector3> playerSeatLocation = new List<Mogre.Vector3>();
-                playerSeatLocation.Add(new Mogre.Vector3(0f, 0f, 0f));//dealer's cards
-                playerSeatLocation.Add(new Mogre.Vector3(0f, -10f, 0f));//player 1's cards
-                return playerSeatLocation;
-            }
-        }
+
         public void acceptNewGame()
         {
             Event outevent = new Event();
@@ -435,33 +459,11 @@ namespace ExtraMegaBlob
             }
         }
 
-        private List<Quaternion> seatPositions
-        {
-            get
-            {
-                List<Quaternion> playerSeatOrientation = new List<Quaternion>();
-                playerSeatOrientation.Add(new Quaternion(0.2246418f, 0f, 0.9744414f, 0f));
-                playerSeatOrientation.Add(new Quaternion(0.9731094f, 0f, 0.2303433f, 0f));
-                playerSeatOrientation.Add(new Quaternion(0.6975411f, 0f, 0.7165448f, 0f));
-                return playerSeatOrientation;
-            }
-        }
-        private List<Mogre.Vector3> seatLocations
-        {
-            get
-            {
-                List<Mogre.Vector3> playerSeatLocation = new List<Mogre.Vector3>();
-                playerSeatLocation.Add(new Mogre.Vector3(0f, 0f, 0f));
-                playerSeatLocation.Add(new Mogre.Vector3(-1.291305f, 35.18927f, 2.11423f));
-                playerSeatLocation.Add(new Mogre.Vector3(-0.03845761f, 35.18927f, -3.819804f));
-                playerSeatLocation.Add(new Mogre.Vector3(4.63741f, 35.18927f, -0.9184573f));
-                return playerSeatLocation;
-            }
-        }
+
+
         private void resetPlayer(int playerNumber)
         {
-            int seatPosition = 2;
-            resetPlayer(seatLocations[seatPosition],seatPositions[seatPosition]);
+            resetPlayer(seatLocations[playerNumber], seatPositions[playerNumber]);
         }
 
         timer scaleLimiter = new timer(new TimeSpan(0, 0, 1));

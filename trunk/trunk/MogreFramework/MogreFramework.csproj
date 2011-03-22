@@ -161,6 +161,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActorNodes.cs" />
+    <Compile Include="AskQuestionString.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AskQuestionString.Designer.cs">
+      <DependentUpon>AskQuestionString.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entities.cs" />
     <Compile Include="EnumWindows.cs" />
     <Compile Include="Helpers.cs">
@@ -202,6 +208,9 @@
     <Compile Include="Textures.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AskQuestionString.resx">
+      <DependentUpon>AskQuestionString.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="OgreWindow.resx">
       <SubType>Designer</SubType>
       <DependentUpon>OgreWindow.cs</DependentUpon>

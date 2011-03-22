@@ -128,7 +128,11 @@ namespace ExtraMegaBlob
 
 
 
-
+                lights.Add(OgreWindow.Instance.mSceneMgr.CreateLight("playerLight"));
+                lights["playerLight"].Type = Light.LightTypes.LT_POINT;
+                lights["playerLight"].Position = Location().toMogre;
+                lights["playerLight"].DiffuseColour = ColourValue.White;
+                lights["playerLight"].SpecularColour = ColourValue.White;
 
                 #region drone
 
@@ -150,9 +154,11 @@ namespace ExtraMegaBlob
 
                 nodes.Add(nodes["drone"].CreateChildSceneNode("orbit0"));
                 nodes.Add(nodes["orbit0"].CreateChildSceneNode("orbit"));
-                nodes["orbit"].Position = new Mogre.Vector3(0f, 0f, 0f);
+                nodes["orbit"].Position = Location().toMogre;
                 nodes["orbit"].AttachObject(OgreWindow.Instance.mCamera);
                 nodes["drone"].SetFixedYawAxis(true);
+
+
 
                 #endregion
 
@@ -192,6 +198,8 @@ namespace ExtraMegaBlob
 
                 OgreWindow.Instance.tbTextToSend.GotFocus += new EventHandler(tbTextToSend_GotFocus);
                 OgreWindow.Instance.tbTextToSend.LostFocus += new EventHandler(tbTextToSend_LostFocus);
+                OgreWindow.Instance.tbConsole.GotFocus += new EventHandler(tbConsole_GotFocus);
+                OgreWindow.Instance.tbConsole.LostFocus += new EventHandler(tbConsole_LostFocus);
             }
             catch (Exception ex)
             {
@@ -199,6 +207,16 @@ namespace ExtraMegaBlob
             }
             OgreWindow.Instance.unpause();
             log("done starting up! ");
+        }
+
+        void tbConsole_LostFocus(object sender, EventArgs e)
+        {
+            consoleBarUsage = false;
+        }
+
+        void tbConsole_GotFocus(object sender, EventArgs e)
+        {
+            consoleBarUsage = true;
         }
 
         void tbTextToSend_LostFocus(object sender, EventArgs e)
@@ -210,6 +228,7 @@ namespace ExtraMegaBlob
         {
             textBarUsage = true;
         }
+        private bool consoleBarUsage = false;
         private bool textBarUsage = false;
         private void statusUpdaterThread()
         {
@@ -401,7 +420,7 @@ namespace ExtraMegaBlob
             {
                 //chat("____________________________________________________________");
                 nodes["orbit0"].Pitch(s.Y.rel * RotateScale_CameraPitch);
-                if (!player_freeze && !textBarUsage)
+                if (!player_freeze && !textBarUsage && !consoleBarUsage)
                     if (s.X.rel != 0f)
                     {
                         //nodes["drone"].Yaw(-s.X.rel * RotateScale_PlayerTurn);
@@ -481,7 +500,7 @@ namespace ExtraMegaBlob
 
         private void setPos(Mogre.Vector3 pos)
         {
-            if (!player_freeze && !textBarUsage && !control.Actor.IsDisposed)
+            if (!player_freeze && !textBarUsage && !consoleBarUsage && !control.Actor.IsDisposed)
             {
                 control.Actor.MoveGlobalPosition(pos);
                 actors.UpdateAllActors(.0f);
@@ -490,7 +509,7 @@ namespace ExtraMegaBlob
         }
         private void setOrient(Quaternion orient)
         {
-            if (!player_freeze && !textBarUsage && !control.Actor.IsDisposed)
+            if (!player_freeze && !textBarUsage && !consoleBarUsage && !control.Actor.IsDisposed)
             {
                 control.Actor.GlobalOrientationQuaternion = orient;
                 actors.UpdateAllActors(.0f);
@@ -557,7 +576,7 @@ namespace ExtraMegaBlob
                     {
                         if (btnLimiter_F.elapsed)
                         {
-                            if (!player_freeze && !textBarUsage)
+                            if (!player_freeze && !textBarUsage && !consoleBarUsage)
                             {
                                 resetPlayer2(new Mogre.Vector3(-1.291305f, 35.18927f, 2.11423f), new Quaternion(0.2246418f, 0f, 0.9744414f, 0f));
                                 updateCam();
@@ -716,8 +735,6 @@ namespace ExtraMegaBlob
             }
             if (ready)
             {
-
-
                 walkState.AddTime(.01f);
                 //actors.UpdateAllActors(.1f);
                 // actors.UpdateActor(.1f, "drone", control.Actor);
@@ -726,6 +743,7 @@ namespace ExtraMegaBlob
                 if (!control.Actor.IsSleeping)
                 {
                     // nodes["drone"].Position = control.Actor.GlobalPosition;
+                    lights["playerLight"].Position = control.Actor.GlobalPosition;
                     nodes["drone"].Position = control.Actor.GlobalPosition;
                     nodes["drone"].Orientation = control.Actor.GlobalOrientationQuaternion;
                     OgreWindow.Instance.setInfoLabelText(string.Format(" {0}f, {1}f, {2}f ", control.Actor.GlobalPosition.x, control.Actor.GlobalPosition.y, control.Actor.GlobalPosition.z));

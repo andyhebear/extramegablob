@@ -40,13 +40,6 @@ namespace ExtraMegaBlob.References
             }
         }
         public event LogDelegate onLog;
-        public void log(string msg)
-        {
-            if (!object.Equals(null, this.onLog))
-            {
-                onLog(msg);
-            }
-        }
         public abstract void inbox(Event ev);
         public abstract ExtraMegaBlob.References.Vector3 Location();
         #region Globals
@@ -106,6 +99,17 @@ namespace ExtraMegaBlob.References
             outevent._Memories.Add(new Memory("", KeyWord.DATA_VECTOR3_Y, loc.y.ToString()));
             outevent._Memories.Add(new Memory("", KeyWord.DATA_VECTOR3_Z, loc.z.ToString()));
             this.outboxMessage(this, outevent);
+        }
+        public void logConsole(string msg)
+        {
+            OgreWindow.Instance.logConsole(msg);
+        }
+        public void log(string msg)
+        {
+            if (!object.Equals(null, this.onLog))
+            {
+                onLog(msg);
+            }
         }
         #endregion
     }

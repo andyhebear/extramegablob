@@ -1103,11 +1103,144 @@ namespace MogreFramework
             try { Clipboard.SetText(tbStatus3.Text); }
             catch (Exception ex) { log(ex.Message); }
         }
+
+
+
+        #region AskQuestion
         public bool AskQuestionBool(string question)
         {
             DialogResult result;
             result = MessageBox.Show(question, "Question", MessageBoxButtons.YesNo);
             return (result == System.Windows.Forms.DialogResult.Yes) ? true : false;
         }
+        public void AskQuestionString(int secondsTimeout, string question, bool optionalAnswer, bool requiredAnswer)
+        {
+            MogreFramework.AskQuestionString questionForm = new MogreFramework.AskQuestionString(secondsTimeout, question, optionalAnswer, requiredAnswer);
+            questionForm.Parent = this;
+            questionForm.onReplyInput += new MogreFramework.AskQuestionString.replyInputDelegate(questionForm_onReplyInput);
+            return;
+        }
+        void questionForm_onReplyInput(string questionMD5, string text)
+        {
+            questionAnswered(questionMD5, text);
+        }
+        public delegate void questionAnsweredDelegate(string questionMD5, string text);
+        public event questionAnsweredDelegate onQuestionAnswered;
+        private void questionAnswered(string questionMD5, string text)
+        {
+            if (!object.Equals(null, this.onQuestionAnswered))
+            {
+                onQuestionAnswered(questionMD5, text);
+            }
+        }
+        #endregion
+
+        #region console
+        private void btnConsole_Click(object sender, EventArgs e)
+        {
+            consoleInput(grabConsoleInput());
+        }
+        private string grabConsoleInput()
+        {
+            string s = this.tbConsole.Text.Trim();
+            if (s == "") return "";
+            TextBoxClear(tbConsole);
+            return s;
+        }
+        public delegate void consoleInputDelegate(string text);
+        public event consoleInputDelegate onConsoleInput;
+        private void consoleInput(string text)
+        {
+            if (!object.Equals(null, this.onConsoleInput))
+            {
+                onConsoleInput(text);
+            }
+        }
+        private void tbConsole_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && e.Control)
+            {
+                this.tbConsole.Text += Environment.NewLine;
+            }
+            else if (e.KeyCode == Keys.Enter && !e.Control)
+            {
+                consoleInput(grabConsoleInput());
+            }
+        }
+        public void logConsole(string what)
+        {
+            if (this._ShuttingDown) return;
+            string x = logPrefix + what + Environment.NewLine;
+            if (cbAutoScrollLog.Checked)
+                this.ListBoxItemAddAndScrollDown(lbConsole, x);
+            else
+                this.ListBoxItemAdd(lbConsole, x);
+            try
+            {
+                using (StreamWriter w = File.AppendText("console.txt"))
+                {
+                    append(x, w);
+                    w.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                // MessageBox.Show(ex.ToString());
+            }
+
+        }
+        private void btnCopyAllLinesConsole_Click(object sender, EventArgs e)
+        {
+            pauseEvents = true;
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (string line in this.lbConsole.Items)
+                {
+                    sb.Append(line);
+                }
+                Clipboard.SetText(sb.ToString());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            pauseEvents = false;
+        }
+        private void btnCopySelectedLinesConsole_Click(object sender, EventArgs e)
+        {
+            pauseEvents = true;
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                ListBox.SelectedIndexCollection selected = this.lbConsole.SelectedIndices;
+                for (int i = 0; i < selected.Count; i++)
+                {
+                    sb.Append(this.lbConsole.Items[selected[i]]);
+                }
+                Clipboard.SetText(sb.ToString());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            pauseEvents = false;
+        }
+        #endregion
+
+
+        private void lbConsole_SizeChanged(object sender, EventArgs e)
+        {
+            if (cbAutoScrollConsole.Checked)
+                ListBoxScrollDown(lbConsole);
+
+        }
+
+        private void lbChatProximity_SizeChanged(object sender, EventArgs e)
+        {
+            ListBoxScrollDown(this.lbChatProximity);
+        }
+
+
     }
 }

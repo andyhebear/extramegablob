@@ -35,6 +35,13 @@ namespace MogreFramework
             this.lbChatProximity = new System.Windows.Forms.ListBox();
             this.btnSend = new System.Windows.Forms.Button();
             this.tbTextToSend = new System.Windows.Forms.TextBox();
+            this.tabPage8 = new System.Windows.Forms.TabPage();
+            this.cbAutoScrollConsole = new System.Windows.Forms.CheckBox();
+            this.btnCopyAllLinesConsole = new System.Windows.Forms.Button();
+            this.btnCopySelectedLinesConsole = new System.Windows.Forms.Button();
+            this.lbConsole = new System.Windows.Forms.ListBox();
+            this.btnConsole = new System.Windows.Forms.Button();
+            this.tbConsole = new System.Windows.Forms.TextBox();
             this.renderBox = new System.Windows.Forms.PictureBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.cbAutoScrollLog = new System.Windows.Forms.CheckBox();
@@ -71,6 +78,7 @@ namespace MogreFramework
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.tabControl2.SuspendLayout();
             this.tabPage5.SuspendLayout();
+            this.tabPage8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.renderBox)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -98,11 +106,12 @@ namespace MogreFramework
             // tabControl2
             // 
             this.tabControl2.Controls.Add(this.tabPage5);
+            this.tabControl2.Controls.Add(this.tabPage8);
             this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl2.Location = new System.Drawing.Point(0, 0);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(578, 113);
+            this.tabControl2.Size = new System.Drawing.Size(570, 109);
             this.tabControl2.TabIndex = 1;
             this.tabControl2.TabStop = false;
             // 
@@ -114,9 +123,9 @@ namespace MogreFramework
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(570, 87);
+            this.tabPage5.Size = new System.Drawing.Size(562, 83);
             this.tabPage5.TabIndex = 0;
-            this.tabPage5.Text = "proximity";
+            this.tabPage5.Text = "Chat";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
             // lbChatProximity
@@ -128,13 +137,14 @@ namespace MogreFramework
             this.lbChatProximity.FormattingEnabled = true;
             this.lbChatProximity.Location = new System.Drawing.Point(6, 6);
             this.lbChatProximity.Name = "lbChatProximity";
-            this.lbChatProximity.Size = new System.Drawing.Size(558, 30);
+            this.lbChatProximity.Size = new System.Drawing.Size(550, 43);
             this.lbChatProximity.TabIndex = 3;
+            this.lbChatProximity.SizeChanged += new System.EventHandler(this.lbChatProximity_SizeChanged);
             // 
             // btnSend
             // 
             this.btnSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSend.Location = new System.Drawing.Point(489, 59);
+            this.btnSend.Location = new System.Drawing.Point(481, 54);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(75, 23);
             this.btnSend.TabIndex = 2;
@@ -147,12 +157,98 @@ namespace MogreFramework
             // 
             this.tbTextToSend.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbTextToSend.Location = new System.Drawing.Point(6, 56);
+            this.tbTextToSend.Location = new System.Drawing.Point(6, 52);
             this.tbTextToSend.Multiline = true;
             this.tbTextToSend.Name = "tbTextToSend";
-            this.tbTextToSend.Size = new System.Drawing.Size(477, 25);
+            this.tbTextToSend.Size = new System.Drawing.Size(469, 25);
             this.tbTextToSend.TabIndex = 1;
             this.tbTextToSend.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.tbTextToSend_PreviewKeyDown);
+            // 
+            // tabPage8
+            // 
+            this.tabPage8.Controls.Add(this.cbAutoScrollConsole);
+            this.tabPage8.Controls.Add(this.btnCopyAllLinesConsole);
+            this.tabPage8.Controls.Add(this.btnCopySelectedLinesConsole);
+            this.tabPage8.Controls.Add(this.lbConsole);
+            this.tabPage8.Controls.Add(this.btnConsole);
+            this.tabPage8.Controls.Add(this.tbConsole);
+            this.tabPage8.Location = new System.Drawing.Point(4, 22);
+            this.tabPage8.Name = "tabPage8";
+            this.tabPage8.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage8.Size = new System.Drawing.Size(562, 83);
+            this.tabPage8.TabIndex = 1;
+            this.tabPage8.Text = "Console";
+            this.tabPage8.UseVisualStyleBackColor = true;
+            // 
+            // cbAutoScrollConsole
+            // 
+            this.cbAutoScrollConsole.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbAutoScrollConsole.AutoSize = true;
+            this.cbAutoScrollConsole.Checked = true;
+            this.cbAutoScrollConsole.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbAutoScrollConsole.Location = new System.Drawing.Point(452, 53);
+            this.cbAutoScrollConsole.Name = "cbAutoScrollConsole";
+            this.cbAutoScrollConsole.Size = new System.Drawing.Size(77, 17);
+            this.cbAutoScrollConsole.TabIndex = 9;
+            this.cbAutoScrollConsole.Text = "Auto Scroll";
+            this.cbAutoScrollConsole.UseVisualStyleBackColor = true;
+            // 
+            // btnCopyAllLinesConsole
+            // 
+            this.btnCopyAllLinesConsole.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCopyAllLinesConsole.Location = new System.Drawing.Point(452, 5);
+            this.btnCopyAllLinesConsole.Name = "btnCopyAllLinesConsole";
+            this.btnCopyAllLinesConsole.Size = new System.Drawing.Size(104, 20);
+            this.btnCopyAllLinesConsole.TabIndex = 8;
+            this.btnCopyAllLinesConsole.Text = "Copy All Lines";
+            this.btnCopyAllLinesConsole.UseVisualStyleBackColor = true;
+            this.btnCopyAllLinesConsole.Click += new System.EventHandler(this.btnCopyAllLinesConsole_Click);
+            // 
+            // btnCopySelectedLinesConsole
+            // 
+            this.btnCopySelectedLinesConsole.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCopySelectedLinesConsole.Location = new System.Drawing.Point(452, 31);
+            this.btnCopySelectedLinesConsole.Name = "btnCopySelectedLinesConsole";
+            this.btnCopySelectedLinesConsole.Size = new System.Drawing.Size(104, 20);
+            this.btnCopySelectedLinesConsole.TabIndex = 7;
+            this.btnCopySelectedLinesConsole.Text = "Copy Selected Lines";
+            this.btnCopySelectedLinesConsole.UseVisualStyleBackColor = true;
+            this.btnCopySelectedLinesConsole.Click += new System.EventHandler(this.btnCopySelectedLinesConsole_Click);
+            // 
+            // lbConsole
+            // 
+            this.lbConsole.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbConsole.FormattingEnabled = true;
+            this.lbConsole.Location = new System.Drawing.Point(6, 5);
+            this.lbConsole.Name = "lbConsole";
+            this.lbConsole.Size = new System.Drawing.Size(440, 43);
+            this.lbConsole.TabIndex = 6;
+            this.lbConsole.SizeChanged += new System.EventHandler(this.lbConsole_SizeChanged);
+            // 
+            // btnConsole
+            // 
+            this.btnConsole.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnConsole.Location = new System.Drawing.Point(371, 53);
+            this.btnConsole.Name = "btnConsole";
+            this.btnConsole.Size = new System.Drawing.Size(75, 23);
+            this.btnConsole.TabIndex = 5;
+            this.btnConsole.TabStop = false;
+            this.btnConsole.Text = "Enter";
+            this.btnConsole.UseVisualStyleBackColor = true;
+            this.btnConsole.Click += new System.EventHandler(this.btnConsole_Click);
+            // 
+            // tbConsole
+            // 
+            this.tbConsole.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbConsole.Location = new System.Drawing.Point(6, 51);
+            this.tbConsole.Multiline = true;
+            this.tbConsole.Name = "tbConsole";
+            this.tbConsole.Size = new System.Drawing.Size(359, 25);
+            this.tbConsole.TabIndex = 4;
+            this.tbConsole.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.tbConsole_PreviewKeyDown);
             // 
             // renderBox
             // 
@@ -161,7 +257,7 @@ namespace MogreFramework
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.renderBox.Location = new System.Drawing.Point(3, 3);
             this.renderBox.Name = "renderBox";
-            this.renderBox.Size = new System.Drawing.Size(572, 135);
+            this.renderBox.Size = new System.Drawing.Size(564, 128);
             this.renderBox.TabIndex = 0;
             this.renderBox.TabStop = false;
             this.renderBox.SizeChanged += new System.EventHandler(this.pictureBox1_SizeChanged);
@@ -308,7 +404,7 @@ namespace MogreFramework
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(598, 296);
+            this.tabControl1.Size = new System.Drawing.Size(590, 285);
             this.tabControl1.TabIndex = 9;
             this.tabControl1.TabStop = false;
             // 
@@ -318,7 +414,7 @@ namespace MogreFramework
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(590, 270);
+            this.tabPage1.Size = new System.Drawing.Size(582, 259);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "3D";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -339,8 +435,8 @@ namespace MogreFramework
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tabControl2);
-            this.splitContainer1.Size = new System.Drawing.Size(578, 258);
-            this.splitContainer1.SplitterDistance = 141;
+            this.splitContainer1.Size = new System.Drawing.Size(570, 247);
+            this.splitContainer1.SplitterDistance = 134;
             this.splitContainer1.TabIndex = 4;
             // 
             // tabPage7
@@ -348,7 +444,7 @@ namespace MogreFramework
             this.tabPage7.Controls.Add(this.groupBox4);
             this.tabPage7.Location = new System.Drawing.Point(4, 22);
             this.tabPage7.Name = "tabPage7";
-            this.tabPage7.Size = new System.Drawing.Size(590, 270);
+            this.tabPage7.Size = new System.Drawing.Size(582, 259);
             this.tabPage7.TabIndex = 5;
             this.tabPage7.Text = "Plugins";
             this.tabPage7.UseVisualStyleBackColor = true;
@@ -387,7 +483,7 @@ namespace MogreFramework
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(590, 270);
+            this.tabPage2.Size = new System.Drawing.Size(582, 259);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "log";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -405,7 +501,7 @@ namespace MogreFramework
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(590, 270);
+            this.tabPage3.Size = new System.Drawing.Size(582, 259);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "status";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -494,7 +590,7 @@ namespace MogreFramework
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(590, 270);
+            this.tabPage4.Size = new System.Drawing.Size(582, 259);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "controls";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -508,7 +604,7 @@ namespace MogreFramework
             this.tabPage6.Location = new System.Drawing.Point(4, 22);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(590, 270);
+            this.tabPage6.Size = new System.Drawing.Size(582, 259);
             this.tabPage6.TabIndex = 4;
             this.tabPage6.Text = "About";
             this.tabPage6.UseVisualStyleBackColor = true;
@@ -557,7 +653,7 @@ namespace MogreFramework
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(630, 331);
+            this.ClientSize = new System.Drawing.Size(622, 320);
             this.Controls.Add(this.tabControl1);
             this.MinimumSize = new System.Drawing.Size(638, 358);
             this.Name = "OgreWindow";
@@ -566,6 +662,8 @@ namespace MogreFramework
             this.tabControl2.ResumeLayout(false);
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
+            this.tabPage8.ResumeLayout(false);
+            this.tabPage8.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.renderBox)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
@@ -636,5 +734,12 @@ namespace MogreFramework
         private System.Windows.Forms.Button btnCpy3;
         private System.Windows.Forms.TextBox tbStatus3;
         public System.Windows.Forms.TextBox tbTextToSend;
+        private System.Windows.Forms.TabPage tabPage8;
+        private System.Windows.Forms.CheckBox cbAutoScrollConsole;
+        private System.Windows.Forms.Button btnCopyAllLinesConsole;
+        private System.Windows.Forms.Button btnCopySelectedLinesConsole;
+        private System.Windows.Forms.ListBox lbConsole;
+        private System.Windows.Forms.Button btnConsole;
+        public System.Windows.Forms.TextBox tbConsole;
     }
 }

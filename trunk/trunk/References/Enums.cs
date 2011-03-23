@@ -36,6 +36,7 @@
         DATA_VECTOR3_X,
         DATA_VECTOR3_Y,
         DATA_VECTOR3_Z,
+        DATA_STRING,
         PLAYER_RESET,
 
         NIL,
@@ -48,6 +49,7 @@
         CACHE_CLIENTUPDATEFILE,
         CACHE_CLIENTRENAMEFILE,
 
+        CMD_GO,
 
         CAMCAP,
         CAMCAP_JPG,

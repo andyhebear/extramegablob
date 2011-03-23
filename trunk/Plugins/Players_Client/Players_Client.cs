@@ -241,7 +241,7 @@ namespace ExtraMegaBlob
 
                         TranslateVector_Camera.z -= MoveScale_Camera_forwardback;
                         TranslateVector_Camera.x -= MoveScale_Camera_leftright;
-                        //TranslateVector_Camera.y += MoveScale_Camera_updown;
+                        TranslateVector_Camera.y += MoveScale_Camera_updown;
                         Mogre.Vector3 loc1 = control.Actor.GlobalPosition;
                         Mogre.Vector3 loc = control.Actor.GlobalOrientationQuaternion * TranslateVector_Camera;
                         setPos(loc + loc1);
@@ -253,24 +253,27 @@ namespace ExtraMegaBlob
                         }
                         TranslateVector_Camera = new Mogre.Vector3();
                     }
-                    if (middleMouseState == middleMouseStates.scrolldown)
+                    if (middleMouseMode == middleMouseBehavior.orbitCamDistance)
                     {
-                        camDistance -= .1f;
-                        if (camDistance < 0f)
-                            camDistance = 0f;
-                        updateCam();
-                    }
-                    if (middleMouseState == middleMouseStates.scrollup)
-                    {
-                        camDistance += .1f;
-                        if (camDistance > 100f)
-                            camDistance = 100f;
-                        updateCam();
+                        if (middleMouseState == middleMouseStates.scrolldown)
+                        {
+                            camDistance -= .1f;
+                            if (camDistance < 0f)
+                                camDistance = 0f;
+                            updateCam();
+                        }
+                        if (middleMouseState == middleMouseStates.scrollup)
+                        {
+                            camDistance += .1f;
+                            if (camDistance > 100f)
+                                camDistance = 100f;
+                            updateCam();
+                        }
                     }
                     if (turning_left)
-                        setOrient(control.Actor.GlobalOrientationQuaternion * ModifyAngleAroundAxis(new Degree(2 * .01f), new Mogre.Vector3(0, 1, 0)));
+                        setOrient(control.Actor.GlobalOrientationQuaternion * ModifyAngleAroundAxis(new Degree(2 * .001f), new Mogre.Vector3(0, 1, 0)));
                     if (turning_right)
-                        setOrient(control.Actor.GlobalOrientationQuaternion * ModifyAngleAroundAxis(new Degree(-2 * .01f), new Mogre.Vector3(0, 1, 0)));
+                        setOrient(control.Actor.GlobalOrientationQuaternion * ModifyAngleAroundAxis(new Degree(-2 * .001f), new Mogre.Vector3(0, 1, 0)));
                 }
 
                 Thread.Sleep(1);
@@ -331,6 +334,51 @@ namespace ExtraMegaBlob
                         float.Parse(ev._Memories[KeyWord.DATA_VECTOR3_Z].Value));
 
                     resetPlayer2(v, q);
+
+                    break;
+                case KeyWord.CMD_GO:
+                    this.logConsole("parsing coordinates");
+
+                    string arguments = ev._Memories[KeyWord.DATA_STRING].Value.Trim();
+                    if (arguments == "") return;
+                    //" -63.60852f, 95.18869f, -115.0435f "
+
+                    //resetPlayer2(v, q);
+                    string[] x = arguments.Split(',');
+                    int a = 0;
+                    Mogre.Vector3 u = new Mogre.Vector3();
+                    try
+                    {
+                        for (int s = 0; s < x.Length; s++)
+                        {
+                            string j = x[s].Trim().Replace("f", "");
+                            if (j != "")
+                            {
+                                switch (a)
+                                {
+                                    case 0:
+                                        u.x = float.Parse(j);
+                                        a++;
+                                        break;
+                                    case 1:
+                                        u.y = float.Parse(j);
+                                        a++;
+                                        break;
+                                    case 2:
+                                        u.z = float.Parse(j);
+                                        a++;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    {
+                    }
+                    resetPlayer2(u, nodes["drone"].Orientation);
+                    this.logConsole("coordinates: " + u.ToString());
 
                     break;
                 case KeyWord.PLAYER_FREEZE:
@@ -481,6 +529,12 @@ namespace ExtraMegaBlob
             scrolldown,
             idle
         }
+        private enum middleMouseBehavior
+        {
+            orbitCamDistance,
+            yAxis
+        }
+        private middleMouseBehavior middleMouseMode = middleMouseBehavior.yAxis;
         private middleMouseStates middleMouseState = middleMouseStates.idle;
         private float camDistance = 50f;
         private float MoveScale_Camera_forwardback = 0f;
@@ -503,7 +557,7 @@ namespace ExtraMegaBlob
             if (!player_freeze && !textBarUsage && !consoleBarUsage && !control.Actor.IsDisposed)
             {
                 control.Actor.MoveGlobalPosition(pos);
-                actors.UpdateAllActors(.0f);
+                // actors.UpdateAllActors(.0f);
                 //nodes["drone"].SetPosition(pos.x, pos.y, pos.z);
             }
         }
@@ -512,7 +566,7 @@ namespace ExtraMegaBlob
             if (!player_freeze && !textBarUsage && !consoleBarUsage && !control.Actor.IsDisposed)
             {
                 control.Actor.GlobalOrientationQuaternion = orient;
-                actors.UpdateAllActors(.0f);
+                //  actors.UpdateAllActors(.0f);
                 //nodes["drone"].SetOrientation(orient.w, orient.x, orient.y, orient.z);
             }
         }
@@ -550,12 +604,12 @@ namespace ExtraMegaBlob
 
         private void resetPlayer2(Mogre.Vector3 loc, Quaternion orient)
         {
-            setPos(loc);
-            setOrient(orient);
-            TranslateVector_Camera = loc;
+            TranslateVector_Camera = new Mogre.Vector3(0f, 0f, 0f);
             MoveScale_Camera_forwardback = 0f;
             MoveScale_Camera_leftright = 0f;
             MoveScale_Camera_updown = 0f;
+            setPos(loc);
+            setOrient(orient);
         }
         private bool turning_left = false;
         private bool turning_right = false;
@@ -564,168 +618,151 @@ namespace ExtraMegaBlob
             //float RotateScale_PlayerTurn = .005f;//mouse sensitivity
             while (ready)
             {
-                try
-                {
-
-
-                    if (middlemousetimer.elapsed)
+                if (!consoleBarUsage)
+                    try
                     {
-                        middleMouseState = middleMouseStates.idle;
-                    }
-                    if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_F))
-                    {
-                        if (btnLimiter_F.elapsed)
+                        if (middlemousetimer.elapsed)
                         {
-                            if (!player_freeze && !textBarUsage && !consoleBarUsage)
-                            {
-                                resetPlayer2(new Mogre.Vector3(-1.291305f, 35.18927f, 2.11423f), new Quaternion(0.2246418f, 0f, 0.9744414f, 0f));
-                                updateCam();
-                                sendLocationBeacon(new Mogre.Vector3(-1.291305f, 35.18927f, 2.11423f));
-                            }
-                            btnLimiter_F.start();
+                            middleMouseState = middleMouseStates.idle;
                         }
-                    }
-                    if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_W))
-                    {
+                        if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_W))
+                        {
 
 
 
-                        if (MoveScale_Camera_forwardback > -speedcap_forwardback)
-                            MoveScale_Camera_forwardback -= incr_forwardback;
-                    }
-                    else if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_S))
-                    {
-                        if (MoveScale_Camera_forwardback < speedcap_forwardback)
-                            MoveScale_Camera_forwardback += incr_forwardback;
-                    }
-                    else if (MoveScale_Camera_forwardback != 0f)
-                    {
-                        if (MoveScale_Camera_forwardback > 0f)
-                            MoveScale_Camera_forwardback -= incr_forwardback;
+                            if (MoveScale_Camera_forwardback > -speedcap_forwardback)
+                                MoveScale_Camera_forwardback -= incr_forwardback;
+                        }
+                        else if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_S))
+                        {
+                            if (MoveScale_Camera_forwardback < speedcap_forwardback)
+                                MoveScale_Camera_forwardback += incr_forwardback;
+                        }
+                        else if (MoveScale_Camera_forwardback != 0f)
+                        {
+                            if (MoveScale_Camera_forwardback > 0f)
+                                MoveScale_Camera_forwardback -= incr_forwardback;
+                            else
+                                MoveScale_Camera_forwardback += incr_forwardback;
+                            if (MoveScale_Camera_forwardback < brakes_forwardback && MoveScale_Camera_forwardback > -brakes_forwardback)
+                                MoveScale_Camera_forwardback = 0f;
+                        }
                         else
-                            MoveScale_Camera_forwardback += incr_forwardback;
-                        if (MoveScale_Camera_forwardback < brakes_forwardback && MoveScale_Camera_forwardback > -brakes_forwardback)
+                        {
                             MoveScale_Camera_forwardback = 0f;
-                    }
-                    else
-                    {
-                        MoveScale_Camera_forwardback = 0f;
-                    }
-                    #region strafe
-                    if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_Q))
-                    {
+                        }
+                        #region strafe
+                        if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_Q))
+                        {
 
-                        if (MoveScale_Camera_leftright > -speedcap_leftright)
-                            MoveScale_Camera_leftright -= incr_leftright;
-                        //nodes["drone"].Yaw(-1f * RotateScale_PlayerTurn);
-                        //setOrient(nodes["drone"]._getDerivedOrientation());
-                    }
-                    else if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_E))
-                    {
-                        if (MoveScale_Camera_leftright < speedcap_leftright)
-                            MoveScale_Camera_leftright += incr_leftright;
-                        //nodes["drone"].Yaw(1f * RotateScale_PlayerTurn);
-                        //setOrient(nodes["drone"]._getDerivedOrientation());
-                    }
-                    else if (MoveScale_Camera_leftright != 0f)
-                    {
-                        if (MoveScale_Camera_leftright > 0f)
-                            MoveScale_Camera_leftright -= incr_leftright;
+                            if (MoveScale_Camera_leftright > -speedcap_leftright)
+                                MoveScale_Camera_leftright -= incr_leftright;
+                            //nodes["drone"].Yaw(-1f * RotateScale_PlayerTurn);
+                            //setOrient(nodes["drone"]._getDerivedOrientation());
+                        }
+                        else if (OgreWindow.g_kb.IsKeyDown(MOIS.KeyCode.KC_E))
+                        {
+                            if (MoveScale_Camera_leftright < speedcap_leftright)
+                                MoveScale_Camera_leftright += incr_leftright;
+                            //nodes["drone"].Yaw(1f * RotateScale_PlayerTurn);
+                            //setOrient(nodes["drone"]._getDerivedOrientation());
+                        }
+                        else if (MoveScale_Camera_leftright != 0f)
+                        {
+                            if (MoveScale_Camera_leftright > 0f)
+                                MoveScale_Camera_leftright -= incr_leftright;
+                            else
+                                MoveScale_Camera_leftright += incr_leftright;
+                            if (MoveScale_Camera_leftright < brakes_leftright && MoveScale_Camera_leftright > -brakes_leftright)
+                                MoveScale_Camera_leftright = 0f;
+                        }
                         else
-                            MoveScale_Camera_leftright += incr_leftright;
-                        if (MoveScale_Camera_leftright < brakes_leftright && MoveScale_Camera_leftright > -brakes_leftright)
+                        {
                             MoveScale_Camera_leftright = 0f;
-                    }
-                    else
-                    {
-                        MoveScale_Camera_leftright = 0f;
-                    } 
-                    #endregion
+                        }
+                        #endregion
 
-                    #region Turn Left / Right
-                    if (!OgreWindow.g_kb.IsKeyDown(KeyCode.KC_A) && !OgreWindow.g_kb.IsKeyDown(KeyCode.KC_D))
-                    {
-                        turning_left = false;
-                        turning_right = false;
-                    } 
-                    else if (OgreWindow.g_kb.IsKeyDown(KeyCode.KC_A) && OgreWindow.g_kb.IsKeyDown(KeyCode.KC_D))
-                    {
-                        turning_left = false;
-                        turning_right = false;
+                        #region Turn Left / Right
+                        if (!OgreWindow.g_kb.IsKeyDown(KeyCode.KC_A) && !OgreWindow.g_kb.IsKeyDown(KeyCode.KC_D))
+                        {
+                            turning_left = false;
+                            turning_right = false;
+                        }
+                        else if (OgreWindow.g_kb.IsKeyDown(KeyCode.KC_A) && OgreWindow.g_kb.IsKeyDown(KeyCode.KC_D))
+                        {
+                            turning_left = false;
+                            turning_right = false;
 
-                    }
-                    else if (OgreWindow.g_kb.IsKeyDown(KeyCode.KC_A))
-                    {
-                        turning_left = true;
-                        turning_right = false;
-                    }
-                    else if (OgreWindow.g_kb.IsKeyDown(KeyCode.KC_D))
-                    {
-                        turning_left = false;
-                        turning_right = true;
-                    }
-                    #endregion
+                        }
+                        else if (OgreWindow.g_kb.IsKeyDown(KeyCode.KC_A))
+                        {
+                            turning_left = true;
+                            turning_right = false;
+                        }
+                        else if (OgreWindow.g_kb.IsKeyDown(KeyCode.KC_D))
+                        {
+                            turning_left = false;
+                            turning_right = true;
+                        }
+                        #endregion
 
-                    if (middleMouseState == middleMouseStates.scrolldown)
-                    {
-                        if (MoveScale_Camera_updown > -speedcap_updown)
-                            MoveScale_Camera_updown -= incr_updown;
-                    }
-                    else if (middleMouseState == middleMouseStates.scrollup)
-                    {
-                        if (MoveScale_Camera_updown < speedcap_updown)
-                            MoveScale_Camera_updown += incr_updown;
-                    }
-                    else if (MoveScale_Camera_updown != 0f)
-                    {
-                        if (MoveScale_Camera_updown > 0f)
-                            MoveScale_Camera_updown -= incr_updown;
+                        if (middleMouseState == middleMouseStates.scrolldown)
+                        {
+                            if (MoveScale_Camera_updown > -speedcap_updown)
+                                MoveScale_Camera_updown -= incr_updown;
+                        }
+                        else if (middleMouseState == middleMouseStates.scrollup)
+                        {
+                            if (MoveScale_Camera_updown < speedcap_updown)
+                                MoveScale_Camera_updown += incr_updown;
+                        }
+                        else if (MoveScale_Camera_updown != 0f)
+                        {
+                            if (MoveScale_Camera_updown > 0f)
+                                MoveScale_Camera_updown -= incr_updown;
+                            else
+                                MoveScale_Camera_updown += incr_updown;
+                            if (MoveScale_Camera_updown < brakes_updown && MoveScale_Camera_updown > -brakes_updown)
+                                MoveScale_Camera_updown = 0f;
+                        }
                         else
-                            MoveScale_Camera_updown += incr_updown;
-                        if (MoveScale_Camera_updown < brakes_updown && MoveScale_Camera_updown > -brakes_updown)
+                        {
                             MoveScale_Camera_updown = 0f;
+                        }
+                        //TranslateVector_Camera.z -= MoveScale_Camera_forwardback;
+                        //TranslateVector_Camera.x -= MoveScale_Camera_leftright;
+                        //TranslateVector_Camera.y += MoveScale_Camera_updown;
+
+                        if (MoveScale_Camera_updown != 0f)
+                        {
+                            //control.Actor.AddForce(new Mogre.Vector3(0f, MoveScale_Camera_updown, 0f));
+                            //chat(MoveScale_Camera_updown.ToString());
+
+                            //this.camDistance += MoveScale_Camera_updown;
+                            //resetCam();
+                        }
+
+
+
+                        //control.Actor.AddForce(loc);
+
+
+
+                        //actors["drone"].actor.AddLocalTorque(new Mogre.Vector3(0f, 1000f, 0f));
+                        //actors["drone"].actor.AddLocalForce(loc);
+
+                        // actors["drone"].actor.LinearVelocity = loc; //kinda works
+                        //actors["drone"].actor.GlobalOrientation..Orientation.ToRotationMatrix();
+                        // if (nodes["drone"].Orientation.Roll.ValueDegrees > 0)
+                        //     actors["drone"].actor.AddLocalTorque(new Mogre.Vector3(0f, 1000f, 0f));
 
                     }
-                    else
-                    {
-                        MoveScale_Camera_updown = 0f;
-                    }
-                    //TranslateVector_Camera.z -= MoveScale_Camera_forwardback;
-                    //TranslateVector_Camera.x -= MoveScale_Camera_leftright;
-                    //TranslateVector_Camera.y += MoveScale_Camera_updown;
-
-                    if (MoveScale_Camera_updown != 0f)
-                    {
-                        //control.Actor.AddForce(new Mogre.Vector3(0f, MoveScale_Camera_updown, 0f));
-                        //chat(MoveScale_Camera_updown.ToString());
-
-                        //this.camDistance += MoveScale_Camera_updown;
-                        //resetCam();
-                    }
-
-
-
-                    //control.Actor.AddForce(loc);
-
-
-
-                    //actors["drone"].actor.AddLocalTorque(new Mogre.Vector3(0f, 1000f, 0f));
-                    //actors["drone"].actor.AddLocalForce(loc);
-
-                    // actors["drone"].actor.LinearVelocity = loc; //kinda works
-                    //actors["drone"].actor.GlobalOrientation..Orientation.ToRotationMatrix();
-                    // if (nodes["drone"].Orientation.Roll.ValueDegrees > 0)
-                    //     actors["drone"].actor.AddLocalTorque(new Mogre.Vector3(0f, 1000f, 0f));
-
-                }
-                catch (Exception ex) { log(ex.ToString()); }
+                    catch (Exception ex) { log(ex.ToString()); }
 
                 Thread.Sleep(100);
 
             }
         }
-
-
         public override void updateHook()
         {
             if (t.elapsed)
@@ -735,7 +772,7 @@ namespace ExtraMegaBlob
             }
             if (ready)
             {
-                walkState.AddTime(.01f);
+                walkState.AddTime(MoveScale_Camera_forwardback * .1f);
                 //actors.UpdateAllActors(.1f);
                 // actors.UpdateActor(.1f, "drone", control.Actor);
 

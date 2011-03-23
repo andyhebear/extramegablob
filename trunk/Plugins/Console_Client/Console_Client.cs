@@ -3,6 +3,7 @@ using System.Collections;
 using System.Windows.Forms;
 using Mogre;
 using MogreFramework;
+using ExtraMegaBlob.References;
 namespace ExtraMegaBlob
 {
     public class plugin : ExtraMegaBlob.References.ClientPlugin
@@ -23,9 +24,18 @@ namespace ExtraMegaBlob
             {
                 if (text.Substring(0, 2) == "go")
                 {
-                    //do something
+                    cmd_go(text.Substring(2, text.Length - 2));
                 }
             }
+        }
+        private void cmd_go(string s)
+        {
+            Event ev = new Event();
+            ev._Memories = new Memories();
+            ev._Memories.Add(new Memory("", KeyWord.DATA_STRING, s));
+            ev._Keyword = KeyWord.CMD_GO;
+            ev._IntendedRecipients = EventTransfer.CLIENTTOCLIENT;
+            this.outboxMessage(this, ev);
         }
         public override void shutdown()
         {

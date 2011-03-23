@@ -1110,7 +1110,7 @@ namespace MogreFramework
         public bool AskQuestionBool(string question)
         {
             DialogResult result;
-            result = MessageBox.Show(question, "Question", MessageBoxButtons.YesNo);
+            result = MessageBox.Show( question, "Question", MessageBoxButtons.YesNo);
             return (result == System.Windows.Forms.DialogResult.Yes) ? true : false;
         }
         public void AskQuestionString(int secondsTimeout, string question, bool optionalAnswer, bool requiredAnswer)

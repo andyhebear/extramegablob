@@ -300,8 +300,9 @@ namespace ExtraMegaBlob
                 #region cards
 
                 Thread.Sleep(5000);
-                resetPlayer(1);
-
+                
+                //only 1 entity needed
+                entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("card", "\\TongIts\\Card.mesh"));
 
                 foreach (string suit in suits)
                 {
@@ -348,7 +349,9 @@ namespace ExtraMegaBlob
                 //}
 
                 #endregion
-
+                resetPlayer(1);
+                this.btnLimiter_F.reset();
+                this.btnLimiter_F.start();
                 ready = true;
             }
 
@@ -360,11 +363,11 @@ namespace ExtraMegaBlob
         }
         private void createCard(string cardName)
         {
-            entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity(cardName, "\\TongIts\\Card.mesh"));
-            entities[cardName].SetMaterialName(cardName);
+            //entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity(cardName, "\\TongIts\\Card.mesh"));
+            //entities[cardName].SetMaterialName(cardName);
             nodes.Add(nodes["table"].CreateChildSceneNode(cardName));
-            nodes[cardName].AttachObject(entities[cardName]);
-            nodes[cardName].Position = Location().toMogre + (new Mogre.Vector3(0f, 15f, 0f));
+            nodes[cardName].AttachObject(entities["card"]);
+            nodes[cardName].Position = Location().toMogre + (new Mogre.Vector3(0f, 15f, 0f)); //this line is wrong
         }
 
 
@@ -456,9 +459,19 @@ namespace ExtraMegaBlob
             {
                 nodes["baseball"].Yaw(new Radian(new Degree(1f)));
                 actors.UpdateAllActors(.1f);
+
+                if (btnLimiter_F.elapsed)
+                {
+                    if (keyboard.IsKeyDown(KeyCode.KC_F))
+                    {
+                        resetPlayer(1);
+                    }
+                    btnLimiter_F.start();
+                } 
+                
             }
         }
-
+        private timer btnLimiter_F = new timer(new TimeSpan(0, 0, 1));
 
 
         private void resetPlayer(int playerNumber)

@@ -22,9 +22,8 @@ namespace ExtraMegaBlob
         private static TimeSpan captureInterval = new TimeSpan(0, 0, 0, 0, 1000);
         private timer captureTimer = new timer(captureInterval);
         private string capTexture = "webcapCapture";
-        public override void startup()
+        public override void init()
         {
-            log("starting up!");
             if (!TextureManager.Singleton.ResourceExists(capTexture))
             {
                 //OgreWindow.Instance.textures.Add(TextureManager.Singleton.CreateManual(capTexture, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME,

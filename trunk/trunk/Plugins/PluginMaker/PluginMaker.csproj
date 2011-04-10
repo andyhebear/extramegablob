@@ -5,14 +5,13 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{2E5AE8EC-45C9-44C2-9366-A8DC7DC5B5AD}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{4347C912-E70F-436F-80CF-FA9F104153FC}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MousePick_Client</RootNamespace>
-    <AssemblyName>MousePick_Client</AssemblyName>
+    <RootNamespace>PluginMaker</RootNamespace>
+    <AssemblyName>PluginMaker</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -34,33 +33,20 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
-    <Compile Include="MousePick_Client.cs" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ExtraMegaBlob.References">
-      <HintPath>..\..\bin\ExtraMegaBlob.References.dll</HintPath>
-    </Reference>
-    <Reference Include="Mogre">
-      <HintPath>..\..\bin\Mogre.dll</HintPath>
-    </Reference>
-    <Reference Include="MogreFramework">
-      <HintPath>..\..\bin\MogreFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="MOIS">
-      <HintPath>..\..\bin\MOIS.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Windows.Forms" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Program.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>copy "$(ProjectDir)\MousePick_Client.cs" "$(SolutionDir)\..\bin\servercache\MousePick_Client.cs"
-copy "$(ProjectDir)\MousePick_Client.cs" "$(SolutionDir)\..\bin\cache\MousePick_Client.cs"</PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

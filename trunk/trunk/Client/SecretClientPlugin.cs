@@ -18,6 +18,10 @@ namespace ExtraMegaBlob.Client
 {
     class SecretClientPlugin : ClientPlugin
     {
+        public override void init()
+        {
+            throw new NotImplementedException();
+        }
         unsafe class resourceLoaderMeshBasic : ManualResourceLoader
         {
             public override void LoadResource(Resource resource)
@@ -67,13 +71,13 @@ namespace ExtraMegaBlob.Client
             }
         }
 
-        public override void startup()
-        {
-            log("starting up!");
+        //public override void startup()
+        //{
+        //    log("starting up!");
             
 
-            //    OgreWindow.Instance.textures[       "\\TongIts\\200px-Playing_card_spade_A.svg.png"].
-        }
+        //    //    OgreWindow.Instance.textures[       "\\TongIts\\200px-Playing_card_spade_A.svg.png"].
+        //}
 
         
         private void addCheeriosBox()

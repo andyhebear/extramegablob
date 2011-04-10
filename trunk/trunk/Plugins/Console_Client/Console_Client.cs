@@ -8,11 +8,9 @@ namespace ExtraMegaBlob
 {
     public class plugin : ExtraMegaBlob.References.ClientPlugin
     {
-        public override void startup()
+        public override void init()
         {
-            log("starting up");
             OgreWindow.Instance.onConsoleInput += new OgreWindow.consoleInputDelegate(Instance_onConsoleInput);
-            log("done starting up");
         }
 
         private void Instance_onConsoleInput(string text)

@@ -123,8 +123,8 @@ namespace ExtraMegaBlob.Client
             {
                 if (!object.Equals(null, allPlugins[i]))
                 {
-                    try { ((ClientPlugin)allPlugins[i]).updateHook(); }
-                    catch (Exception ex) { log(ex.ToString()); }
+                    try { ((ClientPlugin)allPlugins[i]).tryupdateHook(); }
+                    catch (Exception ex) { log( ex.ToString()); }
                 }
             }
         }

@@ -51,162 +51,119 @@ namespace ExtraMegaBlob
         }
         private BoxControllerDesc bcd = new BoxControllerDesc();
         private BoxController control = null;
-        private void resourceWaitThread()
+
+        public override void init()
         {
-            while (true)
+
+            #region ground
+            MeshManager.Singleton.CreatePlane("ground",
+                ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME,
+                new Plane(Mogre.Vector3.UNIT_Y, 0),
+                1500, 1500, 20, 20, true, 1, 5, 5, Mogre.Vector3.UNIT_Z);
+            // Create a ground plane
+            entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("GroundEntity", "ground"));
+            entities["GroundEntity"].CastShadows = false;
+            entities["GroundEntity"].SetMaterialName("dirt");
+            nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("ground"));
+            nodes["ground"].AttachObject(entities["GroundEntity"]);
+            nodes["ground"].Position = new Mogre.Vector3(0f, 0f, 0f) + Location().toMogre;
+
+            // the actor properties control the mass, position and orientation
+            // if you leave the body set to null it will become a static actor and wont move
+            ActorDesc actorDesc2 = new ActorDesc();
+            actorDesc2.Density = 4;
+            actorDesc2.Body = null;
+            actorDesc2.GlobalPosition = nodes["ground"].Position;
+            actorDesc2.GlobalOrientation = nodes["ground"].Orientation.ToRotationMatrix();
+
+
+            PhysXHelpers.StaticMeshData meshdata = new PhysXHelpers.StaticMeshData(entities["GroundEntity"].GetMesh());
+            actorDesc2.Shapes.Add(PhysXHelpers.CreateTriangleMesh(meshdata));
+            Actor actor2 = null;
+            try { actor2 = OgreWindow.Instance.scene.CreateActor(actorDesc2); }
+            catch (System.AccessViolationException ex) { log(ex.ToString()); }
+            if (actor2 != null)
             {
-                Thread.Sleep(1000);
-
-                foreach (DictionaryEntry de in materials_lookup)
-                {
-                    if (!TextureManager.Singleton.ResourceExists((string)de.Value)) goto waitmore;
-                }
-                foreach (DictionaryEntry de in skeletons_lookup)
-                {
-                    if (!SkeletonManager.Singleton.ResourceExists((string)de.Value)) goto waitmore;
-                }
-                foreach (DictionaryEntry de in meshes_lookup)
-                {
-                    if (!MeshManager.Singleton.ResourceExists((string)de.Value)) goto waitmore;
-                }
-                if (!OgreWindow.Instance.mSceneMgr.HasSceneNode("mushroom")) goto waitmore;
-                if (!OgreWindow.Instance.SceneReady) goto waitmore;
-
-
-                break;
-            waitmore:
-                continue;
+                // create our special actor node to tie together the scene node and actor that we can update its position later
+                ActorNode actorNode2 = new ActorNode(nodes["ground"], actor2);
+                actors.Add(actorNode2);
             }
-            init();
-        }
-        private void init()
-        {
-            log("starting up! ");
-            OgreWindow.Instance.pause();
-            try
-            {
-                Hashtable mats = materials_lookup;
-                foreach (DictionaryEntry mat in mats)
-                {
-                    materials.Add((MaterialPtr)MaterialManager.Singleton.Create((string)mat.Key, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME));
-                    materials[(string)mat.Key].GetTechnique(0).GetPass(0).CreateTextureUnitState((string)mat.Value);
-                }
-                #region ground
-                MeshManager.Singleton.CreatePlane("ground",
-                    ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME,
-                    new Plane(Mogre.Vector3.UNIT_Y, 0),
-                    1500, 1500, 20, 20, true, 1, 5, 5, Mogre.Vector3.UNIT_Z);
-                // Create a ground plane
-                entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("GroundEntity", "ground"));
-                entities["GroundEntity"].CastShadows = false;
-                entities["GroundEntity"].SetMaterialName("dirt");
-                nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("ground"));
-                nodes["ground"].AttachObject(entities["GroundEntity"]);
-                nodes["ground"].Position = new Mogre.Vector3(0f, 0f, 0f) + Location().toMogre;
-
-                // the actor properties control the mass, position and orientation
-                // if you leave the body set to null it will become a static actor and wont move
-                ActorDesc actorDesc2 = new ActorDesc();
-                actorDesc2.Density = 4;
-                actorDesc2.Body = null;
-                actorDesc2.GlobalPosition = nodes["ground"].Position;
-                actorDesc2.GlobalOrientation = nodes["ground"].Orientation.ToRotationMatrix();
-
-
-                PhysXHelpers.StaticMeshData meshdata = new PhysXHelpers.StaticMeshData(entities["GroundEntity"].GetMesh());
-                actorDesc2.Shapes.Add(PhysXHelpers.CreateTriangleMesh(meshdata));
-                Actor actor2 = null;
-                try { actor2 = OgreWindow.Instance.scene.CreateActor(actorDesc2); }
-                catch (System.AccessViolationException ex) { log(ex.ToString()); }
-                if (actor2 != null)
-                {
-                    // create our special actor node to tie together the scene node and actor that we can update its position later
-                    ActorNode actorNode2 = new ActorNode(nodes["ground"], actor2);
-                    actors.Add(actorNode2);
-                }
-                #endregion
+            #endregion
 
 
 
-                lights.Add(OgreWindow.Instance.mSceneMgr.CreateLight("playerLight"));
-                lights["playerLight"].Type = Light.LightTypes.LT_POINT;
-                lights["playerLight"].Position = Location().toMogre;
-                lights["playerLight"].DiffuseColour = ColourValue.White;
-                lights["playerLight"].SpecularColour = ColourValue.White;
+            lights.Add(OgreWindow.Instance.mSceneMgr.CreateLight("playerLight"));
+            lights["playerLight"].Type = Light.LightTypes.LT_POINT;
+            lights["playerLight"].Position = Location().toMogre;
+            lights["playerLight"].DiffuseColour = ColourValue.White;
+            lights["playerLight"].SpecularColour = ColourValue.White;
 
-                #region drone
+            #region drone
 
-                OgreWindow.Instance.skeletons["\\Drone.skeleton"].Load();
-                OgreWindow.Instance.meshes["\\Drone.mesh"].Load();
-                OgreWindow.Instance.meshes["\\Drone.mesh"].SkeletonName = "\\Drone.skeleton";
+            OgreWindow.Instance.skeletons["\\Drone.skeleton"].Load();
+            OgreWindow.Instance.meshes["\\Drone.mesh"].Load();
+            OgreWindow.Instance.meshes["\\Drone.mesh"].SkeletonName = "\\Drone.skeleton";
 
-                entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("drone", "\\Drone.mesh"));
+            entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("drone", "\\Drone.mesh"));
 
-                entities["drone"].CastShadows = true;
-                walkState = entities["drone"].GetAnimationState("walk");
-                walkState.Enabled = true;
-                walkState.Loop = true;
-                entities["drone"].SetMaterialName("metal");
-                nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("drone"));
-                nodes["drone"].AttachObject(entities["drone"]);
-                nodes["drone"].Position = new Mogre.Vector3(0f, 40f, 0f) + Location().toMogre;
-                nodes["drone"].Scale(new Mogre.Vector3(.3f));
+            entities["drone"].CastShadows = true;
+            walkState = entities["drone"].GetAnimationState("walk");
+            walkState.Enabled = true;
+            walkState.Loop = true;
+            entities["drone"].SetMaterialName("metal");
+            nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("drone"));
+            nodes["drone"].AttachObject(entities["drone"]);
+            nodes["drone"].Position = new Mogre.Vector3(0f, 40f, 0f) + Location().toMogre;
+            nodes["drone"].Scale(new Mogre.Vector3(.3f));
 
-                nodes.Add(nodes["drone"].CreateChildSceneNode("orbit0"));
-                nodes.Add(nodes["orbit0"].CreateChildSceneNode("orbit"));
-                nodes["orbit"].Position = Location().toMogre;
-                nodes["orbit"].AttachObject(OgreWindow.Instance.mCamera);
-                nodes["drone"].SetFixedYawAxis(true);
-
-
-
-                #endregion
+            nodes.Add(nodes["drone"].CreateChildSceneNode("orbit0"));
+            nodes.Add(nodes["orbit0"].CreateChildSceneNode("orbit"));
+            nodes["orbit"].Position = Location().toMogre;
+            nodes["orbit"].AttachObject(OgreWindow.Instance.mCamera);
+            nodes["drone"].SetFixedYawAxis(true);
 
 
-                //#region baseball
-                //entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("baseball", "\\baseball.mesh"));
-                //entities["baseball"].SetMaterialName("baseball");
-                ////nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("baseball"));
-                //nodes.Add(nodes["drone"].CreateChildSceneNode("baseball"));
-                //nodes["baseball"].AttachObject(entities["baseball"]);
-                //nodes["baseball"].SetScale(.5f, .5f, .5f);
-                //nodes["baseball"].SetPosition(-3f, 7f, 3f);
-                //// nodes["baseball"].SetScale(5f, 5f, 5f);
-                //#endregion
 
-                #region player physics
-                bcd = new BoxControllerDesc();
-                control = OgreWindow.Instance.physics.ControllerManager.CreateController(OgreWindow.Instance.scene, bcd); //System.NullReferenceException
-                #endregion
+            #endregion
 
-                nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("suspensionY"));
 
-                OgreWindow.g_m.MouseMoved += new MouseListener.MouseMovedHandler(mouseMoved);
-                middlemousetimer.reset();
-                middlemousetimer.start();
+            //#region baseball
+            //entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("baseball", "\\baseball.mesh"));
+            //entities["baseball"].SetMaterialName("baseball");
+            ////nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("baseball"));
+            //nodes.Add(nodes["drone"].CreateChildSceneNode("baseball"));
+            //nodes["baseball"].AttachObject(entities["baseball"]);
+            //nodes["baseball"].SetScale(.5f, .5f, .5f);
+            //nodes["baseball"].SetPosition(-3f, 7f, 3f);
+            //// nodes["baseball"].SetScale(5f, 5f, 5f);
+            //#endregion
 
-                this.btnLimiter_F.reset();
-                this.btnLimiter_F.start();
+            #region player physics
+            bcd = new BoxControllerDesc();
+            control = OgreWindow.Instance.physics.ControllerManager.CreateController(OgreWindow.Instance.scene, bcd); //System.NullReferenceException
+            #endregion
 
-                ready = true;
-                new Thread(new ThreadStart(controlThread)).Start();
-                new Thread(new ThreadStart(statusUpdaterThread)).Start();
+            nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("suspensionY"));
 
-                localY = nodes["drone"]._getDerivedOrientation() * Mogre.Vector3.UNIT_Y;
-                localZ = nodes["drone"]._getDerivedOrientation() * Mogre.Vector3.UNIT_Z;
-                localX = nodes["drone"]._getDerivedOrientation() * Mogre.Vector3.UNIT_X;
+            OgreWindow.g_m.MouseMoved += new MouseListener.MouseMovedHandler(mouseMoved);
+            middlemousetimer.reset();
+            middlemousetimer.start();
 
-                OgreWindow.Instance.tbTextToSend.GotFocus += new EventHandler(tbTextToSend_GotFocus);
-                OgreWindow.Instance.tbTextToSend.LostFocus += new EventHandler(tbTextToSend_LostFocus);
-                OgreWindow.Instance.tbConsole.GotFocus += new EventHandler(tbConsole_GotFocus);
-                OgreWindow.Instance.tbConsole.LostFocus += new EventHandler(tbConsole_LostFocus);
-            }
-            catch (Exception ex)
-            {
-                log(ex.ToString());
-            }
-            OgreWindow.Instance.unpause();
-            log("done starting up! ");
+            this.btnLimiter_F.reset();
+            this.btnLimiter_F.start();
+
+            ready = true;
+            new Thread(new ThreadStart(controlThread)).Start();
+            new Thread(new ThreadStart(statusUpdaterThread)).Start();
+
+            localY = nodes["drone"]._getDerivedOrientation() * Mogre.Vector3.UNIT_Y;
+            localZ = nodes["drone"]._getDerivedOrientation() * Mogre.Vector3.UNIT_Z;
+            localX = nodes["drone"]._getDerivedOrientation() * Mogre.Vector3.UNIT_X;
+
+            OgreWindow.Instance.tbTextToSend.GotFocus += new EventHandler(tbTextToSend_GotFocus);
+            OgreWindow.Instance.tbTextToSend.LostFocus += new EventHandler(tbTextToSend_LostFocus);
+            OgreWindow.Instance.tbConsole.GotFocus += new EventHandler(tbConsole_GotFocus);
+            OgreWindow.Instance.tbConsole.LostFocus += new EventHandler(tbConsole_LostFocus);
         }
 
         void tbConsole_LostFocus(object sender, EventArgs e)
@@ -283,10 +240,6 @@ namespace ExtraMegaBlob
         private Mogre.Vector3 localZ = new Mogre.Vector3();
         private Mogre.Vector3 localX = new Mogre.Vector3();
         private AnimationState walkState = null;
-        public override void startup()
-        {
-            new Thread(new ThreadStart(resourceWaitThread)).Start();
-        }
         public override void shutdown()
         {
             ready = false;
@@ -772,14 +725,12 @@ namespace ExtraMegaBlob
             }
             if (ready)
             {
-                walkState.AddTime(MoveScale_Camera_forwardback * .1f);
-                //actors.UpdateAllActors(.1f);
-                // actors.UpdateActor(.1f, "drone", control.Actor);
+                if (walkState != null)
+                    walkState.AddTime(MoveScale_Camera_forwardback * .1f);
 
                 if (control.Actor == null) return;
                 if (!control.Actor.IsSleeping)
                 {
-                    // nodes["drone"].Position = control.Actor.GlobalPosition;
                     lights["playerLight"].Position = control.Actor.GlobalPosition;
                     nodes["drone"].Position = control.Actor.GlobalPosition;
                     nodes["drone"].Orientation = control.Actor.GlobalOrientationQuaternion;
@@ -793,7 +744,6 @@ namespace ExtraMegaBlob
         }
         timer scaleLimiter = new timer(new TimeSpan(0, 0, 1));
 
-        private bool ready = false;
         public override void frameHook(float interpolation)
         {
 

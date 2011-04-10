@@ -146,235 +146,193 @@ namespace ExtraMegaBlob
                 return playerSeatLocation;
             }
         }
-        private void resourceWaitThread()
+        public override void init()
         {
-            while (true)
+            lights.Add(OgreWindow.Instance.mSceneMgr.CreateLight("testLight"));
+            lights["testLight"].Type = Light.LightTypes.LT_POINT;
+            lights["testLight"].Position = new Mogre.Vector3(-117.9847f, 120f, 234.2695f) + Location().toMogre;
+            lights["testLight"].DiffuseColour = ColourValue.White;
+            lights["testLight"].SpecularColour = ColourValue.White;
+
+            lights.Add(OgreWindow.Instance.mSceneMgr.CreateLight("testLight2"));
+            lights["testLight2"].Type = Light.LightTypes.LT_POINT;
+            lights["testLight2"].Position = new Mogre.Vector3(1.408661f, 54.81305f, -3.154539f) + Location().toMogre;
+            lights["testLight2"].DiffuseColour = ColourValue.White;
+            lights["testLight2"].SpecularColour = ColourValue.White;
+
+            //MeshManager.Singleton.CreatePlane("ground",
+            //    ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME,
+            //    new Plane(Mogre.Vector3.UNIT_Y, 0),
+            //    1500, 1500, 20, 20, true, 1, 5, 5, Mogre.Vector3.UNIT_Z);
+            //// Create a ground plane
+            //entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("GroundEntity", "ground"));
+            //entities["GroundEntity"].CastShadows = false;
+            //entities["GroundEntity"].SetMaterialName("dirt");
+            //nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("ground"));
+            //nodes["ground"].AttachObject(entities["GroundEntity"]);
+            //nodes["ground"].Position = new Mogre.Vector3(0f, 0f, 0f) + Location().toMogre;
+
+            //our "ground" is a mushroom :)
+            entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("mushroom", "\\TongIts\\mushroom.mesh"));
+            entities["mushroom"].SetMaterialName("mushroom");
+            nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("mushroom"));
+            nodes["mushroom"].AttachObject(entities["mushroom"]);
+            nodes["mushroom"].Position = new Mogre.Vector3(0f, -20f, 0f) + Location().toMogre;
+            nodes["mushroom"].Scale(new Mogre.Vector3(100f));
+            nodes["mushroom"].Roll(new Radian(new Degree(90f)));
+            preventMousePick("mushroom");
+
+
+            #region physics
+
+            // physics
+            // attaching a body to the actor makes it dynamic, you can set things like initial velocity
+            BodyDesc bodyDesc = new BodyDesc();
+            bodyDesc.LinearVelocity = new Mogre.Vector3(0, 2, 5);
+
+            // the actor properties control the mass, position and orientation
+            // if you leave the body set to null it will become a static actor and wont move
+            ActorDesc actorDesc = new ActorDesc();
+            actorDesc.Density = 4;
+            actorDesc.Body = null;
+            actorDesc.GlobalPosition = nodes["mushroom"].Position;
+            actorDesc.GlobalOrientation = nodes["mushroom"].Orientation.ToRotationMatrix();
+
+            // a quick trick the get the size of the physics shape right is to use the bounding box of the entity
+            //actorDesc.Shapes.Add(new SphereShapeDesc(1f));//entities["drone"].BoundingBox.HalfSize * scale, entities["drone"].BoundingBox.Center * scale
+
+
+
+            PhysXHelpers.StaticMeshData meshdata = new PhysXHelpers.StaticMeshData(entities["mushroom"].GetMesh());
+            actorDesc.Shapes.Add(PhysXHelpers.CreateTriangleMesh(meshdata));
+
+            Actor actor = null;
+            // finally, create the actor in the physics scene
+            try { actor = OgreWindow.Instance.scene.CreateActor(actorDesc); }
+            catch { }
+            // if (actor == null)
+            //    OgreWindow.Instance.CloseForm();
+            if (actor != null)
             {
-                Thread.Sleep(1000);
-                foreach (DictionaryEntry de in materials_lookup)
-                {
-                    if (!TextureManager.Singleton.ResourceExists((string)de.Value)) goto waitmore;
-                }
-                foreach (DictionaryEntry de in skeletons_lookup)
-                {
-                    if (!SkeletonManager.Singleton.ResourceExists((string)de.Value)) goto waitmore;
-                }
-                foreach (DictionaryEntry de in meshes_lookup)
-                {
-                    if (!MeshManager.Singleton.ResourceExists((string)de.Value)) goto waitmore;
-                }
-                break;
-            waitmore:
-                continue;
+                // create our special actor node to tie together the scene node and actor that we can update its position later
+                ActorNode actorNode = new ActorNode(nodes["mushroom"], actor);
+                actors.Add(actorNode);
             }
-            init();
-        }
-        private void init()
-        {
-            log("starting up! ");
-            OgreWindow.Instance.pause();
-            try
+            #endregion
+
+
+
+            #region table
+            entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("tongitstable", "\\TongIts\\tongitstable.mesh"));
+            nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("table"));
+            nodes["table"].AttachObject(entities["tongitstable"]);
+            nodes["table"].Position = new Mogre.Vector3(0f, 36f, 0f) + Location().toMogre;
+            //nodes["table"].Scale(new Mogre.Vector3(4f));
+            //preventMousePick("tongitstable");
+            // physics
+            // attaching a body to the actor makes it dynamic, you can set things like initial velocity
+            bodyDesc.LinearVelocity = new Mogre.Vector3(0, 0, 0);
+
+            // the actor properties control the mass, position and orientation
+            // if you leave the body set to null it will become a static actor and wont move
+            ActorDesc tableActorDesc = new ActorDesc();
+            tableActorDesc.Density = 4;
+            tableActorDesc.Body = null;
+            tableActorDesc.GlobalPosition = nodes["table"].Position;
+            tableActorDesc.GlobalOrientation = nodes["table"].Orientation.ToRotationMatrix();
+            PhysXHelpers.StaticMeshData tableMeshData = new PhysXHelpers.StaticMeshData(entities["tongitstable"].GetMesh());
+            tableActorDesc.Shapes.Add(PhysXHelpers.CreateTriangleMesh(tableMeshData));
+
+            Actor tableActor = null;
+            // finally, create the actor in the physics scene
+            try { tableActor = OgreWindow.Instance.scene.CreateActor(tableActorDesc); }
+            catch { }
+            if (tableActor != null)
             {
-                Hashtable mats = materials_lookup;
-                foreach (DictionaryEntry mat in mats)
+                actors.Add(new ActorNode(nodes["table"], tableActor));
+            }
+            #endregion
+
+            #region baseball
+            entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("baseball", "\\baseball.mesh"));
+            entities["baseball"].SetMaterialName("baseball");
+            //nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("baseball"));
+            nodes.Add(nodes["table"].CreateChildSceneNode("baseball"));
+            nodes["baseball"].AttachObject(entities["baseball"]);
+            //nodes["baseball"].SetScale(.5f, .5f, .5f);
+            nodes["baseball"].SetPosition(Location().x, Location().y, Location().z);
+            // nodes["baseball"].SetScale(5f, 5f, 5f);
+            #endregion
+
+            #region cards
+
+            Thread.Sleep(5000);
+
+            //only 1 entity needed
+            entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("card", "\\TongIts\\Card.mesh"));
+
+            foreach (string suit in suits)
+            {
+                for (int i = 2; i < 11; i++)
                 {
-                    materials.Add((MaterialPtr)MaterialManager.Singleton.Create((string)mat.Key, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME));
-                    materials[(string)mat.Key].GetTechnique(0).GetPass(0).CreateTextureUnitState((string)mat.Value);
+                    string cardname = string.Format("{0} {1}", suit, i);
+                    createCard(cardname);
+                    placeCard(0, cardname);
                 }
-                lights.Add(OgreWindow.Instance.mSceneMgr.CreateLight("testLight"));
-                lights["testLight"].Type = Light.LightTypes.LT_POINT;
-                lights["testLight"].Position = new Mogre.Vector3(-117.9847f, 120f, 234.2695f) + Location().toMogre;
-                lights["testLight"].DiffuseColour = ColourValue.White;
-                lights["testLight"].SpecularColour = ColourValue.White;
-
-                lights.Add(OgreWindow.Instance.mSceneMgr.CreateLight("testLight2"));
-                lights["testLight2"].Type = Light.LightTypes.LT_POINT;
-                lights["testLight2"].Position = new Mogre.Vector3(1.408661f, 54.81305f, -3.154539f) + Location().toMogre;
-                lights["testLight2"].DiffuseColour = ColourValue.White;
-                lights["testLight2"].SpecularColour = ColourValue.White;
-
-                //MeshManager.Singleton.CreatePlane("ground",
-                //    ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME,
-                //    new Plane(Mogre.Vector3.UNIT_Y, 0),
-                //    1500, 1500, 20, 20, true, 1, 5, 5, Mogre.Vector3.UNIT_Z);
-                //// Create a ground plane
-                //entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("GroundEntity", "ground"));
-                //entities["GroundEntity"].CastShadows = false;
-                //entities["GroundEntity"].SetMaterialName("dirt");
-                //nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("ground"));
-                //nodes["ground"].AttachObject(entities["GroundEntity"]);
-                //nodes["ground"].Position = new Mogre.Vector3(0f, 0f, 0f) + Location().toMogre;
-
-                //our "ground" is a mushroom :)
-                entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("mushroom", "\\TongIts\\mushroom.mesh"));
-                entities["mushroom"].SetMaterialName("mushroom");
-                nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("mushroom"));
-                nodes["mushroom"].AttachObject(entities["mushroom"]);
-                nodes["mushroom"].Position = new Mogre.Vector3(0f, -20f, 0f) + Location().toMogre;
-                nodes["mushroom"].Scale(new Mogre.Vector3(100f));
-                nodes["mushroom"].Roll(new Radian(new Degree(90f)));
-                preventMousePick("mushroom");
-
-
-                #region physics
-
-                // physics
-                // attaching a body to the actor makes it dynamic, you can set things like initial velocity
-                BodyDesc bodyDesc = new BodyDesc();
-                bodyDesc.LinearVelocity = new Mogre.Vector3(0, 2, 5);
-
-                // the actor properties control the mass, position and orientation
-                // if you leave the body set to null it will become a static actor and wont move
-                ActorDesc actorDesc = new ActorDesc();
-                actorDesc.Density = 4;
-                actorDesc.Body = null;
-                actorDesc.GlobalPosition = nodes["mushroom"].Position;
-                actorDesc.GlobalOrientation = nodes["mushroom"].Orientation.ToRotationMatrix();
-
-                // a quick trick the get the size of the physics shape right is to use the bounding box of the entity
-                //actorDesc.Shapes.Add(new SphereShapeDesc(1f));//entities["drone"].BoundingBox.HalfSize * scale, entities["drone"].BoundingBox.Center * scale
-
-
-
-                PhysXHelpers.StaticMeshData meshdata = new PhysXHelpers.StaticMeshData(entities["mushroom"].GetMesh());
-                actorDesc.Shapes.Add(PhysXHelpers.CreateTriangleMesh(meshdata));
-
-                Actor actor = null;
-                // finally, create the actor in the physics scene
-                try { actor = OgreWindow.Instance.scene.CreateActor(actorDesc); }
-                catch { }
-                // if (actor == null)
-                //    OgreWindow.Instance.CloseForm();
-                if (actor != null)
+                foreach (string face in faces)
                 {
-                    // create our special actor node to tie together the scene node and actor that we can update its position later
-                    ActorNode actorNode = new ActorNode(nodes["mushroom"], actor);
-                    actors.Add(actorNode);
+                    string cardname = string.Format("{0} {1}", suit, face);
+                    createCard(cardname);
+                    placeCard(0, cardname);
                 }
-                #endregion
-
-
-
-                #region table
-                entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("tongitstable", "\\TongIts\\tongitstable.mesh"));
-                nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("table"));
-                nodes["table"].AttachObject(entities["tongitstable"]);
-                nodes["table"].Position = new Mogre.Vector3(0f, 36f, 0f) + Location().toMogre;
-                //nodes["table"].Scale(new Mogre.Vector3(4f));
-                //preventMousePick("tongitstable");
-                // physics
-                // attaching a body to the actor makes it dynamic, you can set things like initial velocity
-                bodyDesc.LinearVelocity = new Mogre.Vector3(0, 0, 0);
-
-                // the actor properties control the mass, position and orientation
-                // if you leave the body set to null it will become a static actor and wont move
-                ActorDesc tableActorDesc = new ActorDesc();
-                tableActorDesc.Density = 4;
-                tableActorDesc.Body = null;
-                tableActorDesc.GlobalPosition = nodes["table"].Position;
-                tableActorDesc.GlobalOrientation = nodes["table"].Orientation.ToRotationMatrix();
-                PhysXHelpers.StaticMeshData tableMeshData = new PhysXHelpers.StaticMeshData(entities["tongitstable"].GetMesh());
-                tableActorDesc.Shapes.Add(PhysXHelpers.CreateTriangleMesh(tableMeshData));
-
-                Actor tableActor = null;
-                // finally, create the actor in the physics scene
-                try { tableActor = OgreWindow.Instance.scene.CreateActor(tableActorDesc); }
-                catch { }
-                if (tableActor != null)
-                {
-                    actors.Add(new ActorNode(nodes["table"], tableActor));
-                }
-                #endregion
-
-                #region baseball
-                entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("baseball", "\\baseball.mesh"));
-                entities["baseball"].SetMaterialName("baseball");
-                //nodes.Add(OgreWindow.Instance.mSceneMgr.RootSceneNode.CreateChildSceneNode("baseball"));
-                nodes.Add(nodes["table"].CreateChildSceneNode("baseball"));
-                nodes["baseball"].AttachObject(entities["baseball"]);
-                //nodes["baseball"].SetScale(.5f, .5f, .5f);
-                nodes["baseball"].SetPosition(Location().x, Location().y, Location().z);
-                // nodes["baseball"].SetScale(5f, 5f, 5f);
-                #endregion
-
-                #region cards
-
-                Thread.Sleep(5000);
-                
-                //only 1 entity needed
-                entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("card", "\\TongIts\\Card.mesh"));
-
-                foreach (string suit in suits)
-                {
-                    for (int i = 2; i < 11; i++)
-                    {
-                        string cardname = string.Format("{0} {1}", suit, i);
-                        createCard(cardname);
-                        placeCard(0, cardname);
-                    }
-                    foreach (string face in faces)
-                    {
-                        string cardname = string.Format("{0} {1}", suit, face);
-                        createCard(cardname);
-                        placeCard(0, cardname);
-                    }
-                }
-
-                //MeshManager.Singleton.CreatePlane("spinnycard", "General", new Plane(Mogre.Vector3.UNIT_Y, 0), 200f, 250f, 1, 1, true, 1, 1, 1, Mogre.Vector3.UNIT_X);
-
-                //// physics
-                //// attaching a body to the actor makes it dynamic, you can set things like initial velocity
-                //BodyDesc cardBodyDesc = null;
-                //bodyDesc.LinearVelocity = new Mogre.Vector3(0, 6, 0);
-
-                //// the actor properties control the mass, position and orientation
-                //// if you leave the body set to null it will become a static actor and wont move
-                //ActorDesc cardActorDesc = new ActorDesc();
-                //cardActorDesc.Density = 4;
-                //cardActorDesc.Body = cardBodyDesc;
-                //cardActorDesc.GlobalPosition = nodes["club 5"].Position;
-                //cardActorDesc.GlobalOrientation = nodes["club 5"].Orientation.ToRotationMatrix();
-                //PhysXHelpers.StaticMeshData cardMeshData = new PhysXHelpers.StaticMeshData(entities["club 5"].GetMesh());
-                //cardActorDesc.Shapes.Add(PhysXHelpers.CreateConvexHull(cardMeshData));
-
-                //Actor cardActor = null;
-                //// finally, create the actor in the physics scene
-                //try { cardActor = OgreWindow.Instance.scene.CreateActor(cardActorDesc); }
-                //catch { }
-                //// if (actor == null)
-                ////    OgreWindow.Instance.CloseForm();
-                //if (cardActor != null)
-                //{
-                //    actors.Add(new ActorNode(nodes["club 5"], cardActor));
-                //}
-
-                #endregion
-                resetPlayer(1);
-                this.btnLimiter_F.reset();
-                this.btnLimiter_F.start();
-                ready = true;
             }
 
-            catch (Exception ex)
-            {
-                log(ex.ToString());
-            }
-            OgreWindow.Instance.unpause();
+            //MeshManager.Singleton.CreatePlane("spinnycard", "General", new Plane(Mogre.Vector3.UNIT_Y, 0), 200f, 250f, 1, 1, true, 1, 1, 1, Mogre.Vector3.UNIT_X);
+
+            //// physics
+            //// attaching a body to the actor makes it dynamic, you can set things like initial velocity
+            //BodyDesc cardBodyDesc = null;
+            //bodyDesc.LinearVelocity = new Mogre.Vector3(0, 6, 0);
+
+            //// the actor properties control the mass, position and orientation
+            //// if you leave the body set to null it will become a static actor and wont move
+            //ActorDesc cardActorDesc = new ActorDesc();
+            //cardActorDesc.Density = 4;
+            //cardActorDesc.Body = cardBodyDesc;
+            //cardActorDesc.GlobalPosition = nodes["club 5"].Position;
+            //cardActorDesc.GlobalOrientation = nodes["club 5"].Orientation.ToRotationMatrix();
+            //PhysXHelpers.StaticMeshData cardMeshData = new PhysXHelpers.StaticMeshData(entities["club 5"].GetMesh());
+            //cardActorDesc.Shapes.Add(PhysXHelpers.CreateConvexHull(cardMeshData));
+
+            //Actor cardActor = null;
+            //// finally, create the actor in the physics scene
+            //try { cardActor = OgreWindow.Instance.scene.CreateActor(cardActorDesc); }
+            //catch { }
+            //// if (actor == null)
+            ////    OgreWindow.Instance.CloseForm();
+            //if (cardActor != null)
+            //{
+            //    actors.Add(new ActorNode(nodes["club 5"], cardActor));
+            //}
+
+            #endregion
+            resetPlayer(1);
+            this.btnLimiter_F.reset();
+            this.btnLimiter_F.start();
         }
         private void createCard(string cardName)
         {
             //entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity(cardName, "\\TongIts\\Card.mesh"));
             //entities[cardName].SetMaterialName(cardName);
+            if (!existingCards.Contains(cardName.ToLower()))
+                existingCards.Add(cardName.ToLower());
+            else
+                return;
             nodes.Add(nodes["table"].CreateChildSceneNode(cardName));
             nodes[cardName].AttachObject(entities["card"]);
             nodes[cardName].Position = Location().toMogre + (new Mogre.Vector3(0f, 15f, 0f)); //this line is wrong
         }
-
-
-        public override void startup()
-        {
-            new Thread(new ThreadStart(resourceWaitThread)).Start();
-        }
+        private ArrayList existingCards = new ArrayList();
         public override void shutdown()
         {
             ready = false;
@@ -467,8 +425,8 @@ namespace ExtraMegaBlob
                         resetPlayer(1);
                     }
                     btnLimiter_F.start();
-                } 
-                
+                }
+
             }
         }
         private timer btnLimiter_F = new timer(new TimeSpan(0, 0, 1));
@@ -481,7 +439,6 @@ namespace ExtraMegaBlob
 
         timer scaleLimiter = new timer(new TimeSpan(0, 0, 1));
 
-        private bool ready = false;
         public override void frameHook(float interpolation)
         {
 

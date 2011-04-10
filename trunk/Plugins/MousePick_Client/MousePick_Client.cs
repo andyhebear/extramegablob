@@ -7,9 +7,8 @@ namespace ExtraMegaBlob
 {
     public class plugin : ExtraMegaBlob.References.ClientPlugin
     {
-        public override void startup()
+        public override void init()
         {
-            log("starting up!");
             OgreWindow.Instance.renderBox.MouseClick += new MouseEventHandler(renderBox_MouseClick);
         }
         public override void shutdown()

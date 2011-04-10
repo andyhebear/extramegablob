@@ -2,17 +2,32 @@
 using Mogre;
 using Mogre.PhysX;
 using MOIS;
+using System.Collections;
+using System.Threading;
+using System;
 namespace ExtraMegaBlob.References
 {
     public abstract class ClientPlugin
     {
-        public abstract void startup();
+        public Hashtable materials_lookup = new Hashtable();
+        public Hashtable meshes_lookup = new Hashtable();
+        public Hashtable skeletons_lookup = new Hashtable();
+        public bool ready = false;
+        public void startup()
+        {
+            new Thread(new ThreadStart(resourceWaitThread)).Start();
+        }
         public abstract void shutdown();
         public abstract string[] AllowedOutputNames();
         public abstract string[] AllowedInputNames();
         public abstract string Name();
         public abstract void frameHook(float interpolation);
         public abstract void updateHook();
+        public void tryupdateHook()
+        {
+            try { updateHook(); }
+            catch (Exception ex) { log(ex.ToString()); }
+        }
         public event LogDelegate onQuit;
         public void quit(string msg)
         {
@@ -110,6 +125,57 @@ namespace ExtraMegaBlob.References
             {
                 onLog(msg);
             }
+        }
+        private void resourceWaitThread()
+        {
+            while (true)
+            {
+                Thread.Sleep(1000);
+                foreach (DictionaryEntry de in materials_lookup)
+                {
+                    if (!TextureManager.Singleton.ResourceExists((string)de.Value)) goto waitmore;
+                }
+                foreach (DictionaryEntry de in skeletons_lookup)
+                {
+                    if (!SkeletonManager.Singleton.ResourceExists((string)de.Value)) goto waitmore;
+                }
+                foreach (DictionaryEntry de in meshes_lookup)
+                {
+                    if (!MeshManager.Singleton.ResourceExists((string)de.Value)) goto waitmore;
+                }
+                if (!OgreWindow.Instance.SceneReady) goto waitmore;
+                break;
+            waitmore:
+                continue;
+            }
+            init2();
+        }
+        private void init2()
+        {
+            log("starting up!");
+            OgreWindow.Instance.pause();
+            try
+            {
+                Hashtable mats = materials_lookup;
+                foreach (DictionaryEntry mat in mats)
+                {
+                    materials.Add((MaterialPtr)MaterialManager.Singleton.Create((string)mat.Key, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME));
+                    materials[(string)mat.Key].GetTechnique(0).GetPass(0).CreateTextureUnitState((string)mat.Value);
+                }
+            }
+            catch (Exception ex)
+            {
+                log(ex.ToString());
+            }
+            init();
+            init3();
+        }
+        public abstract void init();
+        private void init3()
+        {
+            OgreWindow.Instance.unpause();
+            log("done starting up!");
+            ready = true;
         }
         #endregion
     }

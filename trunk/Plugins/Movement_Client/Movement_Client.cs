@@ -6,10 +6,8 @@ namespace ExtraMegaBlob
 {
     public class plugin : ExtraMegaBlob.References.ClientPlugin
     {
-        public override void startup()
+        public override void init()
         {
-            log("starting up");
-
         }
         public override void shutdown()
         {

@@ -59,7 +59,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(ProjectDir)\VideoCapture_Client.cs" "$(SolutionDir)\..\bin\servercache\VideoCapture_Client.cs"</PostBuildEvent>
+    <PostBuildEvent>copy "$(ProjectDir)\VideoCapture_Client.cs" "$(SolutionDir)\..\bin\servercache\VideoCapture_Client.cs"
+copy "$(ProjectDir)\VideoCapture_Client.cs" "$(SolutionDir)\..\bin\cache\VideoCapture_Client.cs"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

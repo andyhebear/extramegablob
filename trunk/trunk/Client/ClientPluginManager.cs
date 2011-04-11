@@ -27,7 +27,7 @@ namespace ExtraMegaBlob.Client
             ClientPlugin.onLog += new LogDelegate(testDelB);
             ClientPlugin.onChat += new LogDelegate(ClientPlugin_onChat);
             ClientPlugin.onOutboxMessage += new ExtraMegaBlob.References.ClientPlugin.outboxDelegate(ClientPlugin_onOutboxMessage);
-            try { ClientPlugin.startup(); }
+            try { ClientPlugin.init2(); }
             catch (Exception ex)
             {
                 log("[" + ClientPlugin.Name() + "] " + ex.ToString());

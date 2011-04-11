@@ -199,35 +199,26 @@ namespace ExtraMegaBlob
 {
     public class plugin : ExtraMegaBlob.References.ClientPlugin
     {
-        private Hashtable materials_lookup
+        public override Hashtable meshes_lookup()
         {
-            get
-            {
-                Hashtable h = new Hashtable();
-                #region materials
-                #endregion
-                return h;
-            }
+            Hashtable h = new Hashtable();
+            #region meshes
+            #endregion
+            return h;
         }
-        private Hashtable meshes_lookup
+        public override Hashtable skeletons_lookup()
         {
-            get
-            {
-                Hashtable h = new Hashtable();
-                #region meshes
-                #endregion
-                return h;
-            }
+            Hashtable h = new Hashtable();
+            #region meshes
+            #endregion
+            return h;
         }
-        private Hashtable skeletons_lookup
+        public override Hashtable materials_lookup()
         {
-            get
-            {
-                Hashtable h = new Hashtable();
-                #region skeletons
-                #endregion
-                return h;
-            }
+            Hashtable h = new Hashtable();
+            #region materials
+            #endregion
+            return h;
         }
         public override void init()
         {

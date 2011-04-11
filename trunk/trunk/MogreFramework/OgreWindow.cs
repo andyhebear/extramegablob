@@ -1241,6 +1241,16 @@ namespace MogreFramework
             ListBoxScrollDown(this.lbChatProximity);
         }
 
+        private void OgreWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.pause();
+        }
+
+        private void renderBox_Click(object sender, EventArgs e)
+        {
+            renderBox.Focus();
+        }
+
 
     }
 }

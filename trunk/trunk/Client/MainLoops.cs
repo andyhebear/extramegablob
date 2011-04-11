@@ -457,6 +457,7 @@ namespace ExtraMegaBlob.Client
         }
         private void quit()
         {
+            OgreWindow.Instance.pause();
             if (OgreWindow.Instance.ShuttingDown) return;
             OgreWindow.Instance.ShuttingDown = true;
             OgreWindow.Instance.physics.Dispose();

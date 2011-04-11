@@ -17,101 +17,92 @@ namespace ExtraMegaBlob
 
         private string[] suits = { "club", "heart", "spade", "diamond" };
         private string[] faces = { "jack", "king", "queen", "ace" };
-        private Hashtable meshes_lookup
+        public override Hashtable meshes_lookup()
         {
-            get
-            {
-                Hashtable h = new Hashtable();
-                #region meshes
-                h["mushroom"] = "\\TongIts\\mushroom.mesh";
-                h["table"] = "\\TongIts\\tongitstable.mesh";
-                h["card"] = "\\TongIts\\Card.mesh";
-                #endregion
-                return h;
-            }
+            Hashtable h = new Hashtable();
+            #region meshes
+            h["mushroom"] = "\\TongIts\\mushroom.mesh";
+            h["table"] = "\\TongIts\\tongitstable.mesh";
+            h["card"] = "\\TongIts\\Card.mesh";
+            #endregion
+            return h;
         }
-        private Hashtable skeletons_lookup
+        public override Hashtable skeletons_lookup()
         {
-            get
-            {
-                Hashtable h = new Hashtable();
-                #region meshes
-                #endregion
-                return h;
-            }
+            Hashtable h = new Hashtable();
+            #region meshes
+            #endregion
+            return h;
         }
-        private Hashtable materials_lookup
+        public override Hashtable materials_lookup()
         {
-            get
-            {
-                Hashtable h = new Hashtable();
-                #region materials
-                h["baseball"] = "\\baseball-40.gif";
-                h["mushroom"] = "\\TongIts\\Shiitake Mushroom Tree Shii.png";
-                h["webcam"] = "webcapCapture";
-                h["wood"] = "\\TongIts\\woodblurred.jpg";
-                h["Material/TEXFACE/woodblurred.jpg"] = "\\TongIts\\woodblurred.jpg";
-                h["Material/TEXFACE/BumpyMetal.jpg"] = "\\TongIts\\BumpyMetal.jpg";
-                h["clouds"] = "\\clouds.jpg";
-                // h["dirt"] = "\\terr_dirt-grass.jpg";
-                h["noise"] = "\\normalNoiseColor.png";
-                h["blankcardface"] = "\\TongIts\\cardface-blank.png";
-                h["cat1"] = "\\cat2.jpg";
-                h["club 10"] = "\\TongIts\\200px-Playing_card_club_10.svg.png";
-                h["club 2"] = "\\TongIts\\200px-Playing_card_club_2.svg.png";
-                h["club 3"] = "\\TongIts\\200px-Playing_card_club_3.svg.png";
-                h["club 4"] = "\\TongIts\\200px-Playing_card_club_4.svg.png";
-                h["club 5"] = "\\TongIts\\200px-Playing_card_club_5.svg.png";
-                h["club 6"] = "\\TongIts\\200px-Playing_card_club_6.svg.png";
-                h["club 7"] = "\\TongIts\\200px-Playing_card_club_7.svg.png";
-                h["club 8"] = "\\TongIts\\200px-Playing_card_club_8.svg.png";
-                h["club 9"] = "\\TongIts\\200px-Playing_card_club_9.svg.png";
-                h["club ace"] = "\\TongIts\\200px-Playing_card_club_A.svg.png";
-                h["club jack"] = "\\TongIts\\200px-Playing_card_club_J.svg.png";
-                h["club king"] = "\\TongIts\\200px-Playing_card_club_K.svg.png";
-                h["club queen"] = "\\TongIts\\200px-Playing_card_club_Q.svg.png";
-                h["diamond 10"] = "\\TongIts\\200px-Playing_card_diamond_10.svg.png";
-                h["diamond 2"] = "\\TongIts\\200px-Playing_card_diamond_2.svg.png";
-                h["diamond 3"] = "\\TongIts\\200px-Playing_card_diamond_3.svg.png";
-                h["diamond 4"] = "\\TongIts\\200px-Playing_card_diamond_4.svg.png";
-                h["diamond 5"] = "\\TongIts\\200px-Playing_card_diamond_5.svg.png";
-                h["diamond 6"] = "\\TongIts\\200px-Playing_card_diamond_6.svg.png";
-                h["diamond 7"] = "\\TongIts\\200px-Playing_card_diamond_7.svg.png";
-                h["diamond 8"] = "\\TongIts\\200px-Playing_card_diamond_8.svg.png";
-                h["diamond 9"] = "\\TongIts\\200px-Playing_card_diamond_9.svg.png";
-                h["diamond ace"] = "\\TongIts\\200px-Playing_card_diamond_A.svg.png";
-                h["diamond jack"] = "\\TongIts\\200px-Playing_card_diamond_J.svg.png";
-                h["diamond king"] = "\\TongIts\\200px-Playing_card_diamond_K.svg.png";
-                h["diamond queen"] = "\\TongIts\\200px-Playing_card_diamond_Q.svg.png";
-                h["heart 10"] = "\\TongIts\\200px-Playing_card_heart_10.svg.png";
-                h["heart 2"] = "\\TongIts\\200px-Playing_card_heart_2.svg.png";
-                h["heart 3"] = "\\TongIts\\200px-Playing_card_heart_3.svg.png";
-                h["heart 4"] = "\\TongIts\\200px-Playing_card_heart_4.svg.png";
-                h["heart 5"] = "\\TongIts\\200px-Playing_card_heart_5.svg.png";
-                h["heart 6"] = "\\TongIts\\200px-Playing_card_heart_6.svg.png";
-                h["heart 7"] = "\\TongIts\\200px-Playing_card_heart_7.svg.png";
-                h["heart 8"] = "\\TongIts\\200px-Playing_card_heart_8.svg.png";
-                h["heart 9"] = "\\TongIts\\200px-Playing_card_heart_9.svg.png";
-                h["heart ace"] = "\\TongIts\\200px-Playing_card_heart_A.svg.png";
-                h["heart jack"] = "\\TongIts\\200px-Playing_card_heart_J.svg.png";
-                h["heart king"] = "\\TongIts\\200px-Playing_card_heart_K.svg.png";
-                h["heart queen"] = "\\TongIts\\200px-Playing_card_heart_Q.svg.png";
-                h["spade 10"] = "\\TongIts\\200px-Playing_card_spade_10.svg.png";
-                h["spade 2"] = "\\TongIts\\200px-Playing_card_spade_2.svg.png";
-                h["spade 3"] = "\\TongIts\\200px-Playing_card_spade_3.svg.png";
-                h["spade 4"] = "\\TongIts\\200px-Playing_card_spade_4.svg.png";
-                h["spade 5"] = "\\TongIts\\200px-Playing_card_spade_5.svg.png";
-                h["spade 6"] = "\\TongIts\\200px-Playing_card_spade_6.svg.png";
-                h["spade 7"] = "\\TongIts\\200px-Playing_card_spade_7.svg.png";
-                h["spade 8"] = "\\TongIts\\200px-Playing_card_spade_8.svg.png";
-                h["spade 9"] = "\\TongIts\\200px-Playing_card_spade_9.svg.png";
-                h["spade ace"] = "\\TongIts\\200px-Playing_card_spade_A.svg.png";
-                h["spade jack"] = "\\TongIts\\200px-Playing_card_spade_J.svg.png";
-                h["spade king"] = "\\TongIts\\200px-Playing_card_spade_K.svg.png";
-                h["spade queen"] = "\\TongIts\\200px-Playing_card_spade_Q.svg.png";
-                #endregion
-                return h;
-            }
+            Hashtable h = new Hashtable();
+            #region materials
+            h["baseball"] = "\\baseball-40.gif";
+            h["mushroom"] = "\\TongIts\\Shiitake Mushroom Tree Shii.png";
+            h["webcam"] = "webcapCapture";
+            h["wood"] = "\\TongIts\\woodblurred.jpg";
+            h["Material/TEXFACE/woodblurred.jpg"] = "\\TongIts\\woodblurred.jpg";
+            h["Material/TEXFACE/BumpyMetal.jpg"] = "\\TongIts\\BumpyMetal.jpg";
+            h["clouds"] = "\\clouds.jpg";
+            // h["dirt"] = "\\terr_dirt-grass.jpg";
+            h["noise"] = "\\normalNoiseColor.png";
+            h["blankcardface"] = "\\TongIts\\cardface-blank.png";
+            h["cat1"] = "\\cat2.jpg";
+            h["club 10"] = "\\TongIts\\200px-Playing_card_club_10.svg.png";
+            h["club 2"] = "\\TongIts\\200px-Playing_card_club_2.svg.png";
+            h["club 3"] = "\\TongIts\\200px-Playing_card_club_3.svg.png";
+            h["club 4"] = "\\TongIts\\200px-Playing_card_club_4.svg.png";
+            h["club 5"] = "\\TongIts\\200px-Playing_card_club_5.svg.png";
+            h["club 6"] = "\\TongIts\\200px-Playing_card_club_6.svg.png";
+            h["club 7"] = "\\TongIts\\200px-Playing_card_club_7.svg.png";
+            h["club 8"] = "\\TongIts\\200px-Playing_card_club_8.svg.png";
+            h["club 9"] = "\\TongIts\\200px-Playing_card_club_9.svg.png";
+            h["club ace"] = "\\TongIts\\200px-Playing_card_club_A.svg.png";
+            h["club jack"] = "\\TongIts\\200px-Playing_card_club_J.svg.png";
+            h["club king"] = "\\TongIts\\200px-Playing_card_club_K.svg.png";
+            h["club queen"] = "\\TongIts\\200px-Playing_card_club_Q.svg.png";
+            h["diamond 10"] = "\\TongIts\\200px-Playing_card_diamond_10.svg.png";
+            h["diamond 2"] = "\\TongIts\\200px-Playing_card_diamond_2.svg.png";
+            h["diamond 3"] = "\\TongIts\\200px-Playing_card_diamond_3.svg.png";
+            h["diamond 4"] = "\\TongIts\\200px-Playing_card_diamond_4.svg.png";
+            h["diamond 5"] = "\\TongIts\\200px-Playing_card_diamond_5.svg.png";
+            h["diamond 6"] = "\\TongIts\\200px-Playing_card_diamond_6.svg.png";
+            h["diamond 7"] = "\\TongIts\\200px-Playing_card_diamond_7.svg.png";
+            h["diamond 8"] = "\\TongIts\\200px-Playing_card_diamond_8.svg.png";
+            h["diamond 9"] = "\\TongIts\\200px-Playing_card_diamond_9.svg.png";
+            h["diamond ace"] = "\\TongIts\\200px-Playing_card_diamond_A.svg.png";
+            h["diamond jack"] = "\\TongIts\\200px-Playing_card_diamond_J.svg.png";
+            h["diamond king"] = "\\TongIts\\200px-Playing_card_diamond_K.svg.png";
+            h["diamond queen"] = "\\TongIts\\200px-Playing_card_diamond_Q.svg.png";
+            h["heart 10"] = "\\TongIts\\200px-Playing_card_heart_10.svg.png";
+            h["heart 2"] = "\\TongIts\\200px-Playing_card_heart_2.svg.png";
+            h["heart 3"] = "\\TongIts\\200px-Playing_card_heart_3.svg.png";
+            h["heart 4"] = "\\TongIts\\200px-Playing_card_heart_4.svg.png";
+            h["heart 5"] = "\\TongIts\\200px-Playing_card_heart_5.svg.png";
+            h["heart 6"] = "\\TongIts\\200px-Playing_card_heart_6.svg.png";
+            h["heart 7"] = "\\TongIts\\200px-Playing_card_heart_7.svg.png";
+            h["heart 8"] = "\\TongIts\\200px-Playing_card_heart_8.svg.png";
+            h["heart 9"] = "\\TongIts\\200px-Playing_card_heart_9.svg.png";
+            h["heart ace"] = "\\TongIts\\200px-Playing_card_heart_A.svg.png";
+            h["heart jack"] = "\\TongIts\\200px-Playing_card_heart_J.svg.png";
+            h["heart king"] = "\\TongIts\\200px-Playing_card_heart_K.svg.png";
+            h["heart queen"] = "\\TongIts\\200px-Playing_card_heart_Q.svg.png";
+            h["spade 10"] = "\\TongIts\\200px-Playing_card_spade_10.svg.png";
+            h["spade 2"] = "\\TongIts\\200px-Playing_card_spade_2.svg.png";
+            h["spade 3"] = "\\TongIts\\200px-Playing_card_spade_3.svg.png";
+            h["spade 4"] = "\\TongIts\\200px-Playing_card_spade_4.svg.png";
+            h["spade 5"] = "\\TongIts\\200px-Playing_card_spade_5.svg.png";
+            h["spade 6"] = "\\TongIts\\200px-Playing_card_spade_6.svg.png";
+            h["spade 7"] = "\\TongIts\\200px-Playing_card_spade_7.svg.png";
+            h["spade 8"] = "\\TongIts\\200px-Playing_card_spade_8.svg.png";
+            h["spade 9"] = "\\TongIts\\200px-Playing_card_spade_9.svg.png";
+            h["spade ace"] = "\\TongIts\\200px-Playing_card_spade_A.svg.png";
+            h["spade jack"] = "\\TongIts\\200px-Playing_card_spade_J.svg.png";
+            h["spade king"] = "\\TongIts\\200px-Playing_card_spade_K.svg.png";
+            h["spade queen"] = "\\TongIts\\200px-Playing_card_spade_Q.svg.png";
+            #endregion
+            return h;
         }
         private List<Quaternion> seatPositions
         {
@@ -269,20 +260,22 @@ namespace ExtraMegaBlob
             Thread.Sleep(5000);
 
             //only 1 entity needed
-            entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity("card", "\\TongIts\\Card.mesh"));
+           
 
             foreach (string suit in suits)
             {
                 for (int i = 2; i < 11; i++)
                 {
                     string cardname = string.Format("{0} {1}", suit, i);
-                    createCard(cardname);
+                    createCardEntity(cardname);
+                    createCardSceneNode(cardname);
                     placeCard(0, cardname);
                 }
                 foreach (string face in faces)
                 {
                     string cardname = string.Format("{0} {1}", suit, face);
-                    createCard(cardname);
+                    createCardEntity(cardname);
+                    createCardSceneNode(cardname);
                     placeCard(0, cardname);
                 }
             }
@@ -320,8 +313,16 @@ namespace ExtraMegaBlob
             this.btnLimiter_F.reset();
             this.btnLimiter_F.start();
         }
-        private void createCard(string cardName)
+        private void createCardEntity(string cardName)
         {
+            entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity(cardName, "\\TongIts\\Card.mesh"));
+            entities[cardName].SetMaterialName(cardName);
+        }
+        private void createCardSceneNode(string cardName)
+        {
+            
+
+           // return; //something wrong with using one entity for multiple scene nodes???
             //entities.Add(OgreWindow.Instance.mSceneMgr.CreateEntity(cardName, "\\TongIts\\Card.mesh"));
             //entities[cardName].SetMaterialName(cardName);
             if (!existingCards.Contains(cardName.ToLower()))
@@ -329,8 +330,17 @@ namespace ExtraMegaBlob
             else
                 return;
             nodes.Add(nodes["table"].CreateChildSceneNode(cardName));
-            nodes[cardName].AttachObject(entities["card"]);
+            nodes[cardName].AttachObject(entities[cardName]);
             nodes[cardName].Position = Location().toMogre + (new Mogre.Vector3(0f, 15f, 0f)); //this line is wrong
+        }
+        private void placeCard(int playerNumber, string cardName)
+        {
+            //  return;//temporary
+            nodes[cardName].Translate(cardPrimaryLocations[playerNumber].x,
+                       cardPrimaryLocations[playerNumber].y,
+                       cardPrimaryLocations[playerNumber].z);
+
+
         }
         private ArrayList existingCards = new ArrayList();
         public override void shutdown()
@@ -394,14 +404,7 @@ namespace ExtraMegaBlob
                     break;
             }
         }
-        private void placeCard(int playerNumber, string cardName)
-        {
-            nodes[cardName].Translate(cardPrimaryLocations[playerNumber].x,
-                       cardPrimaryLocations[playerNumber].y,
-                       cardPrimaryLocations[playerNumber].z);
 
-
-        }
 
         public void acceptNewGame()
         {

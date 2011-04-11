@@ -14,40 +14,31 @@ namespace ExtraMegaBlob
 {
     public class plugin : ExtraMegaBlob.References.ClientPlugin
     {
-        private Hashtable materials_lookup
+        public override Hashtable materials_lookup()
         {
-            get
-            {
-                Hashtable h = new Hashtable();
-                #region materials
-                h["metal"] = "\\Players\\BumpyMetal.jpg";
-                h["dirt"] = "\\terr_dirt-grass.jpg";
-                #endregion
-                return h;
-            }
+            Hashtable h = new Hashtable();
+            #region materials
+            h["metal"] = "\\Players\\BumpyMetal.jpg";
+            h["dirt"] = "\\terr_dirt-grass.jpg";
+            #endregion
+            return h;
         }
-        private Hashtable meshes_lookup
+        public override Hashtable meshes_lookup()
         {
-            get
-            {
-                Hashtable h = new Hashtable();
-                #region meshes
-                h["drone"] = "\\Drone.mesh";
-                h["drone"] = "\\baseball.mesh";
-                #endregion
-                return h;
-            }
+            Hashtable h = new Hashtable();
+            #region meshes
+            h["drone"] = "\\Drone.mesh";
+            h["drone"] = "\\baseball.mesh";
+            #endregion
+            return h;
         }
-        private Hashtable skeletons_lookup
+        public override Hashtable skeletons_lookup()
         {
-            get
-            {
-                Hashtable h = new Hashtable();
-                #region skeletons
-                h["droneskele"] = "\\Drone.skeleton";
-                #endregion
-                return h;
-            }
+            Hashtable h = new Hashtable();
+            #region skeletons
+            h["droneskele"] = "\\Drone.skeleton";
+            #endregion
+            return h;
         }
         private BoxControllerDesc bcd = new BoxControllerDesc();
         private BoxController control = null;
@@ -187,10 +178,25 @@ namespace ExtraMegaBlob
         }
         private bool consoleBarUsage = false;
         private bool textBarUsage = false;
+        private bool updatingNow = false;
+        private bool updateThreadPaused = false;
+        private void pauseUpdates()
+        {
+            updateThreadPaused = true;
+            while (updatingNow)
+                Thread.Sleep(1);
+        }
+        private void unPauseUpdates()
+        {
+            updateThreadPaused = false;
+        }
         private void statusUpdaterThread()
         {
             while (ready)
             {
+                Thread.Sleep(1);
+                if (updateThreadPaused) continue;
+                updatingNow = true;
                 if (!control.Actor.IsDisposed)
                 {
                     if (MoveScale_Camera_forwardback != 0 || MoveScale_Camera_leftright != 0 || MoveScale_Camera_updown != 0)
@@ -232,8 +238,8 @@ namespace ExtraMegaBlob
                     if (turning_right)
                         setOrient(control.Actor.GlobalOrientationQuaternion * ModifyAngleAroundAxis(new Degree(-2 * .001f), new Mogre.Vector3(0, 1, 0)));
                 }
-
-                Thread.Sleep(1);
+                updatingNow = false;
+                
             }
         }
         private Mogre.Vector3 localY = new Mogre.Vector3();
@@ -494,8 +500,8 @@ namespace ExtraMegaBlob
         private float MoveScale_Camera_leftright = 0f;
         private float MoveScale_Camera_updown = 0f;
         private Mogre.Vector3 TranslateVector_Camera = new Mogre.Vector3();
-        private const float speedcap_forwardback = .55f;
-        private const float speedcap_leftright = .55f;
+        private const float speedcap_forwardback = 555f;
+        private const float speedcap_leftright = 555f;
         private const float speedcap_updown = 5.5f;
         private const float incr_forwardback = .05f;
         private const float incr_leftright = .05f;
@@ -507,7 +513,7 @@ namespace ExtraMegaBlob
 
         private void setPos(Mogre.Vector3 pos)
         {
-            if (!player_freeze && !textBarUsage && !consoleBarUsage && !control.Actor.IsDisposed)
+            if (!player_freeze && !textBarUsage && !control.Actor.IsDisposed)
             {
                 control.Actor.MoveGlobalPosition(pos);
                 // actors.UpdateAllActors(.0f);
@@ -516,7 +522,7 @@ namespace ExtraMegaBlob
         }
         private void setOrient(Quaternion orient)
         {
-            if (!player_freeze && !textBarUsage && !consoleBarUsage && !control.Actor.IsDisposed)
+            if (!player_freeze && !textBarUsage && !control.Actor.IsDisposed)
             {
                 control.Actor.GlobalOrientationQuaternion = orient;
                 //  actors.UpdateAllActors(.0f);
@@ -557,13 +563,32 @@ namespace ExtraMegaBlob
 
         private void resetPlayer2(Mogre.Vector3 loc, Quaternion orient)
         {
+           
+            //MoveScale_Camera_forwardback = control.Actor.GlobalPosition.z - loc.z;
+            //MoveScale_Camera_leftright = control.Actor.GlobalPosition.x - loc.x;
+            //MoveScale_Camera_updown = control.Actor.GlobalPosition.y - loc.y;
+
+            //Mogre.Vector3 loc1 = control.Actor.GlobalPosition;
+            pauseUpdates();
+            Mogre.Vector3 loc2 = control.Actor.GlobalOrientationQuaternion * loc;
+            setPos(loc2 + loc);
             TranslateVector_Camera = new Mogre.Vector3(0f, 0f, 0f);
             MoveScale_Camera_forwardback = 0f;
             MoveScale_Camera_leftright = 0f;
             MoveScale_Camera_updown = 0f;
-            setPos(loc);
+           // setPos(loc);
             setOrient(orient);
+            unPauseUpdates();
         }
+        //private void resetPlayer3(Mogre.Vector3 loc, Quaternion orient)
+        //{
+        //    TranslateVector_Camera = new Mogre.Vector3(0f, 0f, 0f);
+        //    MoveScale_Camera_forwardback = 0f;
+        //    MoveScale_Camera_leftright = 0f;
+        //    MoveScale_Camera_updown = 0f;
+        //    setPos(loc);
+        //    setOrient(orient);
+        //}
         private bool turning_left = false;
         private bool turning_right = false;
         private void controlThread()

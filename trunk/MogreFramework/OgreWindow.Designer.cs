@@ -261,6 +261,7 @@ namespace MogreFramework
             this.renderBox.TabIndex = 0;
             this.renderBox.TabStop = false;
             this.renderBox.SizeChanged += new System.EventHandler(this.pictureBox1_SizeChanged);
+            this.renderBox.Click += new System.EventHandler(this.renderBox_Click);
             // 
             // groupBox2
             // 
@@ -659,6 +660,7 @@ namespace MogreFramework
             this.Name = "OgreWindow";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Thing";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OgreWindow_FormClosing);
             this.tabControl2.ResumeLayout(false);
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();

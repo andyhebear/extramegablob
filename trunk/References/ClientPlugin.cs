@@ -9,9 +9,9 @@ namespace ExtraMegaBlob.References
 {
     public abstract class ClientPlugin
     {
-        public Hashtable materials_lookup = new Hashtable();
-        public Hashtable meshes_lookup = new Hashtable();
-        public Hashtable skeletons_lookup = new Hashtable();
+        public virtual Hashtable materials_lookup() { return new Hashtable(); }
+        public virtual Hashtable meshes_lookup() { return new Hashtable(); }
+        public virtual Hashtable skeletons_lookup() { return new Hashtable(); }
         public bool ready = false;
         public void startup()
         {
@@ -131,15 +131,15 @@ namespace ExtraMegaBlob.References
             while (true)
             {
                 Thread.Sleep(1000);
-                foreach (DictionaryEntry de in materials_lookup)
+                foreach (DictionaryEntry de in materials_lookup())
                 {
                     if (!TextureManager.Singleton.ResourceExists((string)de.Value)) goto waitmore;
                 }
-                foreach (DictionaryEntry de in skeletons_lookup)
+                foreach (DictionaryEntry de in skeletons_lookup())
                 {
                     if (!SkeletonManager.Singleton.ResourceExists((string)de.Value)) goto waitmore;
                 }
-                foreach (DictionaryEntry de in meshes_lookup)
+                foreach (DictionaryEntry de in meshes_lookup())
                 {
                     if (!MeshManager.Singleton.ResourceExists((string)de.Value)) goto waitmore;
                 }
@@ -150,14 +150,13 @@ namespace ExtraMegaBlob.References
             }
             init2();
         }
-        private void init2()
+        public void init2()
         {
             log("starting up!");
             OgreWindow.Instance.pause();
             try
             {
-                Hashtable mats = materials_lookup;
-                foreach (DictionaryEntry mat in mats)
+                foreach (DictionaryEntry mat in materials_lookup())
                 {
                     materials.Add((MaterialPtr)MaterialManager.Singleton.Create((string)mat.Key, ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME));
                     materials[(string)mat.Key].GetTechnique(0).GetPass(0).CreateTextureUnitState((string)mat.Value);

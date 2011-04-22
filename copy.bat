@@ -1,0 +1,1 @@
+FolderSync "stg" "C:\Users\Matt\Desktop\extramegablob\\" "Z:\Projects\extramegablob\\"
